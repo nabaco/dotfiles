@@ -1,0 +1,182 @@
+# All lines marked with #t, will appear in help message with the subsequent line
+#
+# wm independent hotkeys
+#
+
+# Help
+super + F1
+	sed '1,9d;/#h /N; /#h /!d; s/\n/: /g; s/#h //g;' ~/.config/sxhkd/sxhkdrc|rofi -dmenu -markup-rows -mesg "<big><b>System Shortcuts</b></big>"
+
+#h <b>Program launcher</b>
+super + space
+	rofi -show run
+
+#h <b>Terminal emulator</b>
+super + Return
+	$TERMINAL fish
+
+#h <b>Editor</b>
+super + v
+	$TERMINAL $EDITOR
+
+#h <b>Browser</b>
+super + q
+	$BROWSER
+
+#h <b>File manager</b>
+super + e
+	$TERMINAL vifm
+
+#h <b>RSS feed reader</b>
+super + n
+	$TERMINAL newsboat
+
+#h <b>Mail reader</b>
+super + m
+	$TERMINAL neomutt
+
+#h <b>Clipboard manager</b>
+ctrl + F1
+	CM_LAUNCHER=rofi clipmenu
+
+#h <b>Password selector</b>
+super + shift + p
+	rofi -modi pass:pass-select.sh -show pass
+
+# make sxhkd reload its configuration files:
+# disable since it's done automatically frm vim
+#super + Escape
+#	pkill -USR1 -x sxhkd
+
+#
+# Music Controls
+#
+
+XF86AudioPlay
+	mpc toggle
+XF86AudioStop
+	mpc stop
+XF86AudioPrevious
+	mpc prev
+XF86AudioNext
+	mpc next
+
+#
+# Function keys binding
+#
+
+XF86ScreenSaver
+	lock
+XF86Sleep
+	lock && systemctl suspend
+
+#
+# bspwm hotkeys
+#
+
+#h <b>Quit/Restart bspwm</b>
+super + alt + {q,r}
+	bspc {quit,wm -r}
+
+#h <b>Close/Kill the current node</b>
+super + {_,shift + }w
+	bspc node -{c,k}
+
+#h <b>Toggle tiled/monocle layout</b>
+super + shift + m
+	bspc desktop -l next
+
+#h <b>Send the newest marked node to the newest preselected node</b>
+super + y
+	bspc node newest.marked.local -n newest.!automatic.local
+
+#h <b>Swap the current node and the biggest node</b>
+super + g
+	bspc node -s biggest
+
+#
+# state/flags
+#
+
+#h <b>Set the window state</b>
+super + {t,shift + t,s,f}
+	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+
+#h <b>Set the node flags</b>
+super + ctrl + {m,x,y,z,g}
+	bspc node -g {marked,locked,sticky,private,hidden}
+
+#
+# focus/swap
+#
+
+#h <b>Focus the node in the given direction</b>
+super + {_,shift + }{h,j,k,l}
+	bspc node -{f,s} {west,south,north,east}
+
+#h <b>Focus the node for the given path jump</b>
+super + {p,b,comma,period}
+	bspc node -f @{parent,brother,first,second}
+
+#h <b>Focus the next/previous node in the current desktop</b>
+alt + {_,shift + }Tab
+#super + {_,shift + }c
+	bspc node -f {next,prev}.local
+
+#h <b>Focus the next/previous desktop in the current monitor</b>
+super + bracket{left,right}
+	bspc desktop -f {prev,next}.local
+
+#h <b>Focus the last node/desktop</b>
+super + {alt + Tab,grave}
+	bspc {node,desktop} -f last
+
+#h <b>Bring up window chooser</b>
+super + Tab
+	rofi -modi window,hidden:wm_unhide.sh -show window
+
+#h <b>Focus the older or newer node in the focus history</b>
+super + {o,i}
+	bspc wm -h off; \
+	bspc node {older,newer} -f; \
+	bspc wm -h on
+
+#h <b>Focus or send to the given desktop</b>
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} '^{1-9,10}'
+
+#
+# preselect
+#
+
+#h <b>Preselect the direction</b>
+super + ctrl + {h,j,k,l}
+	bspc node -p {west,south,north,east}
+
+#h <b>Preselect the ratio</b>
+super + ctrl + {1-9}
+	bspc node -o 0.{1-9}
+
+#h <b>Cancel the preselection for the focused node</b>
+super + ctrl + space
+	bspc node -p cancel
+
+#h <b>Cancel the preselection for the focused desktop</b>
+super + ctrl + shift + space
+	bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
+
+#
+# move/resize
+#
+
+#h <b>Expand a window by moving one of its side outward</b>
+super + alt + {h,j,k,l}
+	bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
+
+#h <b>Contract a window by moving one of its side inward</b>
+super + ctrl + alt + {h,j,k,l}
+	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+
+#h <b>Move a floating window</b>
+super + {Left,Down,Up,Right}
+	bspc node -v {-20 0,0 20,0 -20,20 0}
