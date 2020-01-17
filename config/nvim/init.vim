@@ -20,6 +20,7 @@ set mouse=a
 autocmd BufWritePost *sxhkdrc !pkill -USR1 -x sxhkd
 autocmd BufWritePost *init.vim source ~/.config/nvim/init.vim
 autocmd BufWritePost *bspwmrc !bspc wm -r
+autocmd BufWritePost *picom.conf !pkill -x picom && picom -b
 autocmd BufWritePost *mpd.conf !mpd --kill && mpd
 
 " Automatically close nvim when everything else except NERDTree is closed

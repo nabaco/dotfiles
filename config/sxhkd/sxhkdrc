@@ -13,7 +13,7 @@ super + space
 
 #h <b>Terminal emulator</b>
 super + Return
-	$TERMINAL fish
+	$TERMINAL -e fish
 
 #h <b>Editor</b>
 super + v
