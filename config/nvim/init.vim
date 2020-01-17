@@ -1,5 +1,5 @@
 " Plugin setup {{{
-call plug#begin(stdpath('data').'/bundle')
+call plug#begin(stdpath('data').'../nvim-data/bundle')
 
 Plug 'scrooloose/nerdtree', { 'on':  [ 'NERDTreeToggle', 'NERDTreeFind' ] }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
@@ -8,7 +8,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
 Plug 'kovetskiy/sxhkd-vim'
 
 " Load this one last
-Plug 'ryanoasis/vim-devicons'
+"Plug 'ryanoasis/vim-devicons'
 call plug#end()
 " }}}
 
