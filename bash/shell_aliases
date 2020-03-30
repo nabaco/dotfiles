@@ -1,0 +1,9 @@
+alias ls='ls --color=auto'
+alias ll='ls -l'
+alias e="$EDITOR"
+alias p="$PAGER"
+alias f="$FILE"
+alias bg-choose='sxiv -o -r wallpapers/Landscapes/|xargs setbg'
+alias vifm='vifmrun'
+alias purge='sudo pacman -Rcsn'
+alias pacman='sudo pacman'

@@ -1,2 +1,7 @@
 .git/
-.gitignore
+.netrwhist
+vifm-help.txt
+vifmimgpdffile
+vifmimgpdfpage
+vifminfo
+vifmrc-backup

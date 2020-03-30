@@ -1,3 +1,4 @@
 rofi.theme: /usr/share/rofi/themes/fancy.rasi
+#rofi.theme: .cache/wal/colors-rofi-dark.rasi
 rofi.kb-mode-next: Shift+Right,Control+Tab,Super+Tab
 rofi.kb-mode-previous: Shift+Left,Control+ISO_Left_Tab,Super+ISO_Left_Tab
