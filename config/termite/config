@@ -1,3 +1,8 @@
+## Enable termite terminfo in remote systems:
+# wget https://raw.githubusercontent.com/thestinger/termite/master/termite.terminfo
+# tic -x termite.terminfo
+
+
 [options]
 #allow_bold = true
 #audible_bell = false
