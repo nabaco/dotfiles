@@ -5,46 +5,67 @@
 
 # Help
 super + F1
-	sed '1,9d;/#h /N; /#h /!d; s/\n/: /g; s/#h //g;' ~/.config/sxhkd/sxhkdrc|rofi -dmenu -markup-rows -mesg "<big><b>System Shortcuts</b></big>"
+	awk '/^[A-Za-z]/ && last \{print $0,"\t",last\} \{last=""\} /^#/\{last=$0\}' ~/.config/sxhkd/sxhkdrc | column -t -s $'\t' | rofi -dmenu -i -no-show-icons -width 1000 -mesg "<big>Keyboard Shortcuts</big>"
+	#	sed '1,9d;/# /N; /# /!d; s/\n/: /g; s/# //g;' ~/.config/sxhkd/sxhkdrc|rofi -dmenu -markup-rows -mesg "<big>System Shortcuts</big>"
 
-#h <b>Program launcher</b>
+# Program launcher
 super + space
 	rofi -show run
 
-#h <b>Terminal emulator</b>
+# Terminal emulator
 super + Return
-	$TERMINAL -e fish
+	$TERMINAL -e zsh
 
-#h <b>Editor</b>
+# Text editor
 super + v
-	$TERMINAL $EDITOR
+	$TERMINAL -e $EDITOR
 
-#h <b>Browser</b>
+# Internet browser
 super + q
 	$BROWSER
 
-#h <b>File manager</b>
+# File manager
 super + e
-	$TERMINAL vifm
+	$TERMINAL -e vifmrun
 
-#h <b>RSS feed reader</b>
+# RSS feed reader
 super + n
-	$TERMINAL newsboat
+	$TERMINAL -e newsboat
 
-#h <b>Mail reader</b>
+# Mail reader
 super + m
-	$TERMINAL neomutt
+	$TERMINAL -e neomutt
 
-#h <b>Clipboard manager</b>
+# Clipboard manager
 ctrl + F1
 	CM_LAUNCHER=rofi clipmenu
 
-#h <b>Password selector</b>
+# Password selector
 super + shift + p
-	rofi -modi pass:pass-select.sh -show pass
+	rofi-pass
+
+# Config editor
+super + shift + c
+	dot-config
+
+# Delete current wallpaper
+super + d
+	setbg -d
+
+# Change current wallpaper
+super + c
+	setbg
+
+# Mount USB drive or Android phone
+super + F9
+	dmenumount
+
+# Unmount USB drive or Android phone
+shift + super + F9
+	dmenuumount
 
 # make sxhkd reload its configuration files:
-# disable since it's done automatically frm vim
+# disable since it's done automatically from vim
 #super + Escape
 #	pkill -USR1 -x sxhkd
 
@@ -60,6 +81,12 @@ XF86AudioPrevious
 	mpc prev
 XF86AudioNext
 	mpc next
+XF86AudioRaiseVolume
+	pulsemixer --change-volume +5
+XF86AudioLowerVolume
+	pulsemixer --change-volume -5
+XF86AudioMute
+	pulsemixer --toggle-mute
 
 #
 # Function keys binding
@@ -68,29 +95,29 @@ XF86AudioNext
 XF86ScreenSaver
 	lock
 XF86Sleep
-	lock && systemctl suspend
+	systemctl suspend
 
 #
 # bspwm hotkeys
 #
 
-#h <b>Quit/Restart bspwm</b>
+# Quit/Restart window manager
 super + alt + {q,r}
 	bspc {quit,wm -r}
 
-#h <b>Close/Kill the current node</b>
+# Close/Kill the current node
 super + {_,shift + }w
 	bspc node -{c,k}
 
-#h <b>Toggle tiled/monocle layout</b>
+# Toggle tiled/monocle layout
 super + shift + m
 	bspc desktop -l next
 
-#h <b>Send the newest marked node to the newest preselected node</b>
+# Send the newest marked node to the newest preselected node
 super + y
 	bspc node newest.marked.local -n newest.!automatic.local
 
-#h <b>Swap the current node and the biggest node</b>
+# Swap the current node and the biggest node
 super + g
 	bspc node -s biggest
 
@@ -98,11 +125,11 @@ super + g
 # state/flags
 #
 
-#h <b>Set the window state</b>
+# Set the window state (tiled, pseudo tiled, floating, fullscreen)
 super + {t,shift + t,s,f}
 	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
 
-#h <b>Set the node flags</b>
+# Set the node flags (marked, locked, sticky, private, hidden)
 super + ctrl + {m,x,y,z,g}
 	bspc node -g {marked,locked,sticky,private,hidden}
 
@@ -110,38 +137,38 @@ super + ctrl + {m,x,y,z,g}
 # focus/swap
 #
 
-#h <b>Focus the node in the given direction</b>
+# Focus the node in the given direction
 super + {_,shift + }{h,j,k,l}
 	bspc node -{f,s} {west,south,north,east}
 
-#h <b>Focus the node for the given path jump</b>
+# Focus the node for the given path jump (parent, brother, first, second)
 super + {p,b,comma,period}
 	bspc node -f @{parent,brother,first,second}
 
-#h <b>Focus the next/previous node in the current desktop</b>
+# Focus the next/previous node in the current desktop
 alt + {_,shift + }Tab
 #super + {_,shift + }c
 	bspc node -f {next,prev}.local
 
-#h <b>Focus the next/previous desktop in the current monitor</b>
+# Focus the next/previous desktop in the current monitor
 super + bracket{left,right}
 	bspc desktop -f {prev,next}.local
 
-#h <b>Focus the last node/desktop</b>
+# Focus the last node/desktop
 super + {alt + Tab,grave}
 	bspc {node,desktop} -f last
 
-#h <b>Bring up window chooser</b>
+# Bring up window chooser
 super + Tab
 	rofi -modi window,hidden:wm_unhide.sh -show window
 
-#h <b>Focus the older or newer node in the focus history</b>
+# Focus the older or newer node in the focus history
 super + {o,i}
 	bspc wm -h off; \
 	bspc node {older,newer} -f; \
 	bspc wm -h on
 
-#h <b>Focus or send to the given desktop</b>
+# Focus or send to the given desktop
 super + {_,shift + }{1-9,0}
 	bspc {desktop -f,node -d} '^{1-9,10}'
 
@@ -149,19 +176,19 @@ super + {_,shift + }{1-9,0}
 # preselect
 #
 
-#h <b>Preselect the direction</b>
+# Preselect the direction
 super + ctrl + {h,j,k,l}
 	bspc node -p {west,south,north,east}
 
-#h <b>Preselect the ratio</b>
+# Preselect the ratio
 super + ctrl + {1-9}
 	bspc node -o 0.{1-9}
 
-#h <b>Cancel the preselection for the focused node</b>
+# Cancel the preselection for the focused node
 super + ctrl + space
 	bspc node -p cancel
 
-#h <b>Cancel the preselection for the focused desktop</b>
+# Cancel the preselection for the focused desktop
 super + ctrl + shift + space
 	bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
 
@@ -169,14 +196,26 @@ super + ctrl + shift + space
 # move/resize
 #
 
-#h <b>Expand a window by moving one of its side outward</b>
+# Expand a window by moving one of its side outward
 super + alt + {h,j,k,l}
 	bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
 
-#h <b>Contract a window by moving one of its side inward</b>
+# Contract a window by moving one of its side inward
 super + ctrl + alt + {h,j,k,l}
 	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
 
-#h <b>Move a floating window</b>
+# Move a floating window
 super + {Left,Down,Up,Right}
 	bspc node -v {-20 0,0 20,0 -20,20 0}
+
+# Full screenshot
+Print
+	screenshot	
+
+# Window screenshot
+shift + Print
+	screenshot window
+
+# Screenshot selection
+ctrl + Print
+	screenshot selection
