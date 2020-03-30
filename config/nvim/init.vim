@@ -1,20 +1,64 @@
 " Plugin setup {{{
-call plug#begin(stdpath('data').'../nvim-data/bundle')
+call plug#begin(stdpath("data").'/bundle')
 
+" File browser
 Plug 'scrooloose/nerdtree', { 'on':  [ 'NERDTreeToggle', 'NERDTreeFind' ] }
-Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
+Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
+
+" Git support
+Plug 'lambdalisue/gina.vim'
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
+
+Plug 'vim-airline/vim-airline'
+
+" API documentation
+Plug 'KabbAmine/zeavim.vim'
+
+" Read GNU Info from vim
+Plug 'alx741/vinfo'
 
 " Language specific plugins
 Plug 'kovetskiy/sxhkd-vim'
+Plug 'chrisbra/csv.vim'
+
+" Autocompletion
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+
+" Ultimate fuzzy search + Multi-entry selection UI.
+Plug 'junegunn/fzf.vim'
+
+" Use pywal theme
+"Plug 'dylanaraps/wal.vim'
 
 " Load this one last
-"Plug 'ryanoasis/vim-devicons'
+Plug 'ryanoasis/vim-devicons'
 call plug#end()
 " }}}
-
 " General editor configuration {{{
 set number
 set relativenumber
+set mouse=n
+set splitright
+set splitbelow
+set hidden
+
+let g:python3_host_prog = '/bin/python'
+
+"colorscheme wal
+
+" Use deoplete.
+let g:deoplete#enable_at_startup = 1
+
+let g:LanguageClient_serverCommands = {
+    \ 'cpp': ['/usr/bin/cmake', '-E', 'server', '--debug'],
+    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+    \ 'python': ['/usr/local/bin/pyls'],
+    \ }
 
 if has("cscope")
 	set cscopetag
@@ -34,6 +78,7 @@ autocmd BufWritePost *init.vim source ~/.config/nvim/init.vim
 autocmd BufWritePost *bspwmrc !bspc wm -r
 autocmd BufWritePost *picom.conf !pkill -x picom && picom -b
 autocmd BufWritePost *mpd.conf !mpd --kill && mpd
+autocmd BufWritePost *termite/config !killall -USR1 termite
 
 " Automatically close nvim when everything else except NERDTree is closed
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
@@ -54,7 +99,7 @@ nmap <Leader>v :NERDTreeFind<CR>
 "9 or a: Find places where this symbol is assigned a value
 
 " Print help
-nmap <Leader>ch :echon "s: Find this C symbol\ng: Find this definition\nd: Find functions called by this function\nc: Find functions calling this function\nt: Find this text string\ne: Find this egrep pattern\nf: Find this file\ni: Find files #including this file\na: Find places where this symbol is assigned a value"<cr>
+nmap <Leader>ch :echon "s: Find this C symbol\ng: Find this definition\nd: Find functions called by this function (Cscope only)\nc: Find functions calling this function\nt: Find this text string\ne: Find this egrep pattern\nf: Find this file\ni: Find files #including this file\na: Find places where this symbol is assigned a value\n\n\<Leader\>cx - Jump to result\n\<Leader\>Cx - Open result in a split\n\<Leader\>CX - Open result a vertical split"<cr>
 
 " Jump to result
 nmap <Leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
@@ -95,5 +140,15 @@ nmap <Leader>q :ccl<cr>
 
 nmap <Leader>/ :noh<cr>
 nmap <C-p> :e ./**/
-nmap <Leader><cr> :buffer 
+"nmap <Leader><cr> :buffer 
+nmap <Leader><cr> <CMD>Buffers<CR>
+nmap <Leader>f <CMD>FZF<CR>
+nmap <Leader>t <CMD>Tags<CR>
+nmap <Leader>T <CMD>BTags<CR>
+nmap <Leader>m <CMD>Commits<CR>
+nmap <Leader>M <CMD>BCommits<CR>
+
+nmap <Leader>gg :Gina 
+nmap <Leader>gs <CMD>Gina status -s --opener=vsplit<CR>
+nmap <Leader>gc <CMD>Gina commit<CR>
 " }}}
