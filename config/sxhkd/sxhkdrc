@@ -93,7 +93,7 @@ XF86AudioMute
 #
 
 XF86ScreenSaver
-	lock
+	xset s activate
 XF86Sleep
 	systemctl suspend
 

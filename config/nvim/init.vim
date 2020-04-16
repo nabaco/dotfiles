@@ -26,11 +26,6 @@ Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax' 
 
 " Autocompletion
-"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-"Plug 'autozimu/LanguageClient-neovim', {
-"    \ 'branch': 'next',
-"    \ 'do': 'bash install.sh',
-"    \ }
 Plug 'ycm-core/YouCompleteMe', { 'do': 'python3 install.py --clangd-completer'}
 
 " Ultimate fuzzy search + Multi-entry selection UI.
@@ -282,6 +277,12 @@ nmap <Leader>q :ccl<cr>
 
 " Turn off search highlight
 nmap <Leader>/ :noh<cr>
+
+nmap <Leader>yy :YcmCompleter GoTo<CR>
+nmap <Leader>yc :YcmCompleter GoToReferences<CR>
+
+nmap <Leader>yy :YcmCompleter GoTo<CR>
+nmap <Leader>yc :YcmCompleter GoToReferences<CR>
 
 " Fuzzy-find lite
 nmap <Leader><space> :e ./**/

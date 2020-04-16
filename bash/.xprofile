@@ -10,7 +10,9 @@ sxhkd &
 setxkbmap -layout us,ru,il -variant ,phonetic, -option 'grp:alt_shift_toggle'
 
 xset r rate 300 50 &	# Speed xrate up
-xss-lock -- lock &   # Lock screen automaticaly on DKMS or suspend
+xset s 300 5 &   # Dim screen after 5 minutes. Lock after another 5 seconds
+xset dpms 600 1800 14400 &   # Standby after 10 minutes. Suspend after another 20. Shutdown after another 3.5 hours.
+xss-lock -n /usr/lib/xsecurelock/dimmer -l -- env XSECURELOCK_SAVER=saver_xscreensaver lock &
 unclutter &		# Remove mouse when idle
 picom -b
 dunst &			# dunst for notifications
