@@ -127,6 +127,8 @@ fi
 # Integrate FZF
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+[ -f  /usr/share/autojump/autojump.sh ] && source /usr/share/autojump/autojump.sh
+
 # Import colorscheme from 'wal' asynchronously
 # &   # Run the process in the background.
 # ( ) # Hide shell job control messages.
