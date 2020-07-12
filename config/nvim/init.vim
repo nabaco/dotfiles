@@ -1,40 +1,122 @@
-" Plugin setup {{{
+"{{{"""""" Plug management """"""""
 call plug#begin(stdpath("data").'/bundle')
 
-" File browser
+" let VimPlug manage VimPlug, required
+Plug 'junegunn/vim-plug'
+
+" Get used to proper Vim movement
+Plug 'takac/vim-hardtime'
+
+" Add some additional text objects and attack them
+Plug 'wellle/targets.vim'
+
+" File browsing
 Plug 'scrooloose/nerdtree', { 'on':  [ 'NERDTreeToggle', 'NERDTreeFind' ] }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
+"Plug 'tpope/vim-vinegar'
 
 " Git support
-Plug 'lambdalisue/gina.vim'
-Plug 'airblade/vim-gitgutter'
-Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive' " Only for FZF integration
+Plug 'idanarye/vim-merginal' " Branch TUI based on fugitive
+Plug 'jreybert/vimagit' " Easier stage/commit workflow
+Plug 'airblade/vim-gitgutter' " Show changes live + 'hunk/change' text object
+Plug 'rhysd/git-messenger.vim' " Git blame in bubbles
 
-Plug 'vim-airline/vim-airline'
+if has("Win32")
+	Plug 'Shougo/vimproc.vim', {'do' : 'nmake'}
+endif
 
+" Vim Rooter - needed for all the git plugins to work correctly,
+" in a multi-repo environment
+Plug 'airblade/vim-rooter'
+
+" Puts all vim navigation keys on drugs! f,t,w,b,e etc..
+Plug 'easymotion/vim-easymotion'
+
+" Ultimate fuzzy search + Multi-entry selection UI.
+Plug 'junegunn/fzf', { 'dir': '/nfs/iil/proj/chdsw/dev/users/nbarcohx/fzf', 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+" Alternative file contents search
+Plug 'mileszs/ack.vim'
+
+" Autocompletion
+Plug 'ycm-core/YouCompleteMe', { 'do': 'python3 install.py --clangd-completer'}
+
+" Ctags support
+" Easytags replacement with support for Universal Ctags
+"Plug 'ludovicchabant/vim-gutentags'
+" Plug 'skywind3000/gutentags_plus' " Extra for Cscope
+Plug 'majutsushi/tagbar' " A bar with list of all the tags in the buffer
+"Plug 'xolox/vim-misc' " Required by easytags
+"Plug 'xolox/vim-easytags'
+
+" A - for switching between source and header files
+Plug 'vim-scripts/a.vim'
+
+" UltiSnips
+"Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+
+" Remove extraneous whitespace when edit mode is exited
+Plug 'thirtythreeforty/lessspace.vim'
+
+" Bracket completion
+Plug 'Raimondi/delimitMate'
+
+" Tpope's plugins
+Plug 'tpope/vim-surround' " surround vim
+Plug 'tpope/vim-repeat' " Enable repeating supported plugin maps with .
+Plug 'tpope/vim-eunuch' " Unix commands from Vim
+Plug 'tpope/vim-commentary' " Comment blocks
+Plug 'tpope/vim-obsession' " Vim session management
+
+" Imporve % for if..else and such
+" Does Neovim need this? I think Neovim has it built in
+"Plug 'adelarsq/vim-matchit'
+
+" External App Integration
 " API documentation
 Plug 'KabbAmine/zeavim.vim'
-
+" The ultimate cheat sheet
+Plug 'dbeniamine/cheat.sh-vim'
 " Read GNU Info from vim
 Plug 'alx741/vinfo'
+"Plug 'HiPhish/info.vim'
+
+" Notes, to-do, etc
+Plug 'vimwiki/vimwiki'
+Plug 'vimwiki/utils'
 
 " Language specific plugins
 Plug 'kovetskiy/sxhkd-vim'
 Plug 'chrisbra/csv.vim'
 Plug 'vhdirk/vim-cmake'
 Plug 'vim-pandoc/vim-pandoc'
-Plug 'vim-pandoc/vim-pandoc-syntax' 
+Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'kergoth/vim-bitbake'
+Plug 'Matt-Deacalion/vim-systemd-syntax'
+Plug 'tmux-plugins/vim-tmux'
+Plug 'tmux-plugins/vim-tmux-focus-events'
 
-" Autocompletion
-Plug 'ycm-core/YouCompleteMe', { 'do': 'python3 install.py --clangd-completer'}
+" PlanUML support and preview
+Plug 'aklt/plantuml-syntax'
+Plug 'scrooloose/vim-slumlord'
 
-" Ultimate fuzzy search + Multi-entry selection UI.
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-
+" Pop-up the built in terminal
 if has("nvim")
 	Plug 'Lenovsky/nuake'
 endif
+
+" Eye Candy
+Plug 'morhetz/gruvbox'
+Plug 'vim-airline/vim-airline'
+
+" Start screen
+Plug 'mhinz/vim-startify'
+
+" Highlight same words as under cursor
+Plug 'RRethy/vim-illuminate'
 
 " Use pywal theme
 "Plug 'dylanaraps/wal.vim'
@@ -43,7 +125,24 @@ endif
 "Plug 'ryanoasis/vim-devicons'
 call plug#end()
 " }}}
-" General editor configuration {{{
+"{{{"""""" General Vim Config """""""
+
+set termguicolors
+" Colorscheme wal
+colorscheme gruvbox
+
+" Search highlight colors
+" Should be applied after colorscheme
+hi Search ctermbg=Yellow
+hi Search ctermfg=Red
+
+" Set environment variable to be able to start vim in :terminal
+if has('nvim')
+  let $GIT_EDITOR = 'nvr -cc split --remote-wait'
+endif
+
+" Sync clipboards with system
+set clipboard+=unnamedplus
 
 " Line numbering
 set number
@@ -59,10 +158,6 @@ set splitbelow
 " Hide buffer when closed
 set hidden
 
-set termguicolors
-"colorscheme wal
-colorscheme pablo
-
 " Vimdiff to open vertical splits
 " I don't understand how can anyone work otherwise
 set diffopt+=vertical
@@ -77,16 +172,35 @@ set showmatch
 " persist the undo tree for each file
 set undofile
 
+" Highlight edge column
+set colorcolumn=100
+" Let plugins show effects after 500ms, not 4s
+set updatetime=500
+" Show whitespaces
+set listchars=tab:»·,space:·,trail:·,extends:·,precedes:·,nbsp:·,eol:¬
+
 " Indentation options
 set tabstop=4
-set expandtab 
+set expandtab
 set softtabstop=4
 set shiftwidth=4
 
+" Vim folds
+set foldmethod=marker
+set foldlevel=0
+
+" save the file when switch buffers, make it etc.
+set autowriteall
+
+" Automatically check for changes
+" I'm not sure Neovim needs that
+"autocmd BufEnter * silent! checktime
+
 " Taken from the NeoVim wiki
 " All of those are set by defult in NeoVim
-if has("vim")
+if !has("nvim")
 	set syntax=ON
+    set bg=dark
 	filetype plugin indent on
 	set autoindent
 	set autoread
@@ -152,8 +266,17 @@ if has("vim")
 	set wildoptions=pum,tagfile
 endif
 
-" Show whitespaces
-set listchars=tab:»·,trail:·,extends:·,precedes:·,nbsp:·,eol:¶
+" ignore common files
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.o,*/source-pc/*,*/raspberrypi/*,*/.git/*
+
+" Case-insensitive search
+set wildignorecase
+set ignorecase
+set smartcase
+
+" Enable per project .vimrc
+set exrc
+set secure
 
 set tags=./tags,**5/tags,tags;~
 "                          ^ in working dir, or parents
@@ -161,17 +284,28 @@ set tags=./tags,**5/tags,tags;~
 "           ^ sibling of open file
 
 if has("cscope")
+	" Cscope config
 	set cscopetag
-	set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
+	set cscopequickfix=a-,c-,d-,e-,i-,s-,t-
+
+	" Gtags interface
+	set csprg=gtags-cscope
 
 	" add any database in current directory
-	if filereadable("cscope.out")
+	if filereadable("GTAGS")
+		silent cs add GTAGS
+	elseif filereadable("cscope.out")
 	    silent cs add cscope.out
 	" else add database pointed to by environment
 	elseif $CSCOPE_DB != ""
 	    silent cs add $CSCOPE_DB
 	endif
 endif
+
+augroup highlight_yank
+	autocmd!
+	autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank("IncSearch", 1000)
+augroup END
 
 autocmd BufWritePost *sxhkdrc !pkill -USR1 -x sxhkd
 autocmd BufWritePost *init.vim source ~/.config/nvim/init.vim
@@ -180,23 +314,104 @@ autocmd BufWritePost *picom.conf !pkill -x picom && picom -b
 autocmd BufWritePost *mpd.conf !mpd --kill && mpd
 autocmd BufWritePost *termite/config !killall -USR1 termite
 
-" Automatically close nvim when everything else except NERDTree is closed
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
 " Show netrw in tree style (i to change)
 "let g:netrw_liststyle=3
 
 let g:python_host_prog = '/usr/bin/python'
 let g:python3_host_prog = '/usr/bin/python3'
 
-let g:ycm_clangd_binary_path = '/usr/bin/clangd-9'
+" AutoComplete Config
+" Don't let autocomplete affect usual typing habits
+"set completeopt+=menuone,preview,noinsert
 
+" }}}
+" {{{"""""" Plugs Config """"""
+
+" HardTime in all buffers
+let g:hardtime_default_on = 0
+let g:hardtime_showmsg = 1
+let g:hardtime_ignore_buffer_patterns = [ "NERD.*" ]
+let g:hardtime_ignore_quickfix = 1
+let g:hardtime_allow_different_key = 1
+
+" Automatically close nvim when everything else except NERDTree is closed
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+"set statusline="%f%m%r%h%w [%Y] [0x%02.2B]%< %F%=%4v,%4l %3p%% of %L"
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline#extensions#tabline#enabled = 1
+
+" Gutentag Config
+" enable gtags module
+let g:gutentags_modules = ['ctags', 'cscope']
+" config project root markers.
+let g:gutentags_project_root = ['.repo']
+
+" Git Config
+" Let GitGutter do its thing on large files
+let g:gitgutter_max_signs=50000
+" GitGutter colors
+" let g:gitgutter_override_sign_column_highlight = 0
+" highlight clear SignColumn
+" highlight GitGutterAdd ctermfg=10
+" highlight GitGutterChange ctermfg=11
+" highlight GitGutterDelete ctermfg=9
+" highlight GitGutterChangeDelete ctermfg=14
+
+" Vimagit config
+" Go straight into insert mode when committing
+autocmd User VimagitEnterCommit startinsert
+
+" Vim Rooter Config
+let g:rooter_manual_only = 1 " Improves Vim startup time
+autocmd BufEnter * call FindRootDirectory() " Still autochange the directory
+let g:rooter_silent_chdir = 1
+let g:rooter_change_directory_for_non_project_files = 'current'
+let g:rooter_resolve_links = 1
+
+" If your terminal's background is white (light theme), uncomment the following
+" to make EasyMotion's cues much easier to read.
+" hi link EasyMotionTarget String
+" hi link EasyMotionShade Comment
+" hi link EasyMotionTarget2First String
+" hi link EasyMotionTarget2Second Statement
+
+" Ack config
+"let g:ackprg = 'ag --vimgrep'
+let g:ackprg = 'rg --vimgrep -i'
+let g:ackhighlight = 1
+
+" FZF Config
+"let $FZF_DEFAULT_COMMAND = 'ag -g ""'
+let $FZF_DEFAULT_COMMAND = 'fd --type file'
+"let $FZF_DEFAULT_COMMAND = 'rg --files -g ""'
+
+" Show netrw in tree style (i to change)
+let g:netrw_liststyle=3
+
+" Nerd tree Config
+let g:loaded_nerdtree_git_status = 1
+let NERDTreeQuitOnOpen = 1
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+
+" Make :UltiSnipsEdit to split the window.
+let g:UltiSnipsEditSplit="horizontal"
+let g:UltiSnipsSnippetDirectories=["~/.config/nvim/UltiSnips"]
+let g:UltiSnipsSnippetsDir="~/.config/nvim/UltiSnips"
+
+" YouCompleteMe configuration
+let g:ycm_show_diagnostics_ui = 1
+let g:ycm_enable_diagnostic_signs = 0
+let g:ycm_enable_diagnostic_highlighting = 0
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+" YouCompleteMe Pandoc integration
 if !exists('g:ycm_semantic_triggers')
   let g:ycm_semantic_triggers = {}
 endif
 let g:ycm_semantic_triggers.pandoc = ['@']
-
 let g:ycm_filetype_blacklist = {}
+let g:ycm_clangd_binary_path = '/usr/bin/clangd-9'
 
 " Use deoplete.
 "let g:deoplete#enable_at_startup = 1
@@ -217,8 +432,48 @@ let g:pandoc#command#custom_open='zathura'
 let g:pandoc#command#prefer_pdf=1
 let g:pandoc#command#autoexec_command="Pandoc! pdf"
 let g:pandoc#completion#bib#mode='citeproc'
+
+" VimWiki configuration
+let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
+
+" PlantUML path
+
+function s:gtags_search(line)
+
+	let l:line = split(a:line)[1]
+	let l:file = split(a:line)[2]
+	execute 'edit +'.l:line l:file
+
+endfunction
+
+function s:gtags_preview(line)
+
+	echo line
+	let l:line = split(a:line)[1]
+	let l:file = split(a:line)[2]
+	return l:file.':'.l:line
+
+endfunction
+
 " }}}
-" Key bindings {{{
+" {{{ """""" Key Mappings """"""
+
+nnoremap <silent> <Leader>t :call fzf#run(fzf#wrap({'source':'global -x .', 'sink':function('<sid>gtags_search'),
+			\ 'options': ['-m', '-d', '\t', '--with-nth', '1,2', '-n', '1', '--prompt', 'Tags> ']}))<CR>
+
+" Make life easier with exiting modes back to normal
+imap jk <Esc>
+vmap jk <Esc>
+
+" " " Open netrw in CWD
+" nmap <Leader>n :Rexplore .<cr>
+" nmap <Leader>N :Sexplore .<cr>
+" nmap \|N :Vexplore .<cr>
+" " " Open netrw in the current file's dir
+" nmap <Leader>v :Explore<cr>
+" nmap <Leader>V :Sexplore<cr>
+" nmap \|V :Vexplore<cr>
+
 nmap <Leader>n :NERDTreeToggle<CR>
 nmap <Leader>v :NERDTreeFind<CR>
 
@@ -275,6 +530,19 @@ nmap [q :cprevious<cr>
 nmap [Q :cfirst<cr>
 nmap <Leader>q :ccl<cr>
 
+" UltiSnips Bindings
+let g:UltiSnipsExpandTrigger="<Leader><Leader>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+
+map , <Plug>(easymotion-prefix)
+" Toggle whitespaces
+nmap <F6> :set list! <CR>
+" Toggle the tags bar
+nmap <F8> :TagbarToggle<CR>
+" Toggle spell checking
+nmap <F3> :setlocal spell! spelllang=en<CR>
+
 " Turn off search highlight
 nmap <Leader>/ :noh<cr>
 
@@ -296,19 +564,14 @@ nmap <Leader>T <CMD>BTags<CR>
 nmap <Leader>m <CMD>Commits<CR>
 nmap <Leader>M <CMD>BCommits<CR>
 
-" Git workflow
-nmap <Leader>gg :Gina 
-nmap <Leader>gs <CMD>Gina status -s --opener=vsplit<CR>
-nmap <Leader>gc <CMD>Gina commit<CR>
-
-" Open netrw in CWD
-"nmap <Leader>n :Explore .<cr>
-"nmap <Leader>N :Sexplore .<cr>
-"nmap \|N :Vexplore .<cr>
-" Open netrw in the current file's dir
-"nmap <Leader>v :Explore<cr>
-"nmap <Leader>V :Sexplore<cr>
-"nmap \|V :Vexplore<cr>
+" Start a Git command
+nmap <Leader>gg :Git<Space>
+nmap <Leader>gs :Git status<CR>
+nmap <Leader>gv :Magit<CR>
+"nmap <Leader>gcm :Git commit<CR>
+nmap <Leader>gd :Git diff<CR>
+nmap <Leader>gc :Gdiffsplit<CR>
+nmap <Leader>gb :MerginalToggle<CR>
 
 " Spellchecking Bindings
 imap <m-f> <C-G>u<Esc>[s1z=`]a<C-G>u
@@ -325,8 +588,14 @@ map <silent> <F5> :make<cr><cr><cr>
 " GNUism, for building recursively
 map <silent> <s-F5> :make -w<cr><cr><cr>
 
-map <Leader>` :Nuake<cr>
-tmap <Leader>` <c-\><c-n>:Nuake<cr>
+" Ctags in previw/split window
+nnoremap <C-w><C-]> <C-w>}
+nnoremap <C-w>} <C-w><C-]>
+
+" Nuake Bindings
+nnoremap <Leader>` :Nuake<CR>
+inoremap <Leader>` <C-\><C-n>:Nuake<CR>
+tnoremap <Leader>` <C-\><C-n>:Nuake<CR>
 
 " Compile file (Markdown, LaTeX, etc)
 " TODO: Auto-recognize build system
