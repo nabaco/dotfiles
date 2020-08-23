@@ -3,7 +3,8 @@ HISTFILE=~/.zsh/histfile
 HISTSIZE=10000
 SAVEHIST=10000
 setopt autocd extendedglob nomatch notify
-bindkey -v
+#bindkey -v
+bindkey -e
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
 zstyle :compinstall filename '/home/nachum/.zshrc'
@@ -15,8 +16,10 @@ fi
 
 if [ -f /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
     source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-    bindkey "$terminfo[kcuu1]" history-substring-search-up
-    bindkey "$terminfo[kcud1]" history-substring-search-down
+#    bindkey "$terminfo[kcuu1]" history-substring-search-up
+#    bindkey "$terminfo[kcud1]" history-substring-search-down
+    bindkey "^[[A" history-substring-search-up
+    bindkey "^[[B" history-substring-search-down
 fi
 
 if [ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
@@ -35,9 +38,15 @@ compinit
 # To add support for TTYs this line can be optionally added.
 source ~/.cache/wal/colors-tty.sh
 
-if [[ -r /lib/python3.8/site-packages/powerline/bindings/zsh/powerline.zsh ]]; then
+if [ -f /lib/python3.8/site-packages/powerline/bindings/zsh/powerline.zsh ]; then
 	source /lib/python3.8/site-packages/powerline/bindings/zsh/powerline.zsh
 fi
+
+if [ ~/.local/share/nvim/bundle/fzf/shell/key-bindings.zsh ]; then
+    source ~/.local/share/nvim/bundle/fzf/shell/key-bindings.zsh 
+    source ~/.local/share/nvim/bundle/fzf/shell/completion.zsh
+fi
+
 
 if test -e ~/shell_aliases
 then

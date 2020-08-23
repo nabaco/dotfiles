@@ -5,7 +5,7 @@
 
 # Help
 super + F1
-	awk '/^[A-Za-z]/ && last \{print $0,"\t",last\} \{last=""\} /^#/\{last=$0\}' ~/.config/sxhkd/sxhkdrc | column -t -s $'\t' | rofi -dmenu -i -no-show-icons -width 1000 -mesg "<big>Keyboard Shortcuts</big>"
+	awk '/^[A-Za-z]/ && last \{print $0,"\ ",last\} \{last=""\} /^#/\{last=$0\}' ~/.config/sxhkd/sxhkdrc | column -t -s $'\t' | rofi -dmenu -i -no-show-icons -width 1000 -mesg "<big>Keyboard Shortcuts</big>"
 	#	sed '1,9d;/# /N; /# /!d; s/\n/: /g; s/# //g;' ~/.config/sxhkd/sxhkdrc|rofi -dmenu -markup-rows -mesg "<big>System Shortcuts</big>"
 
 # Program launcher

@@ -3,6 +3,7 @@
 
 # Adds `~/.local/bin/` and all subdirectories to $PATH
 export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//')"
+export PATH="$PATH:$HOME/.gem/ruby/2.7.0/bin"
 export EDITOR="nvim"
 export TERMINAL="termite"
 #export BROWSER="qutebrowser"

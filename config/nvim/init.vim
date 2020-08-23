@@ -278,6 +278,11 @@ set smartcase
 set exrc
 set secure
 
+" Integrate RipGrep
+if executable('rg')
+    set grepprg="rg --with-filename --no-heading $* /dev/null"
+endif
+
 set tags=./tags,**5/tags,tags;~
 "                          ^ in working dir, or parents
 "                   ^ in any subfolder of working dir
@@ -323,6 +328,7 @@ let g:python3_host_prog = '/usr/bin/python3'
 " AutoComplete Config
 " Don't let autocomplete affect usual typing habits
 "set completeopt+=menuone,preview,noinsert
+let g:ycm_clangd_binary_path = '/usr/bin/clangd'
 
 " }}}
 " {{{"""""" Plugs Config """"""
@@ -408,7 +414,7 @@ let g:ycm_collect_identifiers_from_comments_and_strings = 1
 " YouCompleteMe Pandoc integration
 if !exists('g:ycm_semantic_triggers')
   let g:ycm_semantic_triggers = {}
-endif
+:endif
 let g:ycm_semantic_triggers.pandoc = ['@']
 let g:ycm_filetype_blacklist = {}
 let g:ycm_clangd_binary_path = '/usr/bin/clangd-9'
@@ -453,6 +459,21 @@ function s:gtags_preview(line)
 	let l:file = split(a:line)[2]
 	return l:file.':'.l:line
 
+endfunction
+
+" }}}
+" Function {{{
+
+function JumpToTag()
+    " Store where we're jumping from.
+    let pos = getcurpos()
+    let cword = expand('<cword>')
+    let item = {'bufnr': pos[0], 'from': pos, 'tagname': cword}
+    YcmCompleter GoTo cword
+
+    " Assuming jump was successful, write to tag stack.
+    let winid = win_getid()
+    call settagstack(pos[0], item, 'a')
 endfunction
 
 " }}}
