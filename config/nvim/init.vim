@@ -34,7 +34,7 @@ Plug 'airblade/vim-rooter'
 Plug 'easymotion/vim-easymotion'
 
 " Ultimate fuzzy search + Multi-entry selection UI.
-Plug 'junegunn/fzf', { 'dir': '/nfs/iil/proj/chdsw/dev/users/nbarcohx/fzf', 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 " Alternative file contents search
@@ -55,7 +55,7 @@ Plug 'majutsushi/tagbar' " A bar with list of all the tags in the buffer
 Plug 'vim-scripts/a.vim'
 
 " UltiSnips
-"Plug 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 " Remove extraneous whitespace when edit mode is exited
@@ -85,8 +85,8 @@ Plug 'alx741/vinfo'
 "Plug 'HiPhish/info.vim'
 
 " Notes, to-do, etc
-Plug 'vimwiki/vimwiki'
-Plug 'vimwiki/utils'
+"Plug 'vimwiki/vimwiki'
+"Plug 'vimwiki/utils'
 
 " Language specific plugins
 Plug 'kovetskiy/sxhkd-vim'
@@ -378,12 +378,21 @@ let g:rooter_resolve_links = 1
 
 " Ack config
 "let g:ackprg = 'ag --vimgrep'
-let g:ackprg = 'rg --vimgrep -i'
+let g:ackprg = 'rg --vimgrep --smart-case'
 let g:ackhighlight = 1
+" Auto close the Quickfix list after pressing '<enter>' on a list item
+let g:ack_autoclose = 1
+" Any empty ack search will search for the word the cursor is on
+let g:ack_use_cword_for_empty_search = 1
+" Don't jump to first match
+cnoreabbrev Ack Ack!
+command! -nargs=1 Nack Ack! "<args>" $NOTES/**
+command! -nargs=1 Note e $NOTES/Scratch/<args>.md
+command! Scratch exe "e $NOTES/Scratch/".strftime("%F-%H%M%S").".md"
 
 " FZF Config
 "let $FZF_DEFAULT_COMMAND = 'ag -g ""'
-let $FZF_DEFAULT_COMMAND = 'fd --type file'
+"let $FZF_DEFAULT_COMMAND = 'fd --type file'
 "let $FZF_DEFAULT_COMMAND = 'rg --files -g ""'
 
 " Show netrw in tree style (i to change)
@@ -397,8 +406,8 @@ let NERDTreeDirArrows = 1
 
 " Make :UltiSnipsEdit to split the window.
 let g:UltiSnipsEditSplit="horizontal"
-let g:UltiSnipsSnippetDirectories=["~/.config/nvim/UltiSnips"]
-let g:UltiSnipsSnippetsDir="~/.config/nvim/UltiSnips"
+"let g:UltiSnipsSnippetDirectories=["~/.config/nvim/UltiSnips"]
+"let g:UltiSnipsSnippetsDir="~/.config/nvim/UltiSnips"
 
 " YouCompleteMe configuration
 let g:ycm_show_diagnostics_ui = 1
@@ -432,9 +441,6 @@ let g:pandoc#command#custom_open='zathura'
 let g:pandoc#command#prefer_pdf=1
 let g:pandoc#command#autoexec_command="Pandoc! pdf"
 let g:pandoc#completion#bib#mode='citeproc'
-
-" VimWiki configuration
-let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
 
 " PlantUML path
 
@@ -530,8 +536,20 @@ nmap [q :cprevious<cr>
 nmap [Q :cfirst<cr>
 nmap <Leader>q :ccl<cr>
 
+" Quick Ack
+nnoremap // :Ack!<Space>
+" Notes
+nnoremap <Leader>wn :Nack<space>
+nnoremap <Leader>ww :FZF $NOTES<cr>
+
+" Insert date/time
+inoremap <leader>d <C-r>=strftime('%a %d.%m.%Y %H:%M')<cr>
+inoremap <leader>D <C-r>=strftime('%d.%m.%y')<cr>
+
 " UltiSnips Bindings
 let g:UltiSnipsExpandTrigger="<Leader><Leader>"
+
+let g:UltiSnipsListSnippets="<Leader>s"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 

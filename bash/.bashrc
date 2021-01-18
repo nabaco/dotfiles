@@ -25,7 +25,7 @@ HISTFILESIZE=2000
 
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
-#shopt -s globstar
+shopt -s globstar
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -45,7 +45,7 @@ esac
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
-#force_color_prompt=yes
+force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
@@ -120,12 +120,10 @@ fi
 
 #### End of standard Ubuntu .bashrc ####
 
-if [ -f ~/shell_aliases ]; then
-	. ~/shell_aliases
-fi
-
 # Integrate FZF
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+[ -f ~/.local/bin/fzf/shell/completion.bash ] && source ~/.local/bin/fzf/shell/completion.bash
+[ -f ~/.local/bin/fzf/shell/key-bindings.bash ] && source ~/.local/bin/fzf/shell/key-bindings.bash
 
 [ -f  /usr/share/autojump/autojump.sh ] && source /usr/share/autojump/autojump.sh
 
@@ -137,3 +135,18 @@ if [ -f ~/.cache/wal/sequences ]; then
     # To add support for TTYs this line can be optionally added.
     source ~/.cache/wal/colors-tty.sh
 fi
+
+# Ruby exports
+
+export GEM_HOME=$HOME/gems
+export PATH=$HOME/gems/bin:$PATH
+
+export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
+export LIBGL_ALWAYS_INDIRECT=1
+export NOTES=$HOME/Nextcloud/Notes/
+
+
+if [ -f ~/shell_aliases ]; then
+	source ~/shell_aliases
+fi
+

@@ -1,3 +1,4 @@
+# vim ft=sh
 alias ls='ls --color=auto'
 alias ll='ls -l'
 alias e="$EDITOR"
@@ -7,3 +8,16 @@ alias bg-choose='sxiv -o -r wallpapers/Landscapes/|xargs setbg'
 alias vifm='vifmrun'
 alias purge='sudo pacman -Rcsn'
 alias pacman='sudo pacman'
+alias fd=fdfind
+alias nf='fd -e md . $NOTES|fzf --print0|xargs -0 $EDITOR'
+alias notes='$EDITOR $NOTES'
+alias scratch='$EDITOR $NOTES/Unsorted/`date +%F-%H%M%S` - Scratch.md'
+function new-note()
+{
+    $EDITOR "$NOTES/Unsorted/`date +%F` -  $*.md"
+}
+
+function new-meeting()
+{
+    $EDITOR "$NOTES/`date +%F` - $* - Meeting Minutes.md"
+}
