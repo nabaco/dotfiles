@@ -141,7 +141,10 @@ fi
 export GEM_HOME=$HOME/gems
 export PATH=$HOME/gems/bin:$PATH
 
-export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
+WSL=`grep microsoft /proc/version`
+if [ -n "$WSL" ]; then
+    export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
+fi
 export LIBGL_ALWAYS_INDIRECT=1
 export NOTES=$HOME/Nextcloud/Notes/
 
@@ -150,3 +153,6 @@ if [ -f ~/shell_aliases ]; then
 	source ~/shell_aliases
 fi
 
+if [ -f ~/.bashrc.$USER ]; then
+    source ~/.bashrc.$USER
+fi
