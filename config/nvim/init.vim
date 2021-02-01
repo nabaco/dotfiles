@@ -10,6 +10,9 @@ Plug 'takac/vim-hardtime'
 " Add some additional text objects and attack them
 Plug 'wellle/targets.vim'
 
+" Reposition cursor in the last position up file reopening
+Plug 'farmergreg/vim-lastplace'
+
 " File browsing
 Plug 'scrooloose/nerdtree', { 'on':  [ 'NERDTreeToggle', 'NERDTreeFind' ] }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
@@ -41,7 +44,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'mileszs/ack.vim'
 
 " Autocompletion
-Plug 'ycm-core/YouCompleteMe', { 'do': 'python3 install.py --clangd-completer'}
+Plug 'ycm-core/YouCompleteMe', { 'do': 'python3 install.py --clang-completer'}
 
 " Ctags support
 " Easytags replacement with support for Universal Ctags
@@ -81,8 +84,8 @@ Plug 'KabbAmine/zeavim.vim'
 " The ultimate cheat sheet
 Plug 'dbeniamine/cheat.sh-vim'
 " Read GNU Info from vim
-Plug 'alx741/vinfo'
-"Plug 'HiPhish/info.vim'
+"Plug 'alx741/vinfo'
+Plug 'HiPhish/info.vim'
 
 " Send emails from Vim
 Plug  'imain/notmuch-vim'
@@ -320,8 +323,8 @@ autocmd BufWritePost *termite/config !killall -USR1 termite
 " Show netrw in tree style (i to change)
 "let g:netrw_liststyle=3
 
-let g:python_host_prog = '/usr/bin/python'
-let g:python3_host_prog = '/usr/bin/python3'
+" let g:python_host_prog = '/usr/bin/python'
+" let g:python3_host_prog = '/usr/bin/python3'
 
 " AutoComplete Config
 " Don't let autocomplete affect usual typing habits
@@ -413,6 +416,8 @@ let g:UltiSnipsEditSplit="horizontal"
 "let g:UltiSnipsSnippetsDir="~/.config/nvim/UltiSnips"
 
 " YouCompleteMe configuration
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_auto_trigger = 1
 let g:ycm_show_diagnostics_ui = 1
 let g:ycm_enable_diagnostic_signs = 0
 let g:ycm_enable_diagnostic_highlighting = 0
@@ -423,7 +428,7 @@ if !exists('g:ycm_semantic_triggers')
 endif
 let g:ycm_semantic_triggers.pandoc = ['@']
 let g:ycm_filetype_blacklist = {}
-let g:ycm_clangd_binary_path = '/usr/bin/clangd-9'
+"let g:ycm_clangd_binary_path = '/usr/bin/clangd-9'
 
 " Use deoplete.
 "let g:deoplete#enable_at_startup = 1
@@ -467,7 +472,7 @@ endfunction
 " }}}
 " {{{ """""" Key Mappings """"""
 
-nnoremap <silent> <Leader>t :call fzf#run(fzf#wrap({'source':'global -x .', 'sink':function('<sid>gtags_search'),
+"nnoremap <silent> <Leader>t :call fzf#run(fzf#wrap({'source':'global -x .', 'sink':function('<sid>gtags_search'),
 			\ 'options': ['-m', '-d', '\t', '--with-nth', '1,2', '-n', '1', '--prompt', 'Tags> ']}))<CR>
 
 " Make life easier with exiting modes back to normal

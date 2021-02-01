@@ -139,6 +139,14 @@ if [ -f ~/.cache/wal/sequences ]; then
     source ~/.cache/wal/colors-tty.sh
 fi
 
+TICK="✓"
+CROSS="✗"
+
+URGENT="❗"
+OVERDUE="☠️"
+DUETODAY="😱"
+DUETOMORROW="📅"
+
 # Ruby exports
 
 export GEM_HOME=$HOME/gems
@@ -153,6 +161,18 @@ else
 fi
 export LIBGL_ALWAYS_INDIRECT=1
 
+# enable tab-copletetion for git commands
+if [ -f ~/.local/bin/git-completion.bash ]; then
+    source ~/.local/bin/git-completion.bash
+fi
+
+if [ -f ~/.local/usr/share/bash-completion/completions/task ]; then
+    source ~/.local/usr/share/bash-completion/completions/task
+fi
+
+if [ -f ~/.local/bin/appari.sh ]; then
+    source ~/.local/bin/appari.sh
+fi
 
 if [ -f ~/shell_aliases ]; then
 	source ~/shell_aliases
@@ -162,3 +182,17 @@ fi
 if [ -f ~/.bashrc.$USER ]; then
     source ~/.bashrc.$USER
 fi
+
+function task_indicator {
+    if [ `task +READY +OVERDUE count` -gt "0" ]; then
+        echo "$OVERDUE"
+    elif [ `task +READY +DUETODAY count` -gt "0" ]; then
+        echo "$DUETODAY"
+    elif [ `task +READY +DUETOMORROW count` -gt "0" ]; then
+        echo "$DUETOMORROW"
+    elif [ `task +READY urgency \> 10 count` -gt "0" ]; then
+        echo "$URGENT"
+    else
+        echo '$'
+    fi
+}

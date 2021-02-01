@@ -1,0 +1,8 @@
+snippet devnote "CHD git notes template"
+# --------------------------------------------------------------------->
+Title:${3:`git log -1|grep PUMA|awk '{$1="";$0=substr($0,2,length($0));print $0}'`}
+Issue:${2:`git log -1|grep PUMA|awk '{$0=substr($1,1,length($1)-1);print $0}'`}
+System Impact:${4:"New Feature"}
+Resolution:$1
+$0
+endsnippet
