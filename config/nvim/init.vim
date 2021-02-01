@@ -84,6 +84,9 @@ Plug 'dbeniamine/cheat.sh-vim'
 Plug 'alx741/vinfo'
 "Plug 'HiPhish/info.vim'
 
+" Send emails from Vim
+Plug  'imain/notmuch-vim'
+
 " Notes, to-do, etc
 "Plug 'vimwiki/vimwiki'
 "Plug 'vimwiki/utils'

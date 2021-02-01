@@ -1,4 +1,11 @@
 # This is Git's per-user configuration file.
 [user]
 	name = Nachum Barcohen
-	email = nabaco@tutamail.com
+	email = 38861757+nabaco@users.noreply.github.com
+[color]
+	ui = auto
+[init]
+	templatedir = /home/nachum/.config/git/
+[alias]
+	ctags = !.git/hooks/ctags
+    st = status

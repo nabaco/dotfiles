@@ -121,9 +121,12 @@ fi
 #### End of standard Ubuntu .bashrc ####
 
 # Integrate FZF
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-[ -f ~/.local/bin/fzf/shell/completion.bash ] && source ~/.local/bin/fzf/shell/completion.bash
-[ -f ~/.local/bin/fzf/shell/key-bindings.bash ] && source ~/.local/bin/fzf/shell/key-bindings.bash
+if [ -f ~/.fzf.bash ]; then
+    source ~/.fzf.bash
+else
+    [ -f ~/.local/bin/fzf/shell/completion.bash ] && source ~/.local/bin/fzf/shell/completion.bash
+    [ -f ~/.local/bin/fzf/shell/key-bindings.bash ] && source ~/.local/bin/fzf/shell/key-bindings.bash
+fi
 
 [ -f  /usr/share/autojump/autojump.sh ] && source /usr/share/autojump/autojump.sh
 
@@ -144,15 +147,18 @@ export PATH=$HOME/gems/bin:$PATH
 WSL=`grep microsoft /proc/version`
 if [ -n "$WSL" ]; then
     export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
+    export NOTES=/mnt/c/Users/nbarcohx/Nextcloud-BC/Notes/
+else
+    export NOTES=$HOME/Nextcloud/Notes/
 fi
 export LIBGL_ALWAYS_INDIRECT=1
-export NOTES=$HOME/Nextcloud/Notes/
 
 
 if [ -f ~/shell_aliases ]; then
 	source ~/shell_aliases
 fi
 
+# Source user/host specific bashrc
 if [ -f ~/.bashrc.$USER ]; then
     source ~/.bashrc.$USER
 fi
