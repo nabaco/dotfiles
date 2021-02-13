@@ -16,6 +16,7 @@ bspc rule -a Kupfer.py focus=on
 bspc rule -a Screenkey manage=off
 bspc rule -a "Foxit Reader" state=floating
 bspc rule -a "KeePassXC" state=floating centre=on focus=on
+bspc rule -a copyq state=floating centre=on focus=on
 
 # Launch the status bar
 polybar -r main >> ~/.logs/polybar.log 2>&1

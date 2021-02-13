@@ -1,0 +1,7 @@
+depth 0
+oc-search-path
+#dir /
+follow-symlinks
+#show-hidden
+exclude .cache
+exclude .git

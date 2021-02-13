@@ -1,0 +1,5 @@
+configuration {
+	theme: "/usr/share/rofi/themes/fancy.rasi";
+	kb-mode-next: "Shift+Right,Control+Tab,Super+Tab";
+	kb-mode-previous: "Shift+Left,Control+ISO_Left_Tab,Super+ISO_Left_Tab";
+}

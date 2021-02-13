@@ -37,7 +37,9 @@ Plug 'airblade/vim-rooter'
 Plug 'easymotion/vim-easymotion'
 
 " Ultimate fuzzy search + Multi-entry selection UI.
-Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': { -> fzf#install() } }
+if !executable('fzf')
+    Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': { -> fzf#install() } }
+endif
 Plug 'junegunn/fzf.vim'
 
 " Alternative file contents search
@@ -91,8 +93,8 @@ Plug 'HiPhish/info.vim'
 Plug  'imain/notmuch-vim'
 
 " Notes, to-do, etc
-"Plug 'vimwiki/vimwiki'
-"Plug 'vimwiki/utils'
+Plug 'vimwiki/vimwiki'
+Plug 'vimwiki/utils'
 
 " Language specific plugins
 Plug 'kovetskiy/sxhkd-vim'
@@ -102,6 +104,7 @@ Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
 Plug 'kergoth/vim-bitbake'
 Plug 'Matt-Deacalion/vim-systemd-syntax'
+Plug 'cespare/vim-toml'
 Plug 'tmux-plugins/vim-tmux'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 
@@ -289,6 +292,9 @@ if executable('rg')
     set grepprg="rg --with-filename --no-heading $* /dev/null"
 endif
 
+" Show whitespaces
+set listchars=tab:»·,trail:·,extends:·,precedes:·,nbsp:·,eol:¶
+
 set tags=./tags,**5/tags,tags;~
 "                          ^ in working dir, or parents
 "                   ^ in any subfolder of working dir
@@ -324,6 +330,7 @@ autocmd BufWritePost *bspwmrc !bspc wm -r
 autocmd BufWritePost *picom.conf !pkill -x picom && picom -b
 autocmd BufWritePost *mpd.conf !mpd --kill && mpd
 autocmd BufWritePost *termite/config !killall -USR1 termite
+autocmd BufWritePost *qtile/config.py !qtile-cmd -o cmd -f restart > /dev/null 2&>1
 
 " Show netrw in tree style (i to change)
 "let g:netrw_liststyle=3
@@ -334,8 +341,6 @@ autocmd BufWritePost *termite/config !killall -USR1 termite
 " AutoComplete Config
 " Don't let autocomplete affect usual typing habits
 "set completeopt+=menuone,preview,noinsert
-let g:ycm_clangd_binary_path = '/usr/bin/clangd'
-
 " }}}
 " {{{"""""" Plugs Config """"""
 
@@ -434,7 +439,7 @@ if !exists('g:ycm_semantic_triggers')
 :endif
 let g:ycm_semantic_triggers.pandoc = ['@']
 let g:ycm_filetype_blacklist = {}
-"let g:ycm_clangd_binary_path = '/usr/bin/clangd-9'
+let g:ycm_clangd_binary_path = '/usr/bin/clangd'
 
 " Use deoplete.
 "let g:deoplete#enable_at_startup = 1
@@ -455,8 +460,6 @@ let g:pandoc#command#custom_open='zathura'
 let g:pandoc#command#prefer_pdf=1
 let g:pandoc#command#autoexec_command="Pandoc! pdf"
 let g:pandoc#completion#bib#mode='citeproc'
-
-" PlantUML path
 
 function s:gtags_search(line)
 
@@ -508,7 +511,6 @@ vmap jk <Esc>
 " nmap <Leader>v :Explore<cr>
 " nmap <Leader>V :Sexplore<cr>
 " nmap \|V :Vexplore<cr>
-
 nmap <Leader>n :NERDTreeToggle<CR>
 nmap <Leader>v :NERDTreeFind<CR>
 
@@ -566,7 +568,7 @@ nmap [Q :cfirst<cr>
 nmap <Leader>q :ccl<cr>
 
 " Quick Ack
-nnoremap // :Ack!<Space>
+nnoremap /<Leader> :Ack!<Space>
 " Notes
 nnoremap <Leader>wn :Nack<space>
 nnoremap <Leader>ww :FZF $NOTES<cr>

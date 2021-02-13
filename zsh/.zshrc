@@ -41,8 +41,8 @@ then
     source ~/.cache/wal/colors-tty.sh
 fi
 
-if [ -f /lib/python3.8/site-packages/powerline/bindings/zsh/powerline.zsh ]; then
-	source /lib/python3.8/site-packages/powerline/bindings/zsh/powerline.zsh
+if [ -f /lib/python3.9/site-packages/powerline/bindings/zsh/powerline.zsh ]; then
+	source /lib/python3.9/site-packages/powerline/bindings/zsh/powerline.zsh
 fi
 
 if [ ~/.local/share/nvim/bundle/fzf/shell/key-bindings.zsh ]; then

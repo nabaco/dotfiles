@@ -2,6 +2,8 @@
 [user]
 	name = Nachum Barcohen
 	email = 38861757+nabaco@users.noreply.github.com
+[core]
+	excludesFile = ~/.gitignore
 [merge]
 	tool = vimdiff
 [mergetool "vimdiff"]
