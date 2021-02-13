@@ -10,6 +10,9 @@ Plug 'takac/vim-hardtime'
 " Add some additional text objects and attack them
 Plug 'wellle/targets.vim'
 
+" Reposition cursor in the last position up file reopening
+Plug 'farmergreg/vim-lastplace'
+
 " File browsing
 Plug 'scrooloose/nerdtree', { 'on':  [ 'NERDTreeToggle', 'NERDTreeFind' ] }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
@@ -34,14 +37,14 @@ Plug 'airblade/vim-rooter'
 Plug 'easymotion/vim-easymotion'
 
 " Ultimate fuzzy search + Multi-entry selection UI.
-Plug 'junegunn/fzf', { 'dir': '/nfs/iil/proj/chdsw/dev/users/nbarcohx/fzf', 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 " Alternative file contents search
 Plug 'mileszs/ack.vim'
 
 " Autocompletion
-Plug 'ycm-core/YouCompleteMe', { 'do': 'python3 install.py --clangd-completer'}
+Plug 'ycm-core/YouCompleteMe', { 'do': 'python3 install.py --clang-completer'}
 
 " Ctags support
 " Easytags replacement with support for Universal Ctags
@@ -55,7 +58,7 @@ Plug 'majutsushi/tagbar' " A bar with list of all the tags in the buffer
 Plug 'vim-scripts/a.vim'
 
 " UltiSnips
-"Plug 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 " Remove extraneous whitespace when edit mode is exited
@@ -81,12 +84,15 @@ Plug 'KabbAmine/zeavim.vim'
 " The ultimate cheat sheet
 Plug 'dbeniamine/cheat.sh-vim'
 " Read GNU Info from vim
-Plug 'alx741/vinfo'
-"Plug 'HiPhish/info.vim'
+"Plug 'alx741/vinfo'
+Plug 'HiPhish/info.vim'
+
+" Send emails from Vim
+Plug  'imain/notmuch-vim'
 
 " Notes, to-do, etc
-Plug 'vimwiki/vimwiki'
-Plug 'vimwiki/utils'
+"Plug 'vimwiki/vimwiki'
+"Plug 'vimwiki/utils'
 
 " Language specific plugins
 Plug 'kovetskiy/sxhkd-vim'
@@ -322,8 +328,8 @@ autocmd BufWritePost *termite/config !killall -USR1 termite
 " Show netrw in tree style (i to change)
 "let g:netrw_liststyle=3
 
-let g:python_host_prog = '/usr/bin/python'
-let g:python3_host_prog = '/usr/bin/python3'
+" let g:python_host_prog = '/usr/bin/python'
+" let g:python3_host_prog = '/usr/bin/python3'
 
 " AutoComplete Config
 " Don't let autocomplete affect usual typing habits
@@ -384,12 +390,21 @@ let g:rooter_resolve_links = 1
 
 " Ack config
 "let g:ackprg = 'ag --vimgrep'
-let g:ackprg = 'rg --vimgrep -i'
+let g:ackprg = 'rg --vimgrep --smart-case'
 let g:ackhighlight = 1
+" Auto close the Quickfix list after pressing '<enter>' on a list item
+let g:ack_autoclose = 1
+" Any empty ack search will search for the word the cursor is on
+let g:ack_use_cword_for_empty_search = 1
+" Don't jump to first match
+cnoreabbrev Ack Ack!
+command! -nargs=1 Nack Ack! "<args>" $NOTES/**
+command! -nargs=1 Note e $NOTES/Scratch/<args>.md
+command! Scratch exe "e $NOTES/Scratch/".strftime("%F-%H%M%S").".md"
 
 " FZF Config
 "let $FZF_DEFAULT_COMMAND = 'ag -g ""'
-let $FZF_DEFAULT_COMMAND = 'fd --type file'
+"let $FZF_DEFAULT_COMMAND = 'fd --type file'
 "let $FZF_DEFAULT_COMMAND = 'rg --files -g ""'
 
 " Show netrw in tree style (i to change)
@@ -403,10 +418,12 @@ let NERDTreeDirArrows = 1
 
 " Make :UltiSnipsEdit to split the window.
 let g:UltiSnipsEditSplit="horizontal"
-let g:UltiSnipsSnippetDirectories=["~/.config/nvim/UltiSnips"]
-let g:UltiSnipsSnippetsDir="~/.config/nvim/UltiSnips"
+"let g:UltiSnipsSnippetDirectories=["~/.config/nvim/UltiSnips"]
+"let g:UltiSnipsSnippetsDir="~/.config/nvim/UltiSnips"
 
 " YouCompleteMe configuration
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_auto_trigger = 1
 let g:ycm_show_diagnostics_ui = 1
 let g:ycm_enable_diagnostic_signs = 0
 let g:ycm_enable_diagnostic_highlighting = 0
@@ -417,7 +434,7 @@ if !exists('g:ycm_semantic_triggers')
 :endif
 let g:ycm_semantic_triggers.pandoc = ['@']
 let g:ycm_filetype_blacklist = {}
-let g:ycm_clangd_binary_path = '/usr/bin/clangd-9'
+"let g:ycm_clangd_binary_path = '/usr/bin/clangd-9'
 
 " Use deoplete.
 "let g:deoplete#enable_at_startup = 1
@@ -438,9 +455,6 @@ let g:pandoc#command#custom_open='zathura'
 let g:pandoc#command#prefer_pdf=1
 let g:pandoc#command#autoexec_command="Pandoc! pdf"
 let g:pandoc#completion#bib#mode='citeproc'
-
-" VimWiki configuration
-let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
 
 " PlantUML path
 
@@ -479,7 +493,7 @@ endfunction
 " }}}
 " {{{ """""" Key Mappings """"""
 
-nnoremap <silent> <Leader>t :call fzf#run(fzf#wrap({'source':'global -x .', 'sink':function('<sid>gtags_search'),
+"nnoremap <silent> <Leader>t :call fzf#run(fzf#wrap({'source':'global -x .', 'sink':function('<sid>gtags_search'),
 			\ 'options': ['-m', '-d', '\t', '--with-nth', '1,2', '-n', '1', '--prompt', 'Tags> ']}))<CR>
 
 " Make life easier with exiting modes back to normal
@@ -551,8 +565,20 @@ nmap [q :cprevious<cr>
 nmap [Q :cfirst<cr>
 nmap <Leader>q :ccl<cr>
 
+" Quick Ack
+nnoremap // :Ack!<Space>
+" Notes
+nnoremap <Leader>wn :Nack<space>
+nnoremap <Leader>ww :FZF $NOTES<cr>
+
+" Insert date/time
+inoremap <leader>d <C-r>=strftime('%a %d.%m.%Y %H:%M')<cr>
+inoremap <leader>D <C-r>=strftime('%d.%m.%y')<cr>
+
 " UltiSnips Bindings
 let g:UltiSnipsExpandTrigger="<Leader><Leader>"
+
+let g:UltiSnipsListSnippets="<Leader>s"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
