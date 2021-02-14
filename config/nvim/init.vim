@@ -1,4 +1,11 @@
 "{{{"""""" Plug management """"""""
+"Install vim-plug if it is not present
+if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+    silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall
+endif
+
 call plug#begin(stdpath("data").'/bundle')
 
 " let VimPlug manage VimPlug, required
@@ -12,11 +19,6 @@ Plug 'wellle/targets.vim'
 
 " Reposition cursor in the last position up file reopening
 Plug 'farmergreg/vim-lastplace'
-
-" File browsing
-Plug 'scrooloose/nerdtree', { 'on':  [ 'NERDTreeToggle', 'NERDTreeFind' ] }
-Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
-"Plug 'tpope/vim-vinegar'
 
 " Git support
 Plug 'tpope/vim-fugitive' " Only for FZF integration
@@ -46,7 +48,20 @@ Plug 'junegunn/fzf.vim'
 Plug 'mileszs/ack.vim'
 
 " Autocompletion
-Plug 'ycm-core/YouCompleteMe', { 'do': 'python3 install.py --clang-completer'}
+"Plug 'ycm-core/YouCompleteMe', { 'do': 'python3 install.py --clang-completer'}
+Plug 'Shougo/deoplete.nvim', { 'do' : ':UpdateRemotePlugins' }
+"Plug 'Shougo/deoplete-clangx'
+Plug 'deoplete-plugins/deoplete-clang'
+Plug 'Shougo/neoinclude.vim'
+Plug 'Shougo/neco-vim'
+Plug 'deoplete-plugins/deoplete-jedi'
+Plug 'deoplete-plugins/deoplete-tag'
+
+" File browsing
+Plug 'scrooloose/nerdtree', { 'on':  [ 'NERDTreeToggle', 'NERDTreeFind' ] }
+Plug 'Shougo/defx.nvim', { 'do' : ':UpdateRemotePlugins' }
+Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
+"Plug 'tpope/vim-vinegar'
 
 " Ctags support
 " Easytags replacement with support for Universal Ctags
@@ -131,7 +146,7 @@ Plug 'RRethy/vim-illuminate'
 "Plug 'dylanaraps/wal.vim'
 
 " Load this one last
-"Plug 'ryanoasis/vim-devicons'
+Plug 'ryanoasis/vim-devicons'
 call plug#end()
 " }}}
 "{{{"""""" General Vim Config """""""
@@ -357,6 +372,8 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 "set statusline="%f%m%r%h%w [%Y] [0x%02.2B]%< %F%=%4v,%4l %3p%% of %L"
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline_powerline_fonts = 1
 
 " Gutentag Config
 " enable gtags module
@@ -436,13 +453,15 @@ let g:ycm_collect_identifiers_from_comments_and_strings = 1
 " YouCompleteMe Pandoc integration
 if !exists('g:ycm_semantic_triggers')
   let g:ycm_semantic_triggers = {}
-:endif
+endif
 let g:ycm_semantic_triggers.pandoc = ['@']
 let g:ycm_filetype_blacklist = {}
 let g:ycm_clangd_binary_path = '/usr/bin/clangd'
 
 " Use deoplete.
-"let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_at_startup = 1
+
+let g:deoplete#sources#clang#libclang_path = '/usr/lib/llvm-10/lib/libclang.so'
 
 " This is new style
 "call deoplete#custom#var('omni', 'input_patterns', {
@@ -525,7 +544,19 @@ nmap <Leader>v :NERDTreeFind<CR>
 "9 or a: Find places where this symbol is assigned a value
 
 " Print help
-nmap <Leader>ch :echon "s: Find this C symbol\ng: Find this definition\nd: Find functions called by this function (Cscope only)\nc: Find functions calling this function\nt: Find this text string\ne: Find this egrep pattern\nf: Find this file\ni: Find files #including this file\na: Find places where this symbol is assigned a value\n\n\<Leader\>cx - Jump to result\n\<Leader\>Cx - Open result in a split\n\<Leader\>CX - Open result a vertical split"<cr>
+nmap <Leader>ch :echon "
+            \ s: Find this C symbol\n
+            \ g: Find this definition\n
+            \ d: Find functions called by this function (Cscope only)\n
+            \ c: Find functions calling this function\n
+            \ t: Find this text string\n
+            \ e: Find this egrep pattern\n
+            \ f: Find this file\n
+            \ i: Find files #including this file\n
+            \ a: Find places where this symbol is assigned a value\nn
+            \ \<Leader\>cx - Jump to result\n
+            \ \<Leader\>Cx - Open result in a split\n
+            \ \<Leader\>CX - Open result a vertical split"<cr>
 
 " Jump to result
 nmap <Leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
@@ -650,3 +681,102 @@ tnoremap <Leader>` <C-\><C-n>:Nuake<CR>
 " TODO: Auto-recognize build system
 nmap <silent> <F6> :!compiler %<cr>
 " }}}
+" {{{ """""" Defx Key Mappings """"""
+	autocmd FileType defx call s:defx_my_settings()
+	function! s:defx_my_settings() abort
+	  " Define mappings
+	  nnoremap <silent><buffer><expr> <CR>
+	  \ defx#do_action('open')
+	  nnoremap <silent><buffer><expr> c
+	  \ defx#do_action('copy')
+	  nnoremap <silent><buffer><expr> m
+	  \ defx#do_action('move')
+	  nnoremap <silent><buffer><expr> p
+	  \ defx#do_action('paste')
+	  nnoremap <silent><buffer><expr> l
+	  \ defx#do_action('open')
+	  nnoremap <silent><buffer><expr> E
+	  \ defx#do_action('open', 'vsplit')
+	  nnoremap <silent><buffer><expr> P
+	  \ defx#do_action('preview')
+	  nnoremap <silent><buffer><expr> o
+	  \ defx#do_action('open_tree', 'toggle')
+	  nnoremap <silent><buffer><expr> K
+	  \ defx#do_action('new_directory')
+	  nnoremap <silent><buffer><expr> N
+	  \ defx#do_action('new_file')
+	  nnoremap <silent><buffer><expr> M
+	  \ defx#do_action('new_multiple_files')
+	  nnoremap <silent><buffer><expr> C
+	  \ defx#do_action('toggle_columns',
+	  \                'mark:indent:icon:filename:type:size:time')
+	  nnoremap <silent><buffer><expr> S
+	  \ defx#do_action('toggle_sort', 'time')
+	  nnoremap <silent><buffer><expr> d
+	  \ defx#do_action('remove')
+	  nnoremap <silent><buffer><expr> r
+	  \ defx#do_action('rename')
+	  nnoremap <silent><buffer><expr> !
+	  \ defx#do_action('execute_command')
+	  nnoremap <silent><buffer><expr> x
+	  \ defx#do_action('execute_system')
+	  nnoremap <silent><buffer><expr> yy
+	  \ defx#do_action('yank_path')
+	  nnoremap <silent><buffer><expr> .
+	  \ defx#do_action('toggle_ignored_files')
+	  nnoremap <silent><buffer><expr> ;
+	  \ defx#do_action('repeat')
+	  nnoremap <silent><buffer><expr> h
+	  \ defx#do_action('cd', ['..'])
+	  nnoremap <silent><buffer><expr> ~
+	  \ defx#do_action('cd')
+	  nnoremap <silent><buffer><expr> q
+	  \ defx#do_action('quit')
+	  nnoremap <silent><buffer><expr> <Space>
+	  \ defx#do_action('toggle_select') . 'j'
+	  nnoremap <silent><buffer><expr> *
+	  \ defx#do_action('toggle_select_all')
+	  nnoremap <silent><buffer><expr> j
+	  \ line('.') == line('$') ? 'gg' : 'j'
+	  nnoremap <silent><buffer><expr> k
+	  \ line('.') == 1 ? 'G' : 'k'
+	  nnoremap <silent><buffer><expr> <C-l>
+	  \ defx#do_action('redraw')
+	  nnoremap <silent><buffer><expr> <C-g>
+	  \ defx#do_action('print')
+	  nnoremap <silent><buffer><expr> cd
+	  \ defx#do_action('change_vim_cwd')
+      nnoremap <silent><buffer> <Leader>h
+                  \ :echo "
+	              \ \<CR\>:\topen\n
+	              \ c:\tcopy\n
+	              \ m:\tmove\n
+	              \ p:\tpaste\n
+	              \ l:\topen\n
+	              \ E:\topen in vsplit\n
+	              \ P:\tpreview\n
+	              \ o:\topen tree toggle\n
+	              \ K:\tnew directory\n
+	              \ N:\tnew file\n
+	              \ M:\tnew multiple_files\n
+	              \ C:\ttoggle columns - mark:indent:icon:filename:type:size:time\n
+	              \ S:\ttoggle sort by time\n
+	              \ d:\tremove\n
+	              \ r:\trename\n
+	              \ !:\texecute_command\n
+	              \ x:\texecute_system\n
+	              \ y:\tyank_path\n
+	              \ .:\ttoggle_ignored_files\n
+	              \ ;:\trepeat\n
+	              \ h:\tcd ..\n
+	              \ ~:\tcd\n
+	              \ q:\tquit\n
+	              \ <Space>:\ttoggle_select\n
+	              \ *:\ttoggle_select_all\n
+	              \ j:\tdown\n
+	              \ k:\tup\n
+	              \ <C-l>:\tredraw\n
+	              \ <C-g>:\tprint\n
+	              \ cd:\tchange_vim_cwd"<CR>
+	endfunction
+"}}}
