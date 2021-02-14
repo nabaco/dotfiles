@@ -41,13 +41,18 @@ then
     source ~/.cache/wal/colors-tty.sh
 fi
 
-if [ -f /lib/python3.9/site-packages/powerline/bindings/zsh/powerline.zsh ]; then
-	source /lib/python3.9/site-packages/powerline/bindings/zsh/powerline.zsh
+python_version=$(python --version|sed 's/Python \(3.[0-9]*\).[0-9]*/python\1/')
+if [ -f /usr/share/powerline/bindings/zsh/powerline.zsh ]; then
+	source /usr/share/powerline/bindings/zsh/powerline.zsh
+elif [ -f /lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh ]; then
+	source /lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh
 fi
 
-if [ ~/.local/share/nvim/bundle/fzf/shell/key-bindings.zsh ]; then
-    source ~/.local/share/nvim/bundle/fzf/shell/key-bindings.zsh 
-    source ~/.local/share/nvim/bundle/fzf/shell/completion.zsh
+
+if [ -d /usr/share/fzf ]; then
+    source /usr/share/fzf/*.zsh
+elif [ -d ~/.local/share/nvim/bundle/fzf/shell/ ]; then
+    source ~/.local/share/nvim/bundle/fzf/shell/*.zsh
 fi
 
 
