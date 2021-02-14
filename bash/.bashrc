@@ -139,14 +139,6 @@ if [ -f ~/.cache/wal/sequences ]; then
     source ~/.cache/wal/colors-tty.sh
 fi
 
-TICK="✓"
-CROSS="✗"
-
-URGENT="❗"
-OVERDUE="☠️"
-DUETODAY="😱"
-DUETOMORROW="📅"
-
 # Ruby exports
 
 export GEM_HOME=$HOME/gems
@@ -183,16 +175,55 @@ if [ -f ~/.bashrc.$USER ]; then
     source ~/.bashrc.$USER
 fi
 
+TICK="✓"
+CROSS="✗"
+
+URGENT="❗"
+OVERDUE="☠️"
+DUETODAY="😱"
+DUETOMORROW="📅"
+
+# Ansi color code variables
+red="\e[0;91m"
+blue="\e[0;94m"
+green="\e[0;92m"
+yellow="\e[0;33m"
+purple=" \e[0;35m"
+white="\e[0;97m"
+expand_bg="\e[K"
+blue_bg="\e[0;104m${expand_bg}"
+red_bg="\e[0;101m${expand_bg}"
+green_bg="\e[0;102m${expand_bg}"
+bold="\e[1m"
+uline="\e[4m"
+reset="\e[0m"
+
 function task_indicator {
-    if [ `task +READY +OVERDUE count` -gt "0" ]; then
-        echo "$OVERDUE"
-    elif [ `task +READY +DUETODAY count` -gt "0" ]; then
-        echo "$DUETODAY"
-    elif [ `task +READY +DUETOMORROW count` -gt "0" ]; then
-        echo "$DUETOMORROW"
-    elif [ `task +READY urgency \> 10 count` -gt "0" ]; then
-        echo "$URGENT"
-    else
-        echo '$'
+    ti=""
+    unset overdue
+    unset today
+    unset tomorrow
+    unset inbox
+    unset urgent
+    overdue=`task +READY +OVERDUE count`
+    today=`task +READY +TODAY count`
+    tomorrow=`task +READY +TOMORROW count`
+    inbox=`task +in +PENDING count`
+    urgent=`task +READY urgency\>10 count`
+    if [ "$inbox" -gt "0" ]; then
+        ti+="${blue}I:$inbox${reset}|"
     fi
+    if [ "$tomorrow" -gt "0" ]; then
+        ti+="${green}T:$tomorrow${reset}|"
+    fi
+    if [ "$today" -gt "0" ]; then
+        ti+="${yellow}D:$today${reset}|"
+    fi
+    if [ "$urgent" -gt "0" ]; then
+        ti+="${purple}U:$urgent${reset}|"
+    fi
+    if [ "$overdue" -gt "0" ]; then
+        ti+="${red}O:$overdue${reset}|"
+    fi
+    echo "$ti"
 }

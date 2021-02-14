@@ -1,8 +1,9 @@
 #!/bin/sh
 set -e
 PATH="/usr/local/bin:$PATH"
-trap 'rm -f "$$.tags"' EXIT
+trap 'rm -f "$$.tags GTAGS GPATH GRTAGS"' EXIT
 git ls-files | \
-  ctags-universal -L - --file-scope=yes -if0=yes --line-directives=yes --fields=+lS -f"$$.tags"
-  #ctags --tag-relative -L - -f"$$.tags" --languages=-javascript,sql
+  ctags-universal -L - --tag-relative=yes --if0=yes --line-directives=yes --fields=+lS --extras=+F -f"$$.tags"
+git ls-files | \
+  gtags -f -
 mv "$$.tags" "tags"

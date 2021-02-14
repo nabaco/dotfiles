@@ -1,21 +1,50 @@
+;;{{{ General Git config
 # This is Git's per-user configuration file.
 [user]
 	name = Nachum Barcohen
-	email = 38861757+nabaco@users.noreply.github.com
+    email = 38861757+nabaco@users.noreply.github.com
 [core]
 	excludesFile = ~/.gitignore
-[merge]
-	tool = vimdiff
-[mergetool "vimdiff"]
-	path = nvim
+	pager = less
+	editor = nvim
+	# Specify whitespace conventions. Violations will be highlighted in diffs
+	whitespace = -indent-with-non-tab,trailing-space,tabwidth=4
+	preloadindex = true
+[init]
+	templatedir = ~/.config/git/
+[rebase]
+	autosquash = true
+[color]
+	ui = auto
+[alias]
+	st = status
+	ch = checkout
+	log2 = log --oneline --graph --all --decorate
+	ll = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%n' --abbrev-commit --date=relative --branches
+	cm = commit
+	cmm = commit -m
+	cf = commit --fixup
+	ps = push
+	pl = pull
+	ctags = !.git/hooks/ctags
+;;}}}
+
+;;{{{ Git diffs/merges config
+
 [diff]
 	tool = vimdiff
 [difftool "vimdiff"]
-	path = nvim
-[color]
-	ui = auto
-[init]
-	templatedir = /home/nachum/.config/git/
-[alias]
-	ctags = !.git/hooks/ctags
-    st = status
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+[difftool]
+	prompt = false
+;[difftool "meld"]
+;	trustExitCode = true
+[merge]
+	tool = vimdiff
+[mergetool]
+	prompt = false
+[mergetool "vimdiff"]
+	cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$MERGED\" -c '$wincmd w' -c 'wincmd J'"
+[mergetool]
+	prompt = false
+;;}}}

@@ -7,3 +7,6 @@ vifminfo
 vifmrc-backup
 cscope.out
 tags
+GPATH
+GRTAGS
+GTAGS

@@ -1,5 +1,5 @@
 "{{{"""""" Plug management """"""""
-"Install vim-plug if it is not present
+" Install vim-plug if it is not present
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
     silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
                 \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -318,19 +318,30 @@ set tags=./tags,**5/tags,tags;~
 if has("cscope")
 	" Cscope config
 	set cscopetag
+    " Search first ctags and then cscope
+    set cscopetagorder=1
 	set cscopequickfix=a-,c-,d-,e-,i-,s-,t-
-
-	" Gtags interface
-	set csprg=gtags-cscope
 
 	" add any database in current directory
 	if filereadable("GTAGS")
+        " Gtags interface
+        set csprg=gtags-cscope
 		silent cs add GTAGS
 	elseif filereadable("cscope.out")
 	    silent cs add cscope.out
 	" else add database pointed to by environment
 	elseif $CSCOPE_DB != ""
 	    silent cs add $CSCOPE_DB
+    elseif $GTAGSLIBPATH != ""
+        " Gtags interface
+        set csprg=gtags-cscope
+         for lib in split($GTAGSLIBPATH, ":")
+             exe "silent cs add ".lib."/GTAGS ".$GTAGSROOT." -a"
+         endfor
+	elseif $GTAGSDBPATH != ""
+        " Gtags interface
+        set csprg=gtags-cscope
+	    silent cs add $GTAGSDBPATH/GTAGS
 	endif
 endif
 
@@ -461,7 +472,7 @@ let g:ycm_clangd_binary_path = '/usr/bin/clangd'
 " Use deoplete.
 let g:deoplete#enable_at_startup = 1
 
-let g:deoplete#sources#clang#libclang_path = '/usr/lib/llvm-10/lib/libclang.so'
+"let g:deoplete#sources#clang#libclang_path = '/usr/lib/llvm-10/lib/libclang.so'
 
 " This is new style
 "call deoplete#custom#var('omni', 'input_patterns', {
