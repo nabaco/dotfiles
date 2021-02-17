@@ -12,18 +12,30 @@ zstyle :compinstall filename '/home/nachum/.zshrc'
 fpath=(/usr/share/zsh/site-functions/ $fpath)
 if [ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
     source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+elif [ -f $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+    source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
+if [ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+    source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif [ -f $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+    source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 if [ -f /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
     source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 #    bindkey "$terminfo[kcuu1]" history-substring-search-up
 #    bindkey "$terminfo[kcud1]" history-substring-search-down
-    bindkey "^[[A" history-substring-search-up
-    bindkey "^[[B" history-substring-search-down
-fi
-
-if [ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-    source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    bindkey '^[[A' history-substring-search-up
+    bindkey '^[[B' history-substring-search-down
+elif [ -f $HOME/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
+    source $HOME/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
+#    bindkey "$terminfo[kcuu1]" history-substring-search-up
+#    bindkey "$terminfo[kcud1]" history-substring-search-down
+    bindkey '^[[A' history-substring-search-up
+    bindkey '^[[B' history-substring-search-down
+    bindkey '^[OA' history-substring-search-up
+    bindkey '^[OB' history-substring-search-down
 fi
 
 autoload -Uz compinit
@@ -41,22 +53,21 @@ then
     source ~/.cache/wal/colors-tty.sh
 fi
 
-python_version=$(python --version|sed 's/Python \(3.[0-9]*\).[0-9]*/python\1/')
-if [ -f /usr/share/powerline/bindings/zsh/powerline.zsh ]; then
-	source /usr/share/powerline/bindings/zsh/powerline.zsh
-elif [ -f /lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh ]; then
-	source /lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh
-fi
-
-
 if [ -d /usr/share/fzf ]; then
     source /usr/share/fzf/*.zsh
 elif [ -d ~/.local/share/nvim/bundle/fzf/shell/ ]; then
     source ~/.local/share/nvim/bundle/fzf/shell/*.zsh
 fi
 
+python_version=$(python3 --version|sed 's/Python \(3\.[0-9]\)\.[0-9]/python\1/')
+if [ -f /lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh ]; then
+	source /lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh
+elif [ -f $HOME/.local/lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh ]; then
+    source $HOME/.local/lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh
+fi
 
-if test -e ~/shell_aliases
+
+if [ -f ~/shell_aliases ]; then
 then
 	source ~/shell_aliases
 fi

@@ -158,10 +158,6 @@ if [ -f ~/.local/bin/git-completion.bash ]; then
     source ~/.local/bin/git-completion.bash
 fi
 
-if [ -f ~/.local/usr/share/bash-completion/completions/task ]; then
-    source ~/.local/usr/share/bash-completion/completions/task
-fi
-
 if [ -f ~/.local/bin/appari.sh ]; then
     source ~/.local/bin/appari.sh
 fi
@@ -175,6 +171,10 @@ if [ -f ~/.bashrc.$USER ]; then
     source ~/.bashrc.$USER
 fi
 
+if [ -f ~/.local/usr/share/bash-completion/completions/task ]; then
+    source ~/.local/usr/share/bash-completion/completions/task
+fi
+
 TICK="✓"
 CROSS="✗"
 
@@ -184,19 +184,19 @@ DUETODAY="😱"
 DUETOMORROW="📅"
 
 # Ansi color code variables
-red="\e[0;91m"
-blue="\e[0;94m"
-green="\e[0;92m"
-yellow="\e[0;33m"
-purple=" \e[0;35m"
-white="\e[0;97m"
-expand_bg="\e[K"
-blue_bg="\e[0;104m${expand_bg}"
-red_bg="\e[0;101m${expand_bg}"
-green_bg="\e[0;102m${expand_bg}"
-bold="\e[1m"
-uline="\e[4m"
-reset="\e[0m"
+red="\[\e[0;91m\]"
+blue="\[\e[0;94m\]"
+green="\[\e[0;92m\]"
+yellow="\[\e[0;33m\]"
+purple=" \[\e[0;35m\]"
+white="\[\e[0;97m\]"
+expand_bg="\[\e[K\]"
+blue_bg="\[\e[0;104m\]${expand_bg}"
+red_bg="\[\e[0;101m\]${expand_bg}"
+green_bg="\[\e[0;102m\]${expand_bg}"
+bold="\[\e[1m\]"
+uline="\[\e[4m\]"
+reset="\[\e[0m\]"
 
 function task_indicator {
     ti=""

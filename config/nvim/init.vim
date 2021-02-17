@@ -491,6 +491,9 @@ let g:pandoc#command#prefer_pdf=1
 let g:pandoc#command#autoexec_command="Pandoc! pdf"
 let g:pandoc#completion#bib#mode='citeproc'
 
+" PlantUML path
+let g:plantuml_executable_script='java -jar $NFS/plantuml.jar'
+
 function s:gtags_search(line)
 
 	let l:line = split(a:line)[1]
