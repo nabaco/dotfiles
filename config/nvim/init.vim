@@ -42,26 +42,6 @@ Plug 'easymotion/vim-easymotion'
 if !executable('fzf')
     Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': { -> fzf#install() } }
 endif
-Plug 'junegunn/fzf.vim'
-
-" Alternative file contents search
-Plug 'mileszs/ack.vim'
-
-" Autocompletion
-"Plug 'ycm-core/YouCompleteMe', { 'do': 'python3 install.py --clang-completer'}
-Plug 'Shougo/deoplete.nvim', { 'do' : ':UpdateRemotePlugins' }
-"Plug 'Shougo/deoplete-clangx'
-Plug 'deoplete-plugins/deoplete-clang'
-Plug 'Shougo/neoinclude.vim'
-Plug 'Shougo/neco-vim'
-Plug 'deoplete-plugins/deoplete-jedi'
-Plug 'deoplete-plugins/deoplete-tag'
-
-" File browsing
-Plug 'scrooloose/nerdtree', { 'on':  [ 'NERDTreeToggle', 'NERDTreeFind' ] }
-Plug 'Shougo/defx.nvim', { 'do' : ':UpdateRemotePlugins' }
-Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
-"Plug 'tpope/vim-vinegar'
 
 " Ctags support
 " Easytags replacement with support for Universal Ctags
