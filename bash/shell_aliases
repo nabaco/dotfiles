@@ -22,4 +22,4 @@ function new-meeting()
     $EDITOR "$NOTES/`date +%F` - $* - Meeting Minutes.md"
 }
 
-alias in='task add +in'
+alias inb='task add +in'

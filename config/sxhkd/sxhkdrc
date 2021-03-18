@@ -219,3 +219,5 @@ shift + Print
 # Screenshot selection
 ctrl + Print
 	screenshot selection
+
+#vim:ft=sxhkd

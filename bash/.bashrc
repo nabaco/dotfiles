@@ -175,6 +175,10 @@ if [ -f ~/.local/usr/share/bash-completion/completions/task ]; then
     source ~/.local/usr/share/bash-completion/completions/task
 fi
 
+if [ -e ~/.config/broot/launcher/bash/br ]; then
+    source /home/nbarcohx/.config/broot/launcher/bash/br
+fi
+
 TICK="✓"
 CROSS="✗"
 
@@ -227,3 +231,4 @@ function task_indicator {
     fi
     echo "$ti"
 }
+

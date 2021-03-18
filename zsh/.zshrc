@@ -71,3 +71,5 @@ if [ -f ~/shell_aliases ]; then
 then
 	source ~/shell_aliases
 fi
+
+source /home/nbarcohx/.config/broot/launcher/bash/br

@@ -1,4 +1,4 @@
-"{{{"""""" Plug management """"""""
+""""""" Plug management """"""""{{{1
 " Install vim-plug if it is not present
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
     silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
@@ -48,26 +48,22 @@ Plug 'junegunn/fzf.vim'
 Plug 'mileszs/ack.vim'
 
 " Autocompletion
-"Plug 'ycm-core/YouCompleteMe', { 'do': 'python3 install.py --clang-completer'}
-Plug 'Shougo/deoplete.nvim', { 'do' : ':UpdateRemotePlugins' }
-"Plug 'Shougo/deoplete-clangx'
-Plug 'deoplete-plugins/deoplete-clang'
-Plug 'Shougo/neoinclude.vim'
-Plug 'Shougo/neco-vim'
-Plug 'deoplete-plugins/deoplete-jedi'
-Plug 'deoplete-plugins/deoplete-tag'
+Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/completion-nvim'
 
 " File browsing
+"Plug 'kyazdani42/nvim-tree.lua' " Not as ripe as nerdtree, yet
 Plug 'scrooloose/nerdtree', { 'on':  [ 'NERDTreeToggle', 'NERDTreeFind' ] }
-Plug 'Shougo/defx.nvim', { 'do' : ':UpdateRemotePlugins' }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
-"Plug 'tpope/vim-vinegar'
+" Ranger file manager integration
+Plug 'kevinhwang91/rnvimr', {'do': 'make sync'}
 
 " Ctags support
 " Easytags replacement with support for Universal Ctags
 "Plug 'ludovicchabant/vim-gutentags'
 " Plug 'skywind3000/gutentags_plus' " Extra for Cscope
-Plug 'majutsushi/tagbar' " A bar with list of all the tags in the buffer
+"Plug 'majutsushi/tagbar' " A bar with list of all the tags in the buffer
+Plug 'liuchengxu/vista.vim'
 "Plug 'xolox/vim-misc' " Required by easytags
 "Plug 'xolox/vim-easytags'
 
@@ -77,64 +73,72 @@ Plug 'vim-scripts/a.vim'
 " UltiSnips
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
+"Plug 'norcalli/snippets.nvim' "To be revisited
 
 " Remove extraneous whitespace when edit mode is exited
 Plug 'thirtythreeforty/lessspace.vim'
 
 " Bracket completion
-Plug 'Raimondi/delimitMate'
+"Plug 'Raimondi/delimitMate'
+Plug 'cohama/lexima.vim'
 
 " Tpope's plugins
 Plug 'tpope/vim-surround' " surround vim
 Plug 'tpope/vim-repeat' " Enable repeating supported plugin maps with .
 Plug 'tpope/vim-eunuch' " Unix commands from Vim
 Plug 'tpope/vim-commentary' " Comment blocks
-Plug 'tpope/vim-obsession' " Vim session management
+" It appears I don't need that since Startify does the same
+"Plug 'tpope/vim-obsession' " Vim session management
 
 " Imporve % for if..else and such
 " Does Neovim need this? I think Neovim has it built in
 "Plug 'adelarsq/vim-matchit'
 
+" Some help with the keys
+Plug 'liuchengxu/vim-which-key'
+
 " External App Integration
 " API documentation
-Plug 'KabbAmine/zeavim.vim'
+Plug 'KabbAmine/zeavim.vim', { 'on': ['Zeavim', 'Zeavim!', 'ZeavimV', 'ZeavimV!'] }
 " The ultimate cheat sheet
-Plug 'dbeniamine/cheat.sh-vim'
+Plug 'dbeniamine/cheat.sh-vim', { 'on' : ['Cheat'] }
 " Read GNU Info from vim
 "Plug 'alx741/vinfo'
-Plug 'HiPhish/info.vim'
-
-" Send emails from Vim
-Plug  'imain/notmuch-vim'
+Plug 'HiPhish/info.vim', {'on' : 'Info'}
 
 " Notes, to-do, etc
 Plug 'vimwiki/vimwiki'
 Plug 'vimwiki/utils'
 
 " Language specific plugins
-Plug 'kovetskiy/sxhkd-vim'
-Plug 'chrisbra/csv.vim'
-Plug 'vhdirk/vim-cmake'
-Plug 'vim-pandoc/vim-pandoc'
-Plug 'vim-pandoc/vim-pandoc-syntax'
-Plug 'kergoth/vim-bitbake'
-Plug 'Matt-Deacalion/vim-systemd-syntax'
-Plug 'cespare/vim-toml'
+Plug 'kovetskiy/sxhkd-vim', { 'for': 'sxhkd' }
+Plug 'chrisbra/csv.vim', { 'for': 'csv' }
+Plug 'vhdirk/vim-cmake', { 'for': 'cmake' }
+Plug 'vim-pandoc/vim-pandoc', { 'for': 'markdown' }
+Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': 'markdown' }
+Plug 'kergoth/vim-bitbake', { 'for': 'bitbake' }
+Plug 'Matt-Deacalion/vim-systemd-syntax', { 'for': 'systemd' }
+Plug 'cespare/vim-toml', { 'for': 'toml' }
 Plug 'tmux-plugins/vim-tmux'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 
 " PlanUML support and preview
-Plug 'aklt/plantuml-syntax'
-Plug 'scrooloose/vim-slumlord'
+Plug 'aklt/plantuml-syntax', { 'for': 'plantuml' }
+Plug 'scrooloose/vim-slumlord', { 'for': 'plantuml' }
 
 " Pop-up the built in terminal
 if has("nvim")
-	Plug 'Lenovsky/nuake'
+	Plug 'Lenovsky/nuake', { 'on': 'Nuake' }
 endif
 
 " Eye Candy
 Plug 'morhetz/gruvbox'
 Plug 'vim-airline/vim-airline'
+
+" Color colorcodes
+Plug 'norcalli/nvim-colorizer.lua'
+" Color brackets
+Plug 'junegunn/rainbow_parentheses.vim'
 
 " Start screen
 Plug 'mhinz/vim-startify'
@@ -147,9 +151,11 @@ Plug 'RRethy/vim-illuminate'
 
 " Load this one last
 Plug 'ryanoasis/vim-devicons'
+" Goes together with nvim-tree.lua
+"Plug 'kyazdani42/nvim-web-devicons' " for file icons
 call plug#end()
 " }}}
-"{{{"""""" General Vim Config """""""
+""""""" General Vim Config """""""{{{1
 
 set termguicolors
 " Colorscheme wal
@@ -201,7 +207,7 @@ set colorcolumn=100
 " Let plugins show effects after 500ms, not 4s
 set updatetime=500
 " Show whitespaces
-set listchars=tab:»·,space:·,trail:·,extends:·,precedes:·,nbsp:·,eol:¬
+set listchars=tab:\|\ ,space:·,trail:·,extends:·,precedes:·,nbsp:·,eol:¬
 
 " Indentation options
 set tabstop=4
@@ -211,7 +217,7 @@ set shiftwidth=4
 
 " Vim folds
 set foldmethod=marker
-set foldlevel=0
+set foldlevel=1
 
 " save the file when switch buffers, make it etc.
 set autowriteall
@@ -220,78 +226,10 @@ set autowriteall
 " I'm not sure Neovim needs that
 "autocmd BufEnter * silent! checktime
 
-" Taken from the NeoVim wiki
-" All of those are set by defult in NeoVim
-if !has("nvim")
-	set syntax=ON
-    set bg=dark
-	filetype plugin indent on
-	set autoindent
-	set autoread
-	set background=dark
-	set backspace=indent,eol,start
-
-	" protect against crash-during-write
-	set writebackup
-	" but do not persist backup after successful write
-	set nobackup
-	" use rename-and-write-new method whenever safe
-	set backupcopy=auto
-	" patch required to honor double slash at end
-	if has("patch-8.1.0251")
-		" consolidate the writebackups -- not a big
-		" deal either way, since they usually get deleted
-		set backupdir^=.,~/.local/share/nvim/backup//
-	else
-		set backupdir^=.,~/.local/share/nvim/backup
-	endif
-
-	set belloff=all
-	set compatible=off
-	set complete=.,w,b,u,t
-	set cscopeverbose
-
-	" Protect changes between writes. Default values of
-	" updatecount (200 keystrokes) and updatetime
-	" (4 seconds) are fine
-	set swapfile
-	set directory^=~/.local/share/nvim/swap//
-
-	set display=lastline,msgsep
-	set encoding=UTF-8
-	set fileencoding=UTF-8
-	set fillchars=vert:│,fold:·,sep:│
-	set formatoptions=tcqj
-	set nofsync
-	set history=10000
-	set hlsearch
-	set incsearch
-	set langnoremap
-	set nolangremap
-	set laststatus=2
-	set nrformats=bin,hex
-	set ruler
-	set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize
-	set shortmess=filnxtToOF
-	set showcmd
-	set sidescroll=1
-	set smarttab
-	set nostartofline
-	set tabpagemax=50
-	set ttimeoutlen=50
-	set ttyfast
-	set undodir^=~/.local/share/nvim/undo//
-	if has("Win32")
-		set viminfo="!,'100,<50,s10,h,rA:,rB:"
-	else
-		set viminfo="!,'100,<50,s10,h"
-	endif
-	set wildmenu
-	set wildoptions=pum,tagfile
-endif
-
-" ignore common files
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.o,*/source-pc/*,*/raspberrypi/*,*/.git/*
+" Ignore common files
+" Important not to have code related directories, as it affects native LSP's
+" root directory search pattern
+set wildignore+=*.so,*.swp,*.zip,*.o,*.la
 
 " Case-insensitive search
 set wildignorecase
@@ -307,8 +245,7 @@ if executable('rg')
     set grepprg="rg --with-filename --no-heading $* /dev/null"
 endif
 
-" Show whitespaces
-set listchars=tab:»·,trail:·,extends:·,precedes:·,nbsp:·,eol:¶
+" Tags magic {{{2
 
 set tags=./tags,**5/tags,tags;~
 "                          ^ in working dir, or parents
@@ -344,10 +281,12 @@ if has("cscope")
 	    silent cs add $GTAGSDBPATH/GTAGS
 	endif
 endif
+" }}}
 
+" Autocommands {{{2
 augroup highlight_yank
 	autocmd!
-	autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank("IncSearch", 1000)
+	autocmd TextYankPost * silent! lua vim.highlight.on_yank({timeout='1000'})
 augroup END
 
 autocmd BufWritePost *sxhkdrc !pkill -USR1 -x sxhkd
@@ -357,18 +296,36 @@ autocmd BufWritePost *picom.conf !pkill -x picom && picom -b
 autocmd BufWritePost *mpd.conf !mpd --kill && mpd
 autocmd BufWritePost *termite/config !killall -USR1 termite
 autocmd BufWritePost *qtile/config.py !qtile-cmd -o cmd -f restart > /dev/null 2&>1
-
-" Show netrw in tree style (i to change)
-"let g:netrw_liststyle=3
-
-" let g:python_host_prog = '/usr/bin/python'
-" let g:python3_host_prog = '/usr/bin/python3'
-
-" AutoComplete Config
-" Don't let autocomplete affect usual typing habits
-"set completeopt+=menuone,preview,noinsert
 " }}}
-" {{{"""""" Plugs Config """"""
+
+let g:python_host_prog = '/usr/bin/python'
+let g:python3_host_prog = '/usr/bin/python3'
+
+" AutoComplete Config {{{2
+" Don't let autocomplete affect usual typing habits
+set completeopt=menuone,noinsert ",noselect
+"                 |        |          ^ Don't select anything in the menu
+"                 |        |            without my interaction
+"                 |        ^ Don't insert text without my interaction
+"                 |          Strongly affects the typing experience
+"                 ^ Open a menu even if there is only one
+"                   completion candidate. Usefull for the
+"                   extra about the completion candidate
+let g:completion_enable_snippet = 'UltiSnips'
+" Snippets vim looks good, but is not ripe yet
+"let g:completion_enable_snippet = 'snippets.nvim'
+" }}}
+" }}}
+
+""""""" Plugs Config """"""{{{1
+
+" Autocompletion {{{2
+autocmd BufEnter * lua require'completion'.on_attach()
+" possible value: "length", "alphabet", "none"
+let g:completion_sorting = "length"
+let g:completion_matching_strategy_list = ['fuzzy', 'exact', 'substring', 'all']
+let g:completion_matching_smart_case = 1
+"}}}
 
 " HardTime in all buffers
 let g:hardtime_default_on = 0
@@ -409,10 +366,11 @@ autocmd User VimagitEnterCommit startinsert
 
 " Vim Rooter Config
 let g:rooter_manual_only = 1 " Improves Vim startup time
-autocmd BufEnter * call FindRootDirectory() " Still autochange the directory
+autocmd BufEnter * Rooter " Still autochange the directory
 let g:rooter_silent_chdir = 1
 let g:rooter_change_directory_for_non_project_files = 'current'
 let g:rooter_resolve_links = 1
+let g:rooter_patterns = ['compile_commands.json']
 
 " If your terminal's background is white (light theme), uncomment the following
 " to make EasyMotion's cues much easier to read.
@@ -454,37 +412,6 @@ let g:UltiSnipsEditSplit="horizontal"
 "let g:UltiSnipsSnippetDirectories=["~/.config/nvim/UltiSnips"]
 "let g:UltiSnipsSnippetsDir="~/.config/nvim/UltiSnips"
 
-" YouCompleteMe configuration
-let g:ycm_confirm_extra_conf = 0
-let g:ycm_auto_trigger = 1
-let g:ycm_show_diagnostics_ui = 1
-let g:ycm_enable_diagnostic_signs = 0
-let g:ycm_enable_diagnostic_highlighting = 0
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-" YouCompleteMe Pandoc integration
-if !exists('g:ycm_semantic_triggers')
-  let g:ycm_semantic_triggers = {}
-endif
-let g:ycm_semantic_triggers.pandoc = ['@']
-let g:ycm_filetype_blacklist = {}
-let g:ycm_clangd_binary_path = '/usr/bin/clangd'
-
-" Use deoplete.
-let g:deoplete#enable_at_startup = 1
-
-"let g:deoplete#sources#clang#libclang_path = '/usr/lib/llvm-10/lib/libclang.so'
-
-" This is new style
-"call deoplete#custom#var('omni', 'input_patterns', {
-"  \ 'pandoc': '@'
-"  \})
-
-"let g:LanguageClient_serverCommands = {
-"    \ 'cpp': ['/usr/bin/cmake', '-E', 'server', '--debug'],
-"    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-"    \ 'python': ['/usr/local/bin/pyls'],
-"    \ }
-
 " Pandoc configuration
 let g:pandoc#command#custom_open='zathura'
 let g:pandoc#command#prefer_pdf=1
@@ -494,58 +421,116 @@ let g:pandoc#completion#bib#mode='citeproc'
 " PlantUML path
 let g:plantuml_executable_script='java -jar $NFS/plantuml.jar'
 
-function s:gtags_search(line)
+" Startify {{{2
 
-	let l:line = split(a:line)[1]
-	let l:file = split(a:line)[2]
-	execute 'edit +'.l:line l:file
+let g:startify_session_autoload = 1
+let g:startify_session_delete_buffers = 1
+let g:startify_change_to_vcs_root = 0 " Rooter does that better
+let g:startify_change_to_dir = 0 " Rooter does that
+let g:startify_fortune_use_unicode = 1
+let g:startify_session_persistence = 1
+let g:startify_enable_special = 0
+let g:startify_relative_path = 1
 
-endfunction
+let g:startify_lists = [
+          \ { 'type': 'dir',       'header': ['   Current Directory: '. getcwd()]  },
+          \ { 'type': 'files',     'header': ['   Files']             },
+          \ { 'type': 'sessions',  'header': ['   Sessions']        },
+          \ { 'type': 'bookmarks', 'header': ['   Bookmarks']       },
+          \ ]
 
-function s:gtags_preview(line)
+let g:startify_bookmarks = [
+            \ { 'i': '~/.config/nvim/init.vim'  },
+            \ { 'b': '~/.bashrc'  },
+            \ { 'u': '~/.bashrc.'.$USER  },
+            \ ]
 
-	echo line
-	let l:line = split(a:line)[1]
-	let l:file = split(a:line)[2]
-	return l:file.':'.l:line
+let g:nabaco = [
+\ '     _   __            ____            ______        ',
+\ '    / | / /  ____ _   / __ )  ____ _  / ____/  ____  ',
+\ '   /  |/ /  / __ `/  / __  | / __ `/ / /      / __ \ ',
+\ '  / /|  /  / /_/ /  / /_/ / / /_/ / / /___   / /_/ / ',
+\ ' /_/ |_/   \__,_/  /_____/  \__,_/  \____/   \____/  ',
+\ ]
 
-endfunction
+"let g:nabaco = [
+"            \ '   ) ',
+"            \ ' ( /(            (             ( ',
+"            \ ' )\())     )   ( )\      )     )\ ',
+"            \ '((_)\   ( /(   )((_)  ( /(   (((_)    ( ',
+"            \ ' _((_)  )(_)) ((_)_   )(_))  )\___    )\ ',
+"            \ '| \| | ((_)_   | _ ) ((_)_  ((/ __|  ((_) ',
+"            \ '| .` | / _` |  | _ \ / _` |  | (__  / _ \ ',
+"            \ '|_|\_| \__,_|  |___/ \__,_|   \___| \___/ ',
+"            \]
+
+"let g:nabaco = [
+"\ '  __  __            ____              ____            __ ',
+"\ ' /\ \/\ \          /\  _`\           /\  _`\         /\ \ ',
+"\ ' \ \ `\\ \     __  \ \ \L\ \     __  \ \ \/\_\    ___\ \ \ ',
+"\ '  \ \ , ` \  /`__`\ \ \  _ <`  /`__`\ \ \ \/_/_  / __`\ \ \ ',
+"\ '   \ \ \`\ \/\ \L\.\_\ \ \L\ \/\ \L\.\_\ \ \L\ \/\ \L\ \ \_\ ',
+"\ '    \ \_\ \_\ \__/.\_\\ \____/\ \__/.\_\\ \____/\ \____/\/\_\ ',
+"\ '     \/_/\/_/\/__/\/_/ \/___/  \/__/\/_/ \/___/  \/___/  \/_/ ',
+"\]
+
+
+let g:startify_custom_header =  'startify#center(g:nabaco) + startify#center(startify#fortune#boxed())'
 
 " }}}
-" Function {{{
 
-function JumpToTag()
-    " Store where we're jumping from.
-    let pos = getcurpos()
-    let cword = expand('<cword>')
-    let item = {'bufnr': pos[0], 'from': pos, 'tagname': cword}
-    YcmCompleter GoTo cword
+" Colorizer && Rainbow {{{2
 
-    " Assuming jump was successful, write to tag stack.
-    let winid = win_getid()
-    call settagstack(pos[0], item, 'a')
-endfunction
+lua << EOF
+require'colorizer'.setup(
+  {'*';},
+  {
+    RGB      = true;         -- #RGB hex codes
+	  RRGGBB   = true;         -- #RRGGBB hex codes
+	  names    = true;         -- "Name" codes like Blue
+	  RRGGBBAA = true;         -- #RRGGBBAA hex codes
+	  rgb_fn   = true;         -- CSS rgb() and rgba() functions
+	  hsl_fn   = true;         -- CSS hsl() and hsla() functions
+	  css      = true;         -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+	  css_fn   = true;         -- Enable all CSS *functions*: rgb_fn, hsl_fn
+  })
+EOF
 
+let g:rainbow#max_level = 16
+let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
+
+autocmd FileType * RainbowParentheses
 " }}}
-" {{{ """""" Key Mappings """"""
+" }}}
 
-"nnoremap <silent> <Leader>t :call fzf#run(fzf#wrap({'source':'global -x .', 'sink':function('<sid>gtags_search'),
-			\ 'options': ['-m', '-d', '\t', '--with-nth', '1,2', '-n', '1', '--prompt', 'Tags> ']}))<CR>
+""""""" Key Mappings """""" {{{1
+call which_key#register('\\', "g:which_key_map")
+let g:which_key_map =  {}
+
+nnoremap <silent> <leader> :<c-u>WhichKey '\\'<CR>
+vnoremap <silent> <leader> :<c-u>WhichKeyVisual '\\'<CR>
 
 " Make life easier with exiting modes back to normal
-imap jk <Esc>
-vmap jk <Esc>
+inoremap jk <Esc>
+vnoremap jk <Esc>
 
-" " " Open netrw in CWD
-" nmap <Leader>n :Rexplore .<cr>
-" nmap <Leader>N :Sexplore .<cr>
-" nmap \|N :Vexplore .<cr>
-" " " Open netrw in the current file's dir
-" nmap <Leader>v :Explore<cr>
-" nmap <Leader>V :Sexplore<cr>
-" nmap \|V :Vexplore<cr>
+" Open netrw in CWD
+"nmap <Leader>n :Rexplore .<cr>
+"nmap <Leader>N :Sexplore .<cr>
+"nmap \|N :Vexplore .<cr>
+"  Open netrw in the current file's dir
+"nmap <Leader>v :Explore<cr>
+"nmap <Leader>V :Sexplore<cr>
+"nmap \|V :Vexplore<cr>
 nmap <Leader>n :NERDTreeToggle<CR>
 nmap <Leader>v :NERDTreeFind<CR>
+let g:which_key_map.n = ['NERDTreeToggle', 'File Tree']
+let g:which_key_map.v = ['NERDTreeFind', 'Find File']
+
+nnoremap <leader>s <cmd>Startify<CR>
+let g:which_key_map.s = ['Startify', 'Startify']
+
+" Cscope and quickfix {{{2
 
 "0 or s: Find this C symbol
 "1 or g: Find this definition
@@ -558,19 +543,8 @@ nmap <Leader>v :NERDTreeFind<CR>
 "9 or a: Find places where this symbol is assigned a value
 
 " Print help
-nmap <Leader>ch :echon "
-            \ s: Find this C symbol\n
-            \ g: Find this definition\n
-            \ d: Find functions called by this function (Cscope only)\n
-            \ c: Find functions calling this function\n
-            \ t: Find this text string\n
-            \ e: Find this egrep pattern\n
-            \ f: Find this file\n
-            \ i: Find files #including this file\n
-            \ a: Find places where this symbol is assigned a value\nn
-            \ \<Leader\>cx - Jump to result\n
-            \ \<Leader\>Cx - Open result in a split\n
-            \ \<Leader\>CX - Open result a vertical split"<cr>
+let g:which_key_map.c = { 'name': '+cscope' }
+let g:which_key_map.c.s = ['cs find g', 'symbol']
 
 " Jump to result
 nmap <Leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
@@ -612,6 +586,102 @@ nmap [q :cprevious<cr>
 nmap [Q :cfirst<cr>
 nmap <Leader>q :ccl<cr>
 
+" }}}
+
+" Language Server{{{2
+lua << EOF
+    local lspconfig = require('lspconfig')
+
+    local on_attach = function(client, bufnr)
+        local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+        local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+        -- Mappings.
+        local opts = { noremap=true, silent=true }
+        buf_set_keymap('n', '<leader>lD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+        buf_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+        buf_set_keymap('n', '<leader>ld', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+        buf_set_keymap('n', '<leader>lh', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+        buf_set_keymap('n', '<leader>li', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+        buf_set_keymap('n', '<leader>ls', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+        buf_set_keymap('n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+        buf_set_keymap('n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+        buf_set_keymap('n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+        buf_set_keymap('n', '<leader>lt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+        buf_set_keymap('n', '<leader>lR', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+        buf_set_keymap('n', '<leader>lr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+        buf_set_keymap('n', '<leader>ds', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+        buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+        buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+        buf_set_keymap('n', '<leader>dq', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+
+        -- Set some keybinds conditional on server capabilities
+        if client.resolved_capabilities.document_formatting then
+            buf_set_keymap("n", "<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+        elseif client.resolved_capabilities.document_range_formatting then
+            buf_set_keymap("n", "<leader>lf", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+        end
+
+        -- Set autocommands conditional on server_capabilities
+        if client.resolved_capabilities.document_highlight then
+            vim.api.nvim_exec([[
+            hi LspReferenceRead cterm=bold ctermbg=red guibg=Orange
+            hi LspReferenceText cterm=bold ctermbg=red guibg=Orange
+            hi LspReferenceWrite cterm=bold ctermbg=red guibg=Orange
+            augroup lsp_document_highlight
+                autocmd! * <buffer>
+                autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+                autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+            augroup END
+            ]], false)
+        end
+    end
+
+    -- Use a loop to conveniently both setup defined servers
+    -- and map buffer local keybindings when the language server attaches
+    local servers = { "jedi_language_server" }
+    for _, lsp in ipairs(servers) do
+        lspconfig[lsp].setup { on_attach = on_attach }
+    end
+
+    lspconfig.clangd.setup{
+        -- cmd = { "clangd", "--background-index", "--cross-file-rename", "--limit-results=0", "-j=$(nproc)" };
+        on_attach = on_attach;
+        root_dir = function(fname)
+            return lspconfig.util.root_pattern("compile_commands.json")(fname) or
+            lspconfig.util.root_pattern("compile_flags.txt", ".clangd", ".git")(fname);
+        end
+        }
+
+EOF
+
+let g:which_key_map.l = {
+            \ 'name': '+LSP',
+            \ 'D': ['lua vim.lsp.buf.declaration()'    , 'Declaration']   ,
+            \ 'd': ['lua vim.lsp.buf.definition()'     , 'Definition']    ,
+            \ 'h': ['lua vim.lsp.buf.hover()'          , 'Hover']         ,
+            \ 'i': ['lua vim.lsp.buf.implementation()' , 'Implementation'],
+            \ 's': ['lua vim.lsp.buf.signature_help()' , 'Sig-Help']      ,
+            \ 't': ['lua vim.lsp.buf.type_definition()', 'Type-Def']      ,
+            \ 'R': ['lua vim.lsp.buf.rename()'         , 'Rename']        ,
+            \ 'r': ['lua vim.lsp.buf.references()'     , 'Refs']          ,
+            \ 'f': ['lua vim.lsp.buf.formatting()'     , 'Format']        ,
+            \}
+
+let g:which_key_map.d = {
+            \ 'name': '+Diagnostics',
+            \ 's': ['lua vim.lsp.diagnostic.show_line_diagnostics()', 'Show-Daigs'],
+            \ 'q': ['lua vim.lsp.diagnostic.set_loclist()', 'Diags2LocList'],
+            \}
+
+let g:which_key_map.w = {
+            \ 'name': '+Workspace',
+            \ 'a': ['lua vim.lsp.buf.add_workspace_folder()', 'Add-Folder'],
+            \ 'r': ['lua vim.lsp.buf.remove_workspace_folder()', 'Remove-Folder'],
+            \ 'l': ['lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))', 'List-Folders'],
+            \}
+"}}}
+
 " Quick Ack
 nnoremap /<Leader> :Ack!<Space>
 " Notes
@@ -640,15 +710,9 @@ nmap <F3> :setlocal spell! spelllang=en<CR>
 " Turn off search highlight
 nmap <Leader>/ :noh<cr>
 
-nmap <Leader>yy :YcmCompleter GoTo<CR>
-nmap <Leader>yc :YcmCompleter GoToReferences<CR>
-
-nmap <Leader>yy :YcmCompleter GoTo<CR>
-nmap <Leader>yc :YcmCompleter GoToReferences<CR>
-
 " Fuzzy-find lite
 nmap <Leader><space> :e ./**/
-"nmap <Leader><cr> :buffer 
+"nmap <Leader><cr> :buffer
 
 " FZF bindings
 nmap <Leader><cr> <CMD>Buffers<CR>
@@ -694,103 +758,7 @@ tnoremap <Leader>` <C-\><C-n>:Nuake<CR>
 " Compile file (Markdown, LaTeX, etc)
 " TODO: Auto-recognize build system
 nmap <silent> <F6> :!compiler %<cr>
+
+inoremap <silent><expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+inoremap <silent><expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
 " }}}
-" {{{ """""" Defx Key Mappings """"""
-	autocmd FileType defx call s:defx_my_settings()
-	function! s:defx_my_settings() abort
-	  " Define mappings
-	  nnoremap <silent><buffer><expr> <CR>
-	  \ defx#do_action('open')
-	  nnoremap <silent><buffer><expr> c
-	  \ defx#do_action('copy')
-	  nnoremap <silent><buffer><expr> m
-	  \ defx#do_action('move')
-	  nnoremap <silent><buffer><expr> p
-	  \ defx#do_action('paste')
-	  nnoremap <silent><buffer><expr> l
-	  \ defx#do_action('open')
-	  nnoremap <silent><buffer><expr> E
-	  \ defx#do_action('open', 'vsplit')
-	  nnoremap <silent><buffer><expr> P
-	  \ defx#do_action('preview')
-	  nnoremap <silent><buffer><expr> o
-	  \ defx#do_action('open_tree', 'toggle')
-	  nnoremap <silent><buffer><expr> K
-	  \ defx#do_action('new_directory')
-	  nnoremap <silent><buffer><expr> N
-	  \ defx#do_action('new_file')
-	  nnoremap <silent><buffer><expr> M
-	  \ defx#do_action('new_multiple_files')
-	  nnoremap <silent><buffer><expr> C
-	  \ defx#do_action('toggle_columns',
-	  \                'mark:indent:icon:filename:type:size:time')
-	  nnoremap <silent><buffer><expr> S
-	  \ defx#do_action('toggle_sort', 'time')
-	  nnoremap <silent><buffer><expr> d
-	  \ defx#do_action('remove')
-	  nnoremap <silent><buffer><expr> r
-	  \ defx#do_action('rename')
-	  nnoremap <silent><buffer><expr> !
-	  \ defx#do_action('execute_command')
-	  nnoremap <silent><buffer><expr> x
-	  \ defx#do_action('execute_system')
-	  nnoremap <silent><buffer><expr> yy
-	  \ defx#do_action('yank_path')
-	  nnoremap <silent><buffer><expr> .
-	  \ defx#do_action('toggle_ignored_files')
-	  nnoremap <silent><buffer><expr> ;
-	  \ defx#do_action('repeat')
-	  nnoremap <silent><buffer><expr> h
-	  \ defx#do_action('cd', ['..'])
-	  nnoremap <silent><buffer><expr> ~
-	  \ defx#do_action('cd')
-	  nnoremap <silent><buffer><expr> q
-	  \ defx#do_action('quit')
-	  nnoremap <silent><buffer><expr> <Space>
-	  \ defx#do_action('toggle_select') . 'j'
-	  nnoremap <silent><buffer><expr> *
-	  \ defx#do_action('toggle_select_all')
-	  nnoremap <silent><buffer><expr> j
-	  \ line('.') == line('$') ? 'gg' : 'j'
-	  nnoremap <silent><buffer><expr> k
-	  \ line('.') == 1 ? 'G' : 'k'
-	  nnoremap <silent><buffer><expr> <C-l>
-	  \ defx#do_action('redraw')
-	  nnoremap <silent><buffer><expr> <C-g>
-	  \ defx#do_action('print')
-	  nnoremap <silent><buffer><expr> cd
-	  \ defx#do_action('change_vim_cwd')
-      nnoremap <silent><buffer> <Leader>h
-                  \ :echo "
-	              \ \<CR\>:\topen\n
-	              \ c:\tcopy\n
-	              \ m:\tmove\n
-	              \ p:\tpaste\n
-	              \ l:\topen\n
-	              \ E:\topen in vsplit\n
-	              \ P:\tpreview\n
-	              \ o:\topen tree toggle\n
-	              \ K:\tnew directory\n
-	              \ N:\tnew file\n
-	              \ M:\tnew multiple_files\n
-	              \ C:\ttoggle columns - mark:indent:icon:filename:type:size:time\n
-	              \ S:\ttoggle sort by time\n
-	              \ d:\tremove\n
-	              \ r:\trename\n
-	              \ !:\texecute_command\n
-	              \ x:\texecute_system\n
-	              \ y:\tyank_path\n
-	              \ .:\ttoggle_ignored_files\n
-	              \ ;:\trepeat\n
-	              \ h:\tcd ..\n
-	              \ ~:\tcd\n
-	              \ q:\tquit\n
-	              \ <Space>:\ttoggle_select\n
-	              \ *:\ttoggle_select_all\n
-	              \ j:\tdown\n
-	              \ k:\tup\n
-	              \ <C-l>:\tredraw\n
-	              \ <C-g>:\tprint\n
-	              \ cd:\tchange_vim_cwd"<CR>
-	endfunction
-"}}}
