@@ -16,10 +16,12 @@ function new-note()
 {
     $EDITOR "$NOTES/Unsorted/`date +%F` -  $*.md"
 }
-
 function new-meeting()
 {
     $EDITOR "$NOTES/`date +%F` - $* - Meeting Minutes.md"
 }
-
+function new-post()
+{
+    hugo -s $WEBSITE --editor=$EDITOR new blog/"$*".md
+}
 alias inb='task add +in'

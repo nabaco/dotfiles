@@ -10,10 +10,7 @@
 
 # Use the command 'task show' to see all defaults and overrides
 
-# Files
-data.location=~/.task
-
-# {{{ Color themes
+#{{{ Color themes
 #include /usr/share/doc/task/rc/light-16.theme
 #include /usr/share/doc/task/rc/light-256.theme
 #include /usr/share/doc/task/rc/dark-16.theme
@@ -28,20 +25,33 @@ data.location=~/.task
 #include /usr/share/doc/task/rc/solarized-dark-256.theme
 #include /usr/share/doc/task/rc/solarized-light-256.theme
 #include /usr/share/doc/task/rc/no-color.theme
-# }}}
+#}}}
 
-# {{{ Sync configuration
+#{{{ Sync options
 taskd.certificate=~/.task/private.certificate.pem
 taskd.key=~/.task/private.key.pem
 taskd.ca=~/.task/ca.crt
 taskd.server=inthe.am:53589
 taskd.credentials=inthe_am/nachum.barcohen/741e379a-1e66-44d9-b162-3fdbf3094a9e
 taskd.trust=ignore hostname
-# }}}
+#}}}
 
-# {{{ Inbox report
+#{{{ Inbox report
 report.in.columns           = id,description
 report.in.description       = Inbox
 report.in.filter            = status:pending limit:page (+in)
 report.in.labels            = ID,Description
-# }}}
+#}}}
+
+rc.report.next.filter=status:pending,+UNBLOCKED
+report.next.sort=status-,start-,priority-,project+,due+
+context.work=project:work or +work
+# Files
+data.location=~/.task
+
+uda.reviewed.type=date
+uda.reviewed.label=Reviewed
+report._reviewed.description=Tasksh review report.  Adjust the filter to your needs.
+report._reviewed.columns=uuid
+report._reviewed.sort=reviewed+,modified+
+report._reviewed.filter=( reviewed.none: or reviewed.before:now-6days ) and ( +PENDING or +WAITING )
