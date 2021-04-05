@@ -161,6 +161,7 @@ call plug#end()
 set termguicolors
 " Colorscheme wal
 colorscheme gruvbox
+let g:gruvbox_contrast_dark='hard'
 
 " Highlight embedded lua code
 let g:vimsyn_embed = 'l'
@@ -374,7 +375,7 @@ autocmd BufEnter * Rooter " Still autochange the directory
 let g:rooter_silent_chdir = 1
 let g:rooter_change_directory_for_non_project_files = 'current'
 let g:rooter_resolve_links = 1
-let g:rooter_patterns = ['compile_commands.json']
+let g:rooter_patterns = ['compile_commands.json', '.git']
 
 " If your terminal's background is white (light theme), uncomment the following
 " to make EasyMotion's cues much easier to read.
@@ -519,15 +520,15 @@ inoremap jk <Esc>
 vnoremap jk <Esc>
 
 " Open netrw in CWD
-"nmap <Leader>n :Rexplore .<cr>
-"nmap <Leader>N :Sexplore .<cr>
-"nmap \|N :Vexplore .<cr>
+"nnoremap <Leader>n :Rexplore .<cr>
+"nnoremap <Leader>N :Sexplore .<cr>
+"nnoremap \|N :Vexplore .<cr>
 "  Open netrw in the current file's dir
-"nmap <Leader>v :Explore<cr>
-"nmap <Leader>V :Sexplore<cr>
-"nmap \|V :Vexplore<cr>
-nmap <Leader>n :NERDTreeToggle<CR>
-nmap <Leader>v :NERDTreeFind<CR>
+"nnoremap <Leader>v :Explore<cr>
+"nnoremap <Leader>V :Sexplore<cr>
+"nnoremap \|V :Vexplore<cr>
+nnoremap <Leader>n :NERDTreeToggle<CR>
+nnoremap <Leader>v :NERDTreeFind<CR>
 let g:which_key_map.n = ['NERDTreeToggle', 'File Tree']
 let g:which_key_map.v = ['NERDTreeFind', 'Find File']
 
@@ -551,44 +552,44 @@ let g:which_key_map.c = { 'name': '+cscope' }
 let g:which_key_map.c.s = ['cs find g', 'symbol']
 
 " Jump to result
-nmap <Leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>cg :cs find g <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>cc :cs find c <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>ct :cs find t <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>ce :cs find e <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>cf :cs find f <C-R>=expand("<cfile>")<CR><CR>
-nmap <Leader>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-nmap <Leader>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>ca :cs find a <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>cg :cs find g <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>cc :cs find c <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>ct :cs find t <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>ce :cs find e <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>cf :cs find f <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <Leader>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nnoremap <Leader>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>ca :cs find a <C-R>=expand("<cword>")<CR><CR>
 
 " Open the result in a split
-nmap <Leader>Cs :scs find s <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>Cg :scs find g <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>Cc :scs find c <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>Ct :scs find t <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>Ce :scs find e <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>Cf :scs find f <C-R>=expand("<cfile>")<CR><CR>
-nmap <Leader>Ci :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-nmap <Leader>Cd :scs find d <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>Ca :scs find a <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>Cs :scs find s <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>Cg :scs find g <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>Cc :scs find c <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>Ct :scs find t <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>Ce :scs find e <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>Cf :scs find f <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <Leader>Ci :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nnoremap <Leader>Cd :scs find d <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>Ca :scs find a <C-R>=expand("<cword>")<CR><CR>
 
 " Open the result in a vertical split
-nmap <Leader>CS :vert scs find s <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>CG :vert scs find g <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>CC :vert scs find c <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>CT :vert scs find t <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>CE :vert scs find e <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>CF :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
-nmap <Leader>CI :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-nmap <Leader>CD :vert scs find d <C-R>=expand("<cword>")<CR><CR>
-nmap <Leader>CA :vert scs find a <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>CS :vert scs find s <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>CG :vert scs find g <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>CC :vert scs find c <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>CT :vert scs find t <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>CE :vert scs find e <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>CF :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <Leader>CI :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nnoremap <Leader>CD :vert scs find d <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>CA :vert scs find a <C-R>=expand("<cword>")<CR><CR>
 
 " Quickfix bindings
-nmap ]q :cnext<cr>
-nmap ]Q :clast<cr>
-nmap [q :cprevious<cr>
-nmap [Q :cfirst<cr>
-nmap <Leader>q :ccl<cr>
+nnoremap ]q :cnext<cr>
+nnoremap ]Q :clast<cr>
+nnoremap [q :cprevious<cr>
+nnoremap [Q :cfirst<cr>
+nnoremap <Leader>q :ccl<cr>
 
 " }}}
 
@@ -605,9 +606,10 @@ lua << EOF
         buf_set_keymap('n', '<leader>lD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
         buf_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
         buf_set_keymap('n', '<leader>ld', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-        buf_set_keymap('n', '<leader>lh', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+        buf_set_keymap('n', '<leader>lk', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
         buf_set_keymap('n', '<leader>li', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-        buf_set_keymap('n', '<leader>ls', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+        buf_set_keymap('n', '<leader>lh', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+        buf_set_keymap('n', '<leader>ls', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
         buf_set_keymap('n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
         buf_set_keymap('n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
         buf_set_keymap('n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
@@ -618,6 +620,11 @@ lua << EOF
         buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
         buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
         buf_set_keymap('n', '<leader>dq', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+        buf_set_keymap('n', '<leader>lca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+
+        -- Vista config
+        vim.api.nvim_set_var('vista_default_executive', 'nvim_lsp')
+        buf_set_keymap('n', '<leader>t', '<cmd>Vista finder<CR>', opts)
 
         -- Set some keybinds conditional on server capabilities
         if client.resolved_capabilities.document_formatting then
@@ -704,51 +711,45 @@ let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
 map , <Plug>(easymotion-prefix)
-" Toggle whitespaces
-nmap <F6> :set list! <CR>
-" Toggle the tags bar
-nmap <F8> :TagbarToggle<CR>
-" Toggle spell checking
-nmap <F3> :setlocal spell! spelllang=en<CR>
 
 " Turn off search highlight
-nmap <Leader>/ :noh<cr>
+nnoremap <Leader>/ :noh<cr>
 
 " Fuzzy-find lite
-nmap <Leader><space> :e ./**/
-"nmap <Leader><cr> :buffer
+nnoremap <Leader><space> :e ./**/
+"nnoremap <Leader><cr> :buffer
 
 " FZF bindings
-nmap <Leader><cr> <CMD>Buffers<CR>
-nmap <Leader>f <CMD>FZF<CR>
-nmap <Leader>t <CMD>Tags<CR>
-nmap <Leader>T <CMD>BTags<CR>
-nmap <Leader>m <CMD>Commits<CR>
-nmap <Leader>M <CMD>BCommits<CR>
+nnoremap <Leader><cr> <CMD>Buffers<CR>
+nnoremap <Leader>f <CMD>FZF<CR>
+nnoremap <Leader>t <CMD>Tags<CR>
+nnoremap <Leader>T <CMD>BTags<CR>
+nnoremap <Leader>m <CMD>Commits<CR>
+nnoremap <Leader>M <CMD>BCommits<CR>
 
 " Start a Git command
-nmap <Leader>gg :Git<Space>
-nmap <Leader>gs :Git status<CR>
-nmap <Leader>gv :Magit<CR>
-"nmap <Leader>gcm :Git commit<CR>
-nmap <Leader>gd :Git diff<CR>
-nmap <Leader>gc :Gdiffsplit<CR>
-nmap <Leader>gb :MerginalToggle<CR>
+nnoremap <Leader>gg :Git<Space>
+nnoremap <Leader>gs :Git status<CR>
+nnoremap <Leader>gv :Magit<CR>
+"nnoremap <Leader>gcm :Git commit<CR>
+nnoremap <Leader>gd :Git diff<CR>
+nnoremap <Leader>gc :Gdiffsplit<CR>
+nnoremap <Leader>gb :MerginalToggle<CR>
 
 " Spellchecking Bindings
 imap <m-f> <C-G>u<Esc>[s1z=`]a<C-G>u
-nmap <m-f> [s1z=<c-o>
+nnoremap <m-f> [s1z=<c-o>
 
 " Toggle whitespaces
-nmap <F2> :set list! <CR>
-
+nnoremap <F2> :set list! <CR>
 " Toggle spell checking
-nmap <F3> :setlocal spell! spelllang=en<CR>
-
+nnoremap <F3> :setlocal spell! spelllang=en<CR>
 " real make
-map <silent> <F5> :make<cr><cr><cr>
+noremap <silent> <F5> :make<cr><cr><cr>
 " GNUism, for building recursively
-map <silent> <s-F5> :make -w<cr><cr><cr>
+noremap <silent> <s-F5> :make -w<cr><cr><cr>
+" Toggle the tags bar
+nnoremap <F8> :Vista<CR>
 
 " Ctags in previw/split window
 nnoremap <C-w><C-]> <C-w>}
@@ -761,7 +762,7 @@ tnoremap <Leader>` <C-\><C-n>:Nuake<CR>
 
 " Compile file (Markdown, LaTeX, etc)
 " TODO: Auto-recognize build system
-nmap <silent> <F6> :!compiler %<cr>
+nnoremap <silent> <F6> :!compiler %<cr>
 
 inoremap <silent><expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
 inoremap <silent><expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"

@@ -1,3 +1,4 @@
+# vim: foldmethod=marker
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -8,16 +9,37 @@ case $- in
       *) return;;
 esac
 
+# Ansi color code variables{{{1
+red="\[\e[0;91m\]"
+blue="\[\e[0;94m\]"
+green="\[\e[0;92m\]"
+yellow="\[\e[0;33m\]"
+purple=" \[\e[0;35m\]"
+white="\[\e[0;97m\]"
+expand_bg="\[\e[K\]"
+blue_bg="\[\e[0;104m\]${expand_bg}"
+red_bg="\[\e[0;101m\]${expand_bg}"
+green_bg="\[\e[0;102m\]${expand_bg}"
+bold="\[\e[1m\]"
+uline="\[\e[4m\]"
+reset="\[\e[0m\]"
+#}}}
+
+# History Configuration {{{1
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
+#HISTCONTROL=ignoredups:erasedups
 
 # append to the history file, don't overwrite it
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=10000
+HISTFILESIZE=10000
+
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
+# }}}
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -32,6 +54,7 @@ shopt -s globstar
 
 PS1='[\u@\h \W]\$ '
 
+# Prompt Configuration {{{1
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
@@ -45,7 +68,7 @@ esac
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
-force_color_prompt=yes
+#force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
@@ -59,40 +82,17 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    PS1='${reset}${debian_chroot:+($debian_chroot)} ${green}\u@\h${reset}:${blue}\w${reset}\$ '
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
 unset color_prompt force_color_prompt
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
+#}}}
 
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    alias dir='dir --color=auto'
-    alias vdir='vdir --color=auto'
-
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-fi
 
 # colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -120,66 +120,38 @@ fi
 
 #### End of standard Ubuntu .bashrc ####
 
-# Integrate FZF
+#It doesn't work properly with FZF
+#set -o vi
+
+# Enter a directory by typing its name
+shopt -s autocd
+
+# Integrations {{{1
+
+# FZF {{{2
 if [ -f ~/.fzf.bash ]; then
     source ~/.fzf.bash
 else
     [ -f ~/.local/bin/fzf/shell/completion.bash ] && source ~/.local/bin/fzf/shell/completion.bash
     [ -f ~/.local/bin/fzf/shell/key-bindings.bash ] && source ~/.local/bin/fzf/shell/key-bindings.bash
 fi
+#}}}
 
-[ -f  /usr/share/autojump/autojump.sh ] && source /usr/share/autojump/autojump.sh
-
-# Import colorscheme from 'wal' asynchronously
-# &   # Run the process in the background.
-# ( ) # Hide shell job control messages.
-if [ -f ~/.cache/wal/sequences ]; then
-    (cat ~/.cache/wal/sequences &)
-    # To add support for TTYs this line can be optionally added.
-    source ~/.cache/wal/colors-tty.sh
-fi
-
-# Ruby exports
-
-export GEM_HOME=$HOME/gems
-export PATH=$HOME/gems/bin:$PATH
-export PATH=$HOME/.emacs.d/bin/:$PATH
-
-WSL=`grep microsoft /proc/version`
-if [ -n "$WSL" ]; then
-    export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
-    export NOTES=/mnt/c/Users/nbarcohx/Nextcloud-BC/Notes/
-else
-    export NOTES=$HOME/Nextcloud/Notes/
-fi
-export LIBGL_ALWAYS_INDIRECT=1
-
+# Git {{{2
 # enable tab-copletetion for git commands
 if [ -f ~/.local/bin/git-completion.bash ]; then
     source ~/.local/bin/git-completion.bash
 fi
+#}}}
 
+# Apparish {{{2
+# https://github.com/goedel-gang/bash-utils
 if [ -f ~/.local/bin/appari.sh ]; then
     source ~/.local/bin/appari.sh
 fi
+#}}}
 
-if [ -f ~/shell_aliases ]; then
-	source ~/shell_aliases
-fi
-
-# Source user/host specific bashrc
-if [ -f ~/.bashrc.$USER ]; then
-    source ~/.bashrc.$USER
-fi
-
-if [ -f ~/.local/usr/share/bash-completion/completions/task ]; then
-    source ~/.local/usr/share/bash-completion/completions/task
-fi
-
-if [ -e ~/.config/broot/launcher/bash/br ]; then
-    source /home/nbarcohx/.config/broot/launcher/bash/br
-fi
-
+# Functions {{{1
 TICK="✓"
 CROSS="✗"
 
@@ -187,21 +159,6 @@ URGENT="❗"
 OVERDUE="☠️"
 DUETODAY="😱"
 DUETOMORROW="📅"
-
-# Ansi color code variables
-red="\[\e[0;91m\]"
-blue="\[\e[0;94m\]"
-green="\[\e[0;92m\]"
-yellow="\[\e[0;33m\]"
-purple=" \[\e[0;35m\]"
-white="\[\e[0;97m\]"
-expand_bg="\[\e[K\]"
-blue_bg="\[\e[0;104m\]${expand_bg}"
-red_bg="\[\e[0;101m\]${expand_bg}"
-green_bg="\[\e[0;102m\]${expand_bg}"
-bold="\[\e[1m\]"
-uline="\[\e[4m\]"
-reset="\[\e[0m\]"
 
 function task_indicator {
     ti=""
@@ -233,3 +190,46 @@ function task_indicator {
     echo "$ti"
 }
 
+# -- Improved X11 forwarding through GNU Screen (or tmux).
+# If not in screen or tmux, update the DISPLAY cache.
+# If we are, update the value of DISPLAY to be that in the cache.
+update-x11-forwarding ()
+{
+    if [ -z "$STY" -a -z "$TMUX" ]; then
+        echo $DISPLAY > ~/.display.txt
+    else
+        export DISPLAY=`cat ~/.display.txt`
+    fi
+}
+
+# This is run before every command.
+preexec() {
+    # Don't cause a preexec for PROMPT_COMMAND.
+    # Beware!  This fails if PROMPT_COMMAND is a string containing more than one command.
+    [ "$BASH_COMMAND" = "$PROMPT_COMMAND" ] && return
+
+    update-x11-forwarding
+
+    # Debugging.
+    #echo DISPLAY = $DISPLAY, display.txt = `cat ~/.display.txt`, STY = $STY, TMUX = $TMUX
+}
+trap 'preexec' DEBUG
+#}}}
+
+# Source user/host specific bashrc
+if [ -f ~/.bashrc.$USER ]; then
+    source ~/.bashrc.$USER
+fi
+
+if [ -f ~/.local/usr/share/bash-completion/completions/task ]; then
+    source ~/.local/usr/share/bash-completion/completions/task
+fi
+
+if [ -e ~/.config/broot/launcher/bash/br ]; then
+    source ~/.config/broot/launcher/bash/br
+fi
+
+if [ -f ~/.local/usr/bin/bb ]; then
+    eval "$(~/.local/usr/bin/bb init -)"
+fi
+#}}}

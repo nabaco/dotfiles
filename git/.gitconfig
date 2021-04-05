@@ -1,50 +1,55 @@
 ;;{{{ General Git config
 # This is Git's per-user configuration file.
 [user]
-	name = Nachum Barcohen
+    name = Nachum Barcohen
     email = 38861757+nabaco@users.noreply.github.com
 [core]
-	excludesFile = ~/.gitignore
-    pager = bat -p
-	editor = nvim
-	# Specify whitespace conventions. Violations will be highlighted in diffs
-	whitespace = -indent-with-non-tab,trailing-space,tabwidth=4
-	preloadindex = true
+    excludesFile = ~/.gitignore
+    pager = cat
+    # For faster opening and editing
+    editor = vim
+    # Specify whitespace conventions. Violations will be highlighted in diffs
+    whitespace = -indent-with-non-tab,trailing-space,tabwidth=4
+    preloadindex = true
 [init]
-	templatedir = ~/.config/git/
+    templatedir = ~/.config/git/
 [rebase]
-	autosquash = true
+    autosquash = true
 [color]
-	ui = auto
+    ui = auto
 [alias]
-	st = status
-	ch = checkout
-	log2 = log --oneline --graph --all --decorate
-	ll = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%n' --abbrev-commit --date=relative --branches
-	cm = commit
-	cmm = commit -m
-	cf = commit --fixup
-	ps = push
-	pl = pull
-	ctags = !.git/hooks/ctags
+    st = status
+    ch = checkout
+    log2 = log --oneline --graph --all --decorate
+    ll = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%n' --abbrev-commit --date=relative --branches
+    cm = commit
+    cmm = commit -m
+    cf = commit --fixup
+    ps = push
+    pl = pull
+    ctags = !.git/hooks/ctags
 ;;}}}
 
 ;;{{{ Git diffs/merges config
 
 [diff]
-	tool = vimdiff
+    tool = vimdiff
 [difftool "vimdiff"]
     cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 [difftool]
-	prompt = false
+    prompt = false
 ;[difftool "meld"]
-;	trustExitCode = true
+;    trustExitCode = true
 [merge]
-	tool = vimdiff
+    tool = vimdiff
 [mergetool]
-	prompt = false
+    prompt = false
 [mergetool "vimdiff"]
-	cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$MERGED\" -c '$wincmd w' -c 'wincmd J'"
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$MERGED\" -c '$wincmd w' -c 'wincmd J'"
 [mergetool]
-	prompt = false
+    prompt = false
+; [mergetool "meld"]
+;     trustExitCode = true
+;     keepTemporaries = false
+;     keepBackup = false
 ;;}}}

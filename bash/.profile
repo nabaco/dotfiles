@@ -19,18 +19,43 @@ if [ -n "$BASH_VERSION" ]; then
 fi
 
 # set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
-fi
-
-# set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
+if [ -d "$HOME/.local/usr/bin" ] ; then
+    PATH="$HOME/.local/usr/bin:$PATH"
+fi
+
+if [ -d "$HOME/.local/usr/local/bin" ] ; then
+    export PATH=$HOME/.local/usr/local/bin:$PATH
+fi
+
+# Ruby exports
+if [ -d $HOME/gems ]; then
+    export GEM_HOME=$HOME/gems
+    export PATH=$HOME/gems/bin:$PATH
+fi
+
+# Add Doom Emacs to PATH
+if [ -d $HOME/.emacs.d/bin ]; then
+    export PATH=$HOME/.emacs.d/bin/:$PATH
+fi
+
+# Add local binaries and scripts to the PATH
+export PATH=$HOME/.local/usr/local/bin:$PATH
+
+WSL=`grep microsoft /proc/version`
+if [ -n "$WSL" ]; then
+    export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
+    export NOTES=/mnt/c/Users/$USER/Nextcloud-BC/Notes/
+else
+    export NOTES=$HOME/Nextcloud/Notes/
+fi
+export LIBGL_ALWAYS_INDIRECT=1
+
 # Adds `~/.local/bin/` and all subdirectories to $PATH
-export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//')"
-export PATH="$PATH:$HOME/.gem/ruby/2.7.0/bin"
+#export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//')"
 export EDITOR="nvim"
 export TERMINAL="termite"
 #export BROWSER="qutebrowser"
