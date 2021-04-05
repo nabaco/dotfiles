@@ -4,6 +4,7 @@ if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
     silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
                 \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall
+    quitall
 endif
 
 call plug#begin(stdpath("data").'/bundle')
@@ -160,6 +161,9 @@ call plug#end()
 set termguicolors
 " Colorscheme wal
 colorscheme gruvbox
+
+" Highlight embedded lua code
+let g:vimsyn_embed = 'l'
 
 " Search highlight colors
 " Should be applied after colorscheme
@@ -625,14 +629,14 @@ lua << EOF
         -- Set autocommands conditional on server_capabilities
         if client.resolved_capabilities.document_highlight then
             vim.api.nvim_exec([[
-            hi LspReferenceRead cterm=bold ctermbg=red guibg=Orange
-            hi LspReferenceText cterm=bold ctermbg=red guibg=Orange
-            hi LspReferenceWrite cterm=bold ctermbg=red guibg=Orange
-            augroup lsp_document_highlight
-                autocmd! * <buffer>
-                autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-                autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-            augroup END
+                hi LspReferenceRead cterm=bold ctermbg=red guibg=Orange
+                hi LspReferenceText cterm=bold ctermbg=red guibg=Orange
+                hi LspReferenceWrite cterm=bold ctermbg=red guibg=Orange
+                augroup lsp_document_highlight
+                    autocmd! * <buffer>
+                    autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+                    autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+                augroup END
             ]], false)
         end
     end
