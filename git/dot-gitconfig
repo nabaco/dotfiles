@@ -5,7 +5,6 @@
     email = 38861757+nabaco@users.noreply.github.com
 [core]
     excludesFile = ~/.gitignore
-    pager = cat
     # For faster opening and editing
     editor = vim
     # Specify whitespace conventions. Violations will be highlighted in diffs

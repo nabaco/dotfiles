@@ -4,10 +4,10 @@
 			{
 				"function": "powerline.segments.shell.mode"
 			},
-            {
-                "function": "powerline_taskwarrior.summary",
-                "priority": 20
-            },
+			{
+				"function": "powerline_taskwarrior.summary",
+				"priority": 20
+			},
 			{
 				"function": "powerline.segments.common.net.hostname",
 				"priority": 10
