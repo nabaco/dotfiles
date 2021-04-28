@@ -3,6 +3,7 @@
 #
 
 [[ -f ~/.profile ]] && . ~/.profile
-[[ -f ~/.bashrc ]] && . ~/.bashrc
+# No need for that as it is started from ~/.profile
+# [[ -f ~/.bashrc ]] && . ~/.bashrc
 
 [[ $(tty) == "/dev/tty1" ]] && startx

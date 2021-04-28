@@ -3,7 +3,6 @@
 set -xe
 
 XDG_USER_CONFIG_DIR="$HOME/.config"
-stowit="stow -v -R -t"
 
 echo "Backing up default config files"
 if [ -f ~/.bashrc ]; then
@@ -20,10 +19,21 @@ for f in `find bash -type f`; do
 done
 
 echo "Stowing config files"
-$stowit ~ bash
-$stowit ~ zsh
-$stowit ~ git
-$stowit "$XDG_USER_CONFIG_DIR" config
+# Ideally I would like to use a single stow command for everything
+# but due to the following bug I have this work around
+# https://github.com/aspiers/stow/issues/33
+for file in `find . -name "dot-*" -type f`; do
+    echo $file;
+    f=`echo $file|sed 's/dot-/~\/./'`;
+    if [ -L $f ]; then
+        rm $f
+    elif [[ -f $f ]]; then
+        mv $f $f.bak
+    fi
+    ln -s $PWD/$file $f;
+done
+
+stow -v -R -t "$XDG_USER_CONFIG_DIR" dot-config
 
 echo "Downloading latest NeoVim"
 if [ "`id|grep sudo`" == "" ]; then
