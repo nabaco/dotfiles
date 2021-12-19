@@ -40,8 +40,12 @@ Plug 'airblade/vim-rooter'
 Plug 'easymotion/vim-easymotion'
 
 " Ultimate fuzzy search + Multi-entry selection UI.
-if !executable('fzf')
-    Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': { -> fzf#install() } }
+if isdirectory('/usr/bin/fzf')
+    " Binary is installed through package manager.
+    " Install just the latest plugin without installing FZF itself
+    Plug 'junegunn/fzf'
+else
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 endif
 Plug 'junegunn/fzf.vim'
 
@@ -50,7 +54,12 @@ Plug 'mileszs/ack.vim'
 
 " Autocompletion
 Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/completion-nvim'
+Plug 'hrsh7th/cmp-nvim-lsp', {'branch':'main'}
+Plug 'hrsh7th/cmp-buffer', {'branch':'main'}
+Plug 'hrsh7th/cmp-path', {'branch':'main'}
+Plug 'hrsh7th/cmp-cmdline', {'branch':'main'}
+Plug 'hrsh7th/nvim-cmp', {'branch':'main'}
+Plug 'quangnguyen30192/cmp-nvim-ultisnips', {'branch':'main'}
 
 " File browsing
 "Plug 'kyazdani42/nvim-tree.lua' " Not as ripe as nerdtree, yet
@@ -122,6 +131,7 @@ Plug 'Matt-Deacalion/vim-systemd-syntax', { 'for': 'systemd' }
 Plug 'cespare/vim-toml', { 'for': 'toml' }
 Plug 'tmux-plugins/vim-tmux'
 Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'mfukar/robotframework-vim'
 
 " PlanUML support and preview
 Plug 'aklt/plantuml-syntax', { 'for': 'plantuml' }
@@ -325,11 +335,146 @@ let g:completion_enable_snippet = 'UltiSnips'
 """"""" Plugs Config """"""{{{1
 
 " Autocompletion {{{2
-autocmd BufEnter * lua require'completion'.on_attach()
-" possible value: "length", "alphabet", "none"
-let g:completion_sorting = "length"
-let g:completion_matching_strategy_list = ['fuzzy', 'exact', 'substring', 'all']
-let g:completion_matching_smart_case = 1
+lua <<EOF
+    local t = function(str)
+        return vim.api.nvim_replace_termcodes(str, true, true, true)
+    end
+  -- Setup nvim-cmp.
+  local cmp = require'cmp'
+
+  cmp.setup({
+    snippet = {
+      expand = function(args)
+        vim.fn["UltiSnips#Anon"](args.body)
+      end,
+    },
+    mapping = {
+        ["<Tab>"] = cmp.mapping({
+            c = function()
+                if cmp.visible() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+                else
+                    cmp.complete()
+                end
+            end,
+            i = function(fallback)
+                if cmp.visible() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+                elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+                    vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
+                else
+                    fallback()
+                end
+            end,
+            s = function(fallback)
+                if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+                    vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
+                else
+                    fallback()
+                end
+            end
+        }),
+        ["<S-Tab>"] = cmp.mapping({
+            c = function()
+                if cmp.visible() then
+                    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+                else
+                    cmp.complete()
+                end
+            end,
+            i = function(fallback)
+                if cmp.visible() then
+                    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+                elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+                    return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
+                else
+                    fallback()
+                end
+            end,
+            s = function(fallback)
+                if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+                    return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
+                else
+                    fallback()
+                end
+            end
+        }),
+        ['<Down>'] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
+        ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
+        ['<C-n>'] = cmp.mapping({
+            c = function()
+                if cmp.visible() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                else
+                    vim.api.nvim_feedkeys(t('<Down>'), 'n', true)
+                end
+            end,
+            i = function(fallback)
+                if cmp.visible() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                else
+                    fallback()
+                end
+            end
+        }),
+        ['<C-p>'] = cmp.mapping({
+            c = function()
+                if cmp.visible() then
+                    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+                else
+                    vim.api.nvim_feedkeys(t('<Up>'), 'n', true)
+                end
+            end,
+            i = function(fallback)
+                if cmp.visible() then
+                    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+                else
+                    fallback()
+                end
+            end
+        }),
+        ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), {'i', 'c'}),
+        ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), {'i', 'c'}),
+        ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), {'i', 'c'}),
+        ['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
+        ['<CR>'] = cmp.mapping({
+            i = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false }),
+            c = function(fallback)
+                if cmp.visible() then
+                    cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+                else
+                    fallback()
+                end
+            end
+        }),
+    },
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      { name = 'ultisnips' }
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+	cmp.setup.cmdline('/', {
+		completion = { autocomplete = false },
+		sources = {
+			-- { name = 'buffer' }
+			{ name = 'buffer', opts = { keyword_pattern = [=[[^[:blank:]].*]=] } }
+		}
+	})
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    completion = { autocomplete = false },
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
+EOF
 "}}}
 
 " HardTime in all buffers
@@ -650,14 +795,19 @@ lua << EOF
 
     -- Use a loop to conveniently both setup defined servers
     -- and map buffer local keybindings when the language server attaches
-    local servers = { "jedi_language_server" }
+    local servers = { "jedi_language_server", "robotframework_ls" }
+	local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
     for _, lsp in ipairs(servers) do
-        lspconfig[lsp].setup { on_attach = on_attach }
+        lspconfig[lsp].setup {
+			on_attach = on_attach;
+			capabilities = capabilities
+			}
     end
 
     lspconfig.clangd.setup{
         -- cmd = { "clangd", "--background-index", "--cross-file-rename", "--limit-results=0", "-j=$(nproc)" };
         on_attach = on_attach;
+		capabilities = capabilities;
         root_dir = function(fname)
             return lspconfig.util.root_pattern("compile_commands.json")(fname) or
             lspconfig.util.root_pattern("compile_flags.txt", ".clangd", ".git")(fname);

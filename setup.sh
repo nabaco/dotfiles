@@ -4,36 +4,29 @@ set -xe
 
 XDG_USER_CONFIG_DIR="$HOME/.config"
 
-echo "Backing up default config files"
-if [ -f ~/.bashrc ]; then
-    mv ~/.bashrc ~/.bashrc.bak
-fi
+# Due to https://github.com/aspiers/stow/issues/33
+# I switched to fling
+echo "Downloading fling"
+FLING_VERSION="0.0.8"
+FLING_PACKAGE="fling_${FLING_VERSION}_linux_amd64.tar.gz"
+wget https://github.com/bbkane/fling/releases/download/v$FLING_VERSION/$FLING_PACKAGE
+tar -xvzf $FLING_PACKAGE --directory $HOME/.local/bin/ fling
+rm $FLING_PACKAGE
 
 echo "Backing up standard dotfiles"
 mkdir -p $HOME/.local/share/dotfiles
 for f in `find bash -type f`; do
 	file="`basename $f`"
-	if [ -f "$HOME/$file" -a ! -h "$HOME/$file" ]; then
+	if [ -f "$HOME/$file" -a ! -L "$HOME/$file" ]; then
 		mv "$HOME/$file" "$HOME/.local/share/dotfiles/$file"
 	fi
 done
 
-echo "Stowing config files"
-# Ideally I would like to use a single stow command for everything
-# but due to the following bug I have this work around
-# https://github.com/aspiers/stow/issues/33
-for file in `find . -name "dot-*" -type f`; do
-    echo $file;
-    f=`echo $file|sed 's/dot-/~\/./'`;
-    if [ -L $f ]; then
-        rm $f
-    elif [[ -f $f ]]; then
-        mv $f $f.bak
-    fi
-    ln -s $PWD/$file $f;
+echo "Begining flinging..."
+for dir in `find * -maxdepth 0 -type d -not -name "*."`; do
+	echo "Flinging $dir"
+	fling link --src-dir $dir --ask false
 done
-
-stow -v -R -t "$XDG_USER_CONFIG_DIR" dot-config
 
 echo "Downloading latest NeoVim"
 if [ "`id|grep sudo`" == "" ]; then

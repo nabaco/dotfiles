@@ -81,8 +81,14 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
+ns=`ip netns identify`
+
 if [ "$color_prompt" = yes ]; then
-    PS1="${reset}${debian_chroot:+($debian_chroot)} ${green}\u@\h${reset}:${blue}\w${reset}\$ "
+    if [ -n "$ns" ]; then
+        PS1="${reset}${debian_chroot:+($debian_chroot)}${green}${ns}${reset}:${blue}\w${reset}\$ "
+    else
+        PS1="${reset}${debian_chroot:+($debian_chroot)}${green}\u@\h${reset}:${blue}\w${reset}\$ "
+    fi
 else
     PS1="${debian_chroot:+($debian_chroot)}\u@\h:\w\$ "
 fi
