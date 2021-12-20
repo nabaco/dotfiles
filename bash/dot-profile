@@ -10,6 +10,8 @@
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
 
+export TZ="Asia/Jerusalem"
+
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
@@ -78,3 +80,4 @@ fi
 
 # Start graphical server if WM not already running.
 [ "$(tty)" = "/dev/tty1" ] && ! pgrep -x "$WM" >/dev/null && exec startx
+. "$HOME/.cargo/env"

@@ -27,13 +27,12 @@
 #include /usr/share/doc/task/rc/no-color.theme
 #}}}
 
-#{{{ Sync options
-taskd.certificate=~/.task/private.certificate.pem
-taskd.key=~/.task/private.key.pem
-taskd.ca=~/.task/ca.crt
-taskd.server=inthe.am:53589
-taskd.credentials=inthe_am/nachum.barcohen/741e379a-1e66-44d9-b162-3fdbf3094a9e
-taskd.trust=ignore hostname
+#WingTask sync server
+taskd.server=app.wingtask.com:53589
+taskd.key=~/.wingtask_certs/nachum.barcohen@gmail.com.key.pem
+taskd.ca=~/.wingtask_certs/letsencrypt_root_cert.pem
+taskd.certificate=~/.wingtask_certs/nachum.barcohen@gmail.com.cert.pem
+#taskd.credentials=
 #}}}
 
 #{{{ Inbox report
@@ -44,8 +43,9 @@ report.in.labels            = ID,Description
 #}}}
 
 rc.report.next.filter=status:pending,+UNBLOCKED
-report.next.sort=status-,start-,priority-,project+,due+
+#report.next.sort=status-,start-,priority-,project+,due+
 context.work=project:work or +work
+context.personal=project:personal or +personal
 # Files
 data.location=~/.task
 

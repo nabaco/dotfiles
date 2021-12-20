@@ -40,13 +40,13 @@ Plug 'airblade/vim-rooter'
 Plug 'easymotion/vim-easymotion'
 
 " Ultimate fuzzy search + Multi-entry selection UI.
-if isdirectory('/usr/bin/fzf')
+"if isdirectory('/usr/bin/fzf')
     " Binary is installed through package manager.
     " Install just the latest plugin without installing FZF itself
-    Plug 'junegunn/fzf'
-else
+"    Plug 'junegunn/fzf'
+"else
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-endif
+"endif
 Plug 'junegunn/fzf.vim'
 
 " Alternative file contents search
@@ -60,6 +60,7 @@ Plug 'hrsh7th/cmp-path', {'branch':'main'}
 Plug 'hrsh7th/cmp-cmdline', {'branch':'main'}
 Plug 'hrsh7th/nvim-cmp', {'branch':'main'}
 Plug 'quangnguyen30192/cmp-nvim-ultisnips', {'branch':'main'}
+Plug 'hrsh7th/cmp-nvim-lua'
 
 " File browsing
 "Plug 'kyazdani42/nvim-tree.lua' " Not as ripe as nerdtree, yet
@@ -119,6 +120,11 @@ Plug 'HiPhish/info.vim', {'on' : 'Info'}
 " Notes, to-do, etc
 Plug 'vimwiki/vimwiki'
 Plug 'vimwiki/utils'
+
+" Task Warrior integration
+Plug 'tools-life/taskwiki'
+Plug 'farseer90718/vim-taskwarrior'
+Plug 'powerman/vim-plugin-AnsiEsc'
 
 " Language specific plugins
 Plug 'kovetskiy/sxhkd-vim', { 'for': 'sxhkd' }
@@ -450,7 +456,8 @@ lua <<EOF
     },
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
-      { name = 'ultisnips' }
+      { name = 'ultisnips' },
+      { name = 'nvim_lua' }
     }, {
       { name = 'buffer' },
     })

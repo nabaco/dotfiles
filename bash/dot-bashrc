@@ -90,9 +90,11 @@ if [ "$color_prompt" = yes ]; then
         PS1="${reset}${debian_chroot:+($debian_chroot)}${green}\u@\h${reset}:${blue}\w${reset}\$ "
     fi
 else
-    PS1="${debian_chroot:+($debian_chroot)}\u@\h:\w\$ "
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
 unset color_prompt force_color_prompt
+
+export PROMPT_COMMAND='PS1="$(task_indicator)${reset}${debian_chroot:+($debian_chroot)} ${green}\u@\h${reset}:${blue}\w${reset}\$ "'
 
 #}}}
 
@@ -239,3 +241,4 @@ if [ -f ~/.local/usr/bin/bb ]; then
     eval "$(~/.local/usr/bin/bb init -)"
 fi
 #}}}
+. "$HOME/.cargo/env"
