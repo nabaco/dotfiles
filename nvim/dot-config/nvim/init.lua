@@ -139,6 +139,8 @@ local paq = require "paq" {
     'tmux-plugins/vim-tmux';
     'tmux-plugins/vim-tmux-focus-events';
     'mfukar/robotframework-vim';
+    'MTDL9/vim-log-highlighting';
+    'coddingtonbear/confluencewiki.vim';
 
     -- " PlanUML support and preview
     -- TODO: 'aklt/plantuml-syntax', { 'for': 'plantuml' };
@@ -168,7 +170,7 @@ local paq = require "paq" {
 }
 
 if paq_bootstrap then
-    paq.sync()
+    paq.install()
 end
 require('impatient')
 -- " }}}

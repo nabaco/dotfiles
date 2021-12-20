@@ -38,16 +38,16 @@ function man()
 
 function new-note()
 {
-    $EDITOR "$NOTES/Unsorted/`date +%F` -  $*.md"
+    $VISUAL "$NOTES/Unsorted/`date +%F` -  $*.md"
 }
 
 function new-meeting()
 {
-    $EDITOR "$NOTES/`date +%F` - $* - Meeting Minutes.md"
+    $VISUAL "$NOTES/`date +%F` - $* - Meeting Minutes.md"
 }
 function new-post()
 {
-    hugo -s $WEBSITE --editor=$EDITOR new blog/"$*".md
+    hugo -s $WEBSITE --editor=$VISUAL new blog/"$*".md
 }
 #}}}
 
@@ -63,7 +63,10 @@ alias cat="bat -p"
 alias h="history"
 alias cd=__icd
 
+alias gl="PAGER=cat git log --no-merges --pretty=format:\"%H - %an, %ar : %s\""
+
 alias e="$EDITOR"
+alias v="$VISUAL"
 alias p="$PAGER"
 alias f="$FILE"
 

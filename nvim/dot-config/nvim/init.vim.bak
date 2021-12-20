@@ -138,6 +138,8 @@ Plug 'cespare/vim-toml', { 'for': 'toml' }
 Plug 'tmux-plugins/vim-tmux'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'mfukar/robotframework-vim'
+Plug 'MTDL9/vim-log-highlighting', { 'for': 'log' }
+Plug 'coddingtonbear/confluencewiki.vim', { 'for': 'jira' }
 
 " PlanUML support and preview
 Plug 'aklt/plantuml-syntax', { 'for': 'plantuml' }

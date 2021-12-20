@@ -50,7 +50,8 @@ export LIBGL_ALWAYS_INDIRECT=1
 
 # Adds `~/.local/bin/` and all subdirectories to $PATH
 #export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//')"
-export EDITOR="nvim"
+export EDITOR="vim"
+export VISUAL="nvim"
 export TERMINAL="termite"
 #export BROWSER="qutebrowser"
 #export BROWSER="firefox"

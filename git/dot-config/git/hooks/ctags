@@ -3,7 +3,9 @@ set -e
 PATH="/usr/local/bin:$PATH"
 trap 'rm -f "$$.tags GTAGS GPATH GRTAGS"' EXIT
 git ls-files | \
-  ctags-universal -L - --tag-relative=yes --if0=yes --line-directives=yes --fields=+lS --extras=+F -f"$$.tags"
+    ctags-universal -L - --tag-relative=yes --if0=yes --fields=+lS --extras=+F -f"$$.tags"
+    # For some reasons --line-directives=yes is causing errors in
+    #ctags-universal -L - --tag-relative=yes --if0=yes --line-directives=yes --fields=+lS --extras=+F -f"$$.tags"
 git ls-files | \
-  gtags -f -
+    gtags -f -
 mv "$$.tags" "tags"
