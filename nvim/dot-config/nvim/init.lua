@@ -7,7 +7,10 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
 end
 
 local paq = require "paq" {
-    -- "savq/paq-nvim";            -- Paq manages itself
+    {"savq/paq-nvim", opt=true}; -- Paq manages itself
+    -- Startup time improvers
+    'lewis6991/impatient.nvim'; -- To be removed after https://github.com/neovim/neovim/pull/15436
+    'nathom/filetype.nvim';
     -- " Get used to proper Vim movement
     'takac/vim-hardtime';
 
@@ -41,12 +44,12 @@ local paq = require "paq" {
         -- " Install just the latest plugin without installing FZF itself
     --    'junegunn/fzf';
     -- else
-        {'junegunn/fzf', run=vim.fn["fzf#install()"]};
+    {'junegunn/fzf', run=vim.fn["fzf#install()"]};
     --end
     'junegunn/fzf.vim';
 
     -- " Alternative file contents search
-    'mileszs/ack.vim';
+    {'mileszs/ack.vim', opt=true};
 
     -- " Autocompletion
     'neovim/nvim-lspconfig';
@@ -56,15 +59,13 @@ local paq = require "paq" {
     {'hrsh7th/cmp-path', branch='main'};
     {'hrsh7th/cmp-cmdline', branch='main'};
     {'hrsh7th/nvim-cmp', branch='main'};
-    {'quangnguyen30192/cmp-nvim-ultisnips', branch='main'};
+    'L3MON4D3/LuaSnip';
+    'saadparwaiz1/cmp_luasnip';
+    'rafamadriz/friendly-snippets';
+    --{'quangnguyen30192/cmp-nvim-ultisnips', branch='main'};
 
     -- " File browsing
-    -- "'kyazdani42/nvim-tree.lua' -- "Not as ripe as nerdtree, yet;
-    -- TODO: Redo with lazy loading
-	-- {'scrooloose/nerdtree', 'on':  [ 'NERDTreeToggle', 'NERDTreeFind' ] };
-    -- {'Xuyuanp/nerdtree-git-plugin', 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] };
-	{'scrooloose/nerdtree'};
-    {'Xuyuanp/nerdtree-git-plugin'};
+    'kyazdani42/nvim-tree.lua';
     -- " Ranger file manager integration
     {'kevinhwang91/rnvimr', run='make sync'};
 
@@ -118,13 +119,13 @@ local paq = require "paq" {
     -- TODO: 'HiPhish/info.vim', {'on' : 'Info'};
 
     -- " Notes, to-do, etc
-    'vimwiki/vimwiki';
-    'vimwiki/utils';
+    {'vimwiki/vimwiki', opt=true};
+    {'vimwiki/utils', opt=true};
 
     -- " Task Warrior integration
-    'tools-life/taskwiki';
-    'farseer90718/vim-taskwarrior';
-    'powerman/vim-plugin-AnsiEsc';
+    {'tools-life/taskwiki', opt=true};
+    {'farseer90718/vim-taskwarrior', opt=true};
+    {'powerman/vim-plugin-AnsiEsc', opt=true};
 
     -- " Language specific plugins
     -- TODO: 'kovetskiy/sxhkd-vim', { 'for': 'sxhkd' };
@@ -148,7 +149,8 @@ local paq = require "paq" {
 
     -- " Eye Candy
     'morhetz/gruvbox';
-    'vim-airline/vim-airline';
+    'nvim-lualine/lualine.nvim';
+    {'kyazdani42/nvim-web-devicons', opt=true};
 
     -- " Color colorcodes
     'norcalli/nvim-colorizer.lua';
@@ -163,16 +165,12 @@ local paq = require "paq" {
 
     -- " Use pywal theme
     -- "'dylanaraps/wal.vim';
-
-    -- " Load this one last
-    'ryanoasis/vim-devicons';
-    -- " Goes together with nvim-tree.lua
-    -- "'kyazdani42/nvim-web-devicons' -- "for file icons;
 }
 
 if paq_bootstrap then
     paq.sync()
 end
+require('impatient')
 -- " }}}
 -- """"""" General Vim Config """""""{{{1
 
@@ -195,7 +193,7 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 
 -- " Enable mouse, but in normal mode
-vim.opt.mouse=n
+vim.opt.mouse='n'
 
 -- " Open split the sane way
 vim.opt.splitright=true
@@ -256,6 +254,9 @@ vim.opt.smartcase = true
 vim.opt.exrc = true
 vim.opt.secure = true
 
+-- " Don't load default filetypes.vim on startup
+vim.g.did_load_filetypes = 1
+
 -- " Integrate RipGrep
 if vim.fn.executable('rg') then
     vim.opt.grepprg="rg --with-filename --no-heading $* /dev/null"
@@ -292,7 +293,8 @@ vim.g.python3_host_prog = '/usr/bin/python3'
 
 -- " AutoComplete Config {{{2
 -- " Don't let autocomplete affect usual typing habits
-vim.opt.completeopt=menuone,noinsert,noselect
+vim.opt.completeopt='menuone' --,noinsert,noselect'
+--vim.opt.completeopt='menuone,noinsert,noselect'
 -- "                 |        |          ^ Don't select anything in the menu
 -- "                 |        |            without my interaction
 -- "                 |        ^ Don't insert text without my interaction
@@ -306,121 +308,49 @@ vim.opt.completeopt=menuone,noinsert,noselect
 -- """"""" Plugs Config """"""{{{1
 -- " Autocompletion {{{2
 
-local t=function(str)
-	return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
 -- Setup nvim-cmp.
-local cmp = require'cmp'
+local has_words_before = function()
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
+
+local luasnip = require("luasnip")
+local cmp = require('cmp')
 
 cmp.setup({
 	snippet = {
 		expand = function(args)
-			vim.fn["UltiSnips#Anon"](args.body)
+			--vim.fn["UltiSnips#Anon"](args.body)
+            luasnip.lsp_expand(args.body)
 		end,
 	},
 	mapping = {
-		["<Tab>"] = cmp.mapping({
-			c = function()
-				if cmp.visible() then
-					cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-				else
-					cmp.complete()
-				end
-			end,
-			i = function(fallback)
-				if cmp.visible() then
-					cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-				elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-					vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
-				else
-					fallback()
-				end
-			end,
-			s = function(fallback)
-				if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-					vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
-				else
-					fallback()
-				end
-			end
-		}),
-		["<S-Tab>"] = cmp.mapping({
-			c = function()
-				if cmp.visible() then
-					cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
-				else
-					cmp.complete()
-				end
-			end,
-			i = function(fallback)
-				if cmp.visible() then
-					cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
-				elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-					return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
-				else
-					fallback()
-				end
-			end,
-			s = function(fallback)
-				if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-					return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
-				else
-					fallback()
-				end
-			end
-		}),
-		['<Down>'] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
-		['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
-		['<C-n>'] = cmp.mapping({
-			c = function()
-				if cmp.visible() then
-					cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
-				else
-					vim.api.nvim_feedkeys(t('<Down>'), 'n', true)
-				end
-			end,
-			i = function(fallback)
-				if cmp.visible() then
-					cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
-				else
-					fallback()
-				end
-			end
-		}),
-		['<C-p>'] = cmp.mapping({
-			c = function()
-				if cmp.visible() then
-					cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
-				else
-					vim.api.nvim_feedkeys(t('<Up>'), 'n', true)
-				end
-			end,
-			i = function(fallback)
-				if cmp.visible() then
-					cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
-				else
-					fallback()
-				end
-			end
-		}),
-		['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), {'i', 'c'}),
-		['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), {'i', 'c'}),
-		['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), {'i', 'c'}),
-		['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
-		['<CR>'] = cmp.mapping({
-			i = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false }),
-			c = function(fallback)
-				if cmp.visible() then
-					cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
-				else
-					fallback()
-				end
-			end
-		}),
+            ["<Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      elseif has_words_before() then
+        cmp.complete()
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+
+    ["<S-Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
 	},
 	sources = cmp.config.sources({
 		{ name = 'nvim_lsp' },
-		{ name = 'ultisnips' }
+		{ name = 'luasnip' }
+		--{ name = 'ultisnips' }
 	}, {
 		{ name = 'buffer' },
 	})
@@ -445,22 +375,25 @@ cmp.setup.cmdline(':', {
 	})
 })
 -- "}}}
+vim.api.nvim_exec('autocmd VimEnter * call vista#RunForNearestMethodOrFunction()', false)
+require'lualine'.setup{
+    options = { theme = 'gruvbox' },
+    sections = { lualine_c = {'filename', 'b:vista_nearest_method_or_function'} }
+}
+
+require'nvim-tree'.setup{}
+require'lspsaga'.init_lsp_saga()
 
 -- " HardTime in all buffers
 vim.g.hardtime_default_on = 0
 vim.g.hardtime_showmsg = 1
-vim.g.hardtime_ignore_buffer_patterns = { "NERD.*" }
+vim.g.hardtime_ignore_buffer_patterns = { "NvimTree.*" }
 vim.g.hardtime_ignore_quickfix = 1
 vim.g.hardtime_allow_different_key = 1
 
--- " Automatically close nvim when everything else except NERDTree is closed
-vim.cmd('autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif')
-
--- "set statusline="%f%m%r%h%w [%Y] [0x%02.2B]%< %F%=%4v,%4l %3p%% of %L"
-vim.g['airline#extensions#tabline#formatter'] = 'unique_tail'
-vim.g['airline#extensions#tabline#enabled'] = 1
-vim.g['airline#extensions#whitespace#enabled'] = 0
-vim.g.airline_powerline_fonts = 1
+-- " Automatically close nvim when everything else except NvimTree is closed
+-- Need to redo this for NvimTree
+-- vim.cmd('autocmd bufenter * if (winnr("$") == 1 && exists("b:NvimTree") && b:NERDTree.isTabTree()) | q | endif')
 
 -- " Gutentag Config
 -- " enable gtags module
@@ -519,20 +452,6 @@ command! Scratch exe "e $NOTES/Scratch/".strftime("%F-%H%M%S").".md"
 -- "let $FZF_DEFAULT_COMMAND = 'fd --type file'
 -- "let $FZF_DEFAULT_COMMAND = 'rg --files -g ""'
 
--- " Show netrw in tree style (i to change)
-vim.g.netrw_liststyle=3
-
--- " Nerd tree Config
-vim.g.loaded_nerdtree_git_status = 1
-vim.NERDTreeQuitOnOpen = 1
-vim.NERDTreeMinimalUI = 1
-vim.NERDTreeDirArrows = 1
-
--- " Make :UltiSnipsEdit to split the window.
-vim.g.UltiSnipsEditSplit="horizontal"
--- "vim.g.UltiSnipsSnippetDirectories=["~/.config/nvim/UltiSnips"]
--- "vim.g.UltiSnipsSnippetsDir="~/.config/nvim/UltiSnips"
-
 -- " Pandoc configuration
 vim.g['pandoc#command#custom_open']='zathura'
 vim.g['pandoc#command#prefer_pdf']=1
@@ -561,11 +480,14 @@ vim.g.startify_lists = {
 }
 
 vim.g.startify_bookmarks = {
-{ i= '~/.config/nvim/init.vim'  },
+{ i= '~/.config/nvim/init.lua'  },
 { b= '~/.bashrc'  },
 { u= '~/.bashrc.'..vim.env.USER  },
 }
 
+-- Lua is more picky about escaping backslashes
+-- Preferable method is to first put the text
+-- and after the shape is fine, escape them
 vim.g.nabaco = {
 '     _   __            ____            ______        ',
 '    / | / /  ____ _   / __ )  ____ _  / ____/  ____  ',
@@ -651,8 +573,8 @@ map{'v', 'jk', '<Esc>'}
 -- "map{'n', '<Leader>v', ':Explore<cr>'}
 -- "map{'n', '<Leader>V', ':Sexplore<cr>'}
 -- "map('n', \|V :Vexplore<cr>
-map{'n', '<Leader>n', ':NERDTreeToggle<CR>'}
-map{'n', '<Leader>v', ':NERDTreeFind<CR>'}
+map{'n', '<Leader>n', ':NvimTreeToggle<CR>'}
+map{'n', '<Leader>v', ':NvimTreeFindFile<CR>'}
 
 map{'n', '<leader>s', '<cmd>Startify<CR>'}
 
@@ -786,6 +708,12 @@ lspconfig.clangd.setup{
 	end
 }
 
+-- " }}}
+-- LspSaga
+map{'n', '<Leader>lf', "<cmd>Lspsaga lsp_finder<CR>"}
+map{'n', '<silent><leader>ca', '<cmd>Lspsaga code_action<CR>'}
+map{'v', '<silent><leader>ca', '<cmd><C-U>Lspsaga range_code_action<CR>'}
+
 -- " Quick Ack
 map{'n', '/<Leader>', ':Ack!<Space>'}
 -- " Notes
@@ -860,3 +788,4 @@ map{'n', '<silent> <F6>', ':!compiler %<cr>'}
 --map{'i', '<silent><expr><tab>', 'pumvisible() ? "<c-n>" : "<tab>"'}
 --map{'i', '<silent><expr><s-tab>', 'pumvisible() ? "<c-p>" : "<s-tab>"'}
 -- " }}}
+
