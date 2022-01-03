@@ -2,7 +2,7 @@
 
 local install_path = vim.fn.stdpath('data')..'/site/pack/paqs/start/paq-nvim'
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-  paq_bootstrap = vim.fn.system({'git', 'clone', '--depth', '1', 'https://github.com/savq/paq-nvim.git', install_path})
+   PAQ_BOOTSTRAP = vim.fn.system({'git', 'clone', '--depth', '1', 'https://github.com/savq/paq-nvim.git', install_path})
   vim.cmd('packadd paq-nvim')
 end
 
@@ -49,34 +49,26 @@ local paq = require "paq" {
     'junegunn/fzf.vim';
 
     -- " Alternative file contents search
-    {'mileszs/ack.vim', opt=true};
+    'mileszs/ack.vim';
 
     -- " Autocompletion
     'neovim/nvim-lspconfig';
-    'glepnir/lspsaga.nvim';
+    --'glepnir/lspsaga.nvim';
+    'tami5/lspsaga.nvim';
+    'liuchengxu/vista.vim';
+    'weilbith/nvim-lsp-smag';
     {'hrsh7th/cmp-nvim-lsp', branch='main'};
     {'hrsh7th/cmp-buffer', branch='main'};
     {'hrsh7th/cmp-path', branch='main'};
     {'hrsh7th/cmp-cmdline', branch='main'};
     {'hrsh7th/nvim-cmp', branch='main'};
-    'L3MON4D3/LuaSnip';
-    'saadparwaiz1/cmp_luasnip';
-    'rafamadriz/friendly-snippets';
-    --{'quangnguyen30192/cmp-nvim-ultisnips', branch='main'};
+    {'quangnguyen30192/cmp-nvim-ultisnips', branch='main'};
+    'folke/lua-dev.nvim';
 
     -- " File browsing
     'kyazdani42/nvim-tree.lua';
     -- " Ranger file manager integration
     {'kevinhwang91/rnvimr', run='make sync'};
-
-    -- " Ctags support
-    -- " Easytags replacement with support for Universal Ctags
-    -- "'ludovicchabant/vim-gutentags';
-    -- " 'skywind3000/gutentags_plus' -- "Extra for Cscope;
-    -- "'majutsushi/tagbar' -- "A bar with list of all the tags in the buffer;
-    'liuchengxu/vista.vim';
-    -- "'xolox/vim-misc' -- "Required by easytags;
-    -- "'xolox/vim-easytags';
 
     -- " A - for switching between source and header files
     'vim-scripts/a.vim';
@@ -84,14 +76,12 @@ local paq = require "paq" {
     -- " UltiSnips
     'SirVer/ultisnips';
     'honza/vim-snippets';
-    -- "'norcalli/snippets.nvim' "To be revisited;
 
     -- " Remove extraneous whitespace when edit mode is exited
     'thirtythreeforty/lessspace.vim';
 
     -- " Bracket completion
-    -- "'Raimondi/delimitMate';
-    'cohama/lexima.vim';
+    'windwp/nvim-autopairs';
 
     -- " Tpope's plugins
     'tpope/vim-surround'; -- "surround vim
@@ -99,7 +89,7 @@ local paq = require "paq" {
     'tpope/vim-eunuch'; -- "Unix commands from Vim
     'tpope/vim-commentary'; -- "Comment blocks
     -- " It appears I don't need that since Startify does the same
-    -- "'tpope/vim.opt.session' -- "Vim session management
+    -- "'tpope/obsession' -- "Vim session management
 
     -- " Imporve % for if..else and such
     -- " Does Neovim need this? I think Neovim has it built in
@@ -111,9 +101,9 @@ local paq = require "paq" {
 
     -- " External App Integration
     -- " API documentation
-    -- TODO: 'KabbAmine/zeavim.vim', { 'on': ['Zeavim', 'Zeavim!', 'ZeavimV', 'ZeavimV!'] };
+    -- TODO: 'KabbAmine/zeavim.vim'
     -- " The ultimate cheat sheet
-    -- TODO: 'dbeniamine/cheat.sh-vim', { 'on' : ['Cheat'] };
+    {'dbeniamine/cheat.sh-vim', opt=true};
     -- " Read GNU Info from vim
     -- "'alx741/vinfo';
     -- TODO: 'HiPhish/info.vim', {'on' : 'Info'};
@@ -169,7 +159,7 @@ local paq = require "paq" {
     -- "'dylanaraps/wal.vim';
 }
 
-if paq_bootstrap then
+if PAQ_BOOTSTRAP then
     paq.install()
 end
 require('impatient')
@@ -295,8 +285,7 @@ vim.g.python3_host_prog = '/usr/bin/python3'
 
 -- " AutoComplete Config {{{2
 -- " Don't let autocomplete affect usual typing habits
-vim.opt.completeopt='menuone' --,noinsert,noselect'
---vim.opt.completeopt='menuone,noinsert,noselect'
+vim.opt.completeopt='menuone,noinsert,noselect'
 -- "                 |        |          ^ Don't select anything in the menu
 -- "                 |        |            without my interaction
 -- "                 |        ^ Don't insert text without my interaction
@@ -311,52 +300,136 @@ vim.opt.completeopt='menuone' --,noinsert,noselect'
 -- " Autocompletion {{{2
 
 -- Setup nvim-cmp.
-local has_words_before = function()
-  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+
+local t = function(str)
+    return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
 
-local luasnip = require("luasnip")
 local cmp = require('cmp')
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on( 'confirm_done', cmp_autopairs.on_confirm_done({  map_char = { tex = '' } }))
 
 cmp.setup({
 	snippet = {
 		expand = function(args)
-			--vim.fn["UltiSnips#Anon"](args.body)
-            luasnip.lsp_expand(args.body)
+			vim.fn["UltiSnips#Anon"](args.body)
 		end,
 	},
-	mapping = {
-            ["<Tab>"] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_jumpable() then
-        luasnip.expand_or_jump()
-      elseif has_words_before() then
-        cmp.complete()
-      else
-        fallback()
-      end
-    end, { "i", "s" }),
+    mapping = {
+        ["<Tab>"] = cmp.mapping({
+            c = function()
+                if cmp.visible() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+                else
+                    cmp.complete()
+                end
+            end,
+            i = function(fallback)
+                if cmp.visible() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+                elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+                    vim.fn["UltiSnips#JumpForwards"]()
+                else
+                    fallback()
+                end
+            end,
+            s = function(fallback)
+                if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+                    vim.fn["UltiSnips#JumpForwards"]()
+                else
+                    fallback()
+                end
+            end
+        }),
+        ["<S-Tab>"] = cmp.mapping({
+            c = function()
+                if cmp.visible() then
+                    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+                else
+                    cmp.complete()
+                end
+            end,
+            i = function(fallback)
+                if cmp.visible() then
+                    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+                elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+                    vim.fn["UltiSnips#JumpBackwards"]()
+                else
+                    fallback()
+                end
+            end,
+            s = function(fallback)
+                if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+                    vim.fn["UltiSnips#JumpBackwards"]()
+                else
+                    fallback()
+                end
+            end
+        }),
+        ['<Down>'] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
+        ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
+        ['<C-n>'] = cmp.mapping({
+            c = function()
+                if cmp.visible() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                else
+                    vim.api.nvim_feedkeys(t('<Down>'), 'n', true)
+                end
+            end,
+            i = function(fallback)
+                if cmp.visible() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                else
+                    fallback()
+                end
+            end
+        }),
+        ['<C-p>'] = cmp.mapping({
+            c = function()
+                if cmp.visible() then
+                    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+                else
+                    vim.api.nvim_feedkeys(t('<Up>'), 'n', true)
+                end
+            end,
+            i = function(fallback)
+                if cmp.visible() then
+                    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+                else
+                    fallback()
+                end
+            end
+        }),
+        ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), {'i', 'c'}),
+        ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), {'i', 'c'}),
+        ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), {'i', 'c'}),
+        ['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
+        ['<CR>'] = cmp.mapping({
+            i = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false }),
+            c = function(fallback)
+                if cmp.visible() then
+                    cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+                else
+                    fallback()
+                end
+            end
+        }),
+    },
 
-    ["<S-Tab>"] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end, { "i", "s" }),
-	},
 	sources = cmp.config.sources({
 		{ name = 'nvim_lsp' },
-		{ name = 'luasnip' }
-		--{ name = 'ultisnips' }
+		--{ name = 'luasnip' }
+		{ name = 'ultisnips' }
 	}, {
 		{ name = 'buffer' },
 	})
 })
+
+-- " UltiSnips Bindings
+vim.g.UltiSnipsExpandTrigger="<Leader><Leader>"
+vim.g.UltiSnipsListSnippets="<Leader>s"
+vim.g.UltiSnipsJumpForwardTrigger="<c-j>"
+vim.g.UltiSnipsJumpBackwardTrigger="<c-k>"
 
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline('/', {
@@ -383,8 +456,13 @@ require'lualine'.setup{
     sections = { lualine_c = {'filename', 'b:vista_nearest_method_or_function'} }
 }
 
-require'nvim-tree'.setup{}
+require'nvim-tree'.setup{auto_close = true}
+vim.g.nvim_tree_quit_on_open = 1
+vim.g.nvim_tree_disable_window_picker = 1
+vim.g.nvim_tree_respect_buf_cwd = 1
+
 require'lspsaga'.init_lsp_saga()
+require'nvim-autopairs'.setup{}
 
 -- " HardTime in all buffers
 vim.g.hardtime_default_on = 0
@@ -392,10 +470,6 @@ vim.g.hardtime_showmsg = 1
 vim.g.hardtime_ignore_buffer_patterns = { "NvimTree.*" }
 vim.g.hardtime_ignore_quickfix = 1
 vim.g.hardtime_allow_different_key = 1
-
--- " Automatically close nvim when everything else except NvimTree is closed
--- Need to redo this for NvimTree
--- vim.cmd('autocmd bufenter * if (winnr("$") == 1 && exists("b:NvimTree") && b:NERDTree.isTabTree()) | q | endif')
 
 -- " Gutentag Config
 -- " enable gtags module
@@ -726,12 +800,6 @@ map{'n', '<Leader>ww', ':FZF $NOTES<cr>'}
 map{'i', '<leader>d', '<C-r>=strftime("%a %d.%m.%Y %H:%M")<cr>'}
 map{'i', '<leader>D', '<C-r>=strftime("%d.%m.%y")<cr>'}
 
--- " UltiSnips Bindings
-vim.g.UltiSnipsExpandTrigger="<Leader><Leader>"
-
-vim.g.UltiSnipsListSnippets="<Leader>s"
-vim.g.UltiSnipsJumpForwardTrigger="<c-j>"
-vim.g.UltiSnipsJumpBackwardTrigger="<c-k>"
 
 map{'n', ',', '<Plug>(easymotion-prefix))'}
 
