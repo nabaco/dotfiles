@@ -136,28 +136,6 @@ shopt -s autocd
 
 # Integrations {{{1
 
-# FZF {{{2
-if [ -f ~/.fzf.bash ]; then
-    source ~/.fzf.bash
-else
-    [ -f ~/.local/bin/fzf/shell/completion.bash ] && source ~/.local/bin/fzf/shell/completion.bash
-    [ -f ~/.local/bin/fzf/shell/key-bindings.bash ] && source ~/.local/bin/fzf/shell/key-bindings.bash
-fi
-#}}}
-
-# Git {{{2
-# enable tab-copletetion for git commands
-if [ -f ~/.local/bin/git-completion.bash ]; then
-    source ~/.local/bin/git-completion.bash
-fi
-#}}}
-
-# Apparish {{{2
-# https://github.com/goedel-gang/bash-utils
-if [ -f ~/.local/bin/appari.sh ]; then
-    source ~/.local/bin/appari.sh
-fi
-#}}}
 
 # Functions {{{1
 TICK="✓"
@@ -224,21 +202,25 @@ preexec() {
 trap 'preexec' DEBUG
 #}}}
 
-# Source user/host specific bashrc
-if [ -f ~/.bashrc.$USER ]; then
-    source ~/.bashrc.$USER
-fi
+# Apparish: https://github.com/goedel-gang/bash-utils
+# FZF: Expected to source either the first one, or the 2 others, but not all.
+FILES_TO_SOURCE="$HOME/.bashrc.$USER \
+                 $HOME/local/usr/share/bash-completion/completions/task \
+                 $HOME/.config/broot/launcher/bash/br \
+                 $HOME/.cargo/env \
+                 $HOME/.local/bin/appary.sh \
+                 $HOME/.local/bin/git-completion.bash \
+                 $HOME/.fzf.bash \
+                 $HOME/.local/bin/fzf/shell/completion.bash \
+                 $HOME/.local/bin/fzf/shell/key-bindings.bash"
 
-if [ -f ~/.local/usr/share/bash-completion/completions/task ]; then
-    source ~/.local/usr/share/bash-completion/completions/task
-fi
-
-if [ -e ~/.config/broot/launcher/bash/br ]; then
-    source ~/.config/broot/launcher/bash/br
-fi
+for file in $FILES_TO_SOURCE; do
+    if [ -f "$file" ]; then
+        source "$file"
+    fi
+done
 
 if [ -f ~/.local/usr/bin/bb ]; then
     eval "$(~/.local/usr/bin/bb init -)"
 fi
 #}}}
-. "$HOME/.cargo/env"
