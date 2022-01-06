@@ -2,8 +2,8 @@
 
 local install_path = vim.fn.stdpath('data')..'/site/pack/paqs/start/paq-nvim'
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-   PAQ_BOOTSTRAP = vim.fn.system({'git', 'clone', '--depth', '1', 'https://github.com/savq/paq-nvim.git', install_path})
-  vim.cmd('packadd paq-nvim')
+    PAQ_BOOTSTRAP = vim.fn.system({'git', 'clone', '--depth', '1', 'https://github.com/savq/paq-nvim.git', install_path})
+    vim.cmd('packadd paq-nvim')
 end
 
 local paq = require "paq" {
@@ -40,8 +40,8 @@ local paq = require "paq" {
 
     -- " Ultimate fuzzy search + Multi-entry selection UI.
     -- TODO: if fn.empty(fn.glob('/usr/bin/fzf')) > 0 then
-        -- " Binary is installed through package manager.
-        -- " Install just the latest plugin without installing FZF itself
+    -- " Binary is installed through package manager.
+    -- " Install just the latest plugin without installing FZF itself
     --    'junegunn/fzf';
     -- else
     {'junegunn/fzf', run=vim.fn["fzf#install()"]};
@@ -63,6 +63,7 @@ local paq = require "paq" {
     {'hrsh7th/cmp-cmdline', branch='main'};
     {'hrsh7th/nvim-cmp', branch='main'};
     {'quangnguyen30192/cmp-nvim-ultisnips', branch='main'};
+    'ray-x/lsp_signature.nvim';
     'folke/lua-dev.nvim';
 
     -- " File browsing
@@ -137,7 +138,7 @@ local paq = require "paq" {
     -- TODO: 'scrooloose/vim-slumlord', { 'for': 'plantuml' };
 
     -- " Pop-up the built in terminal
-	'Lenovsky/nuake';
+    'Lenovsky/nuake';
 
     -- " Eye Candy
     'morhetz/gruvbox';
@@ -210,6 +211,7 @@ vim.opt.undofile=true
 
 -- " Highlight edge column
 vim.opt.colorcolumn='100'
+vim.opt.cursorline = true
 -- " Let plugins show effects after 500ms, not 4s
 --vim.opt.updatetime=500
 -- " Show whitespaces
@@ -265,8 +267,8 @@ vim.opt.tags='./tags,**5/tags,tags;~'
 
 
 augroup highlight_yank
-	autocmd!
-	autocmd TextYankPost * silent! lua vim.highlight.on_yank({timeout='1000'})
+autocmd!
+autocmd TextYankPost * silent! lua vim.highlight.on_yank({timeout='1000'})
 augroup END
 
 autocmd BufWritePost *sxhkdrc !pkill -USR1 -x sxhkd
@@ -310,11 +312,11 @@ local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 cmp.event:on( 'confirm_done', cmp_autopairs.on_confirm_done({  map_char = { tex = '' } }))
 
 cmp.setup({
-	snippet = {
-		expand = function(args)
-			vim.fn["UltiSnips#Anon"](args.body)
-		end,
-	},
+    snippet = {
+        expand = function(args)
+            vim.fn["UltiSnips#Anon"](args.body)
+        end,
+    },
     mapping = {
         ["<Tab>"] = cmp.mapping({
             c = function()
@@ -416,38 +418,38 @@ cmp.setup({
         }),
     },
 
-	sources = cmp.config.sources({
-		{ name = 'nvim_lsp' },
-		--{ name = 'luasnip' }
-		{ name = 'ultisnips' }
-	}, {
-		{ name = 'buffer' },
-	})
+    sources = cmp.config.sources({
+        { name = 'nvim_lsp' },
+        --{ name = 'luasnip' }
+        { name = 'ultisnips' }
+    }, {
+        { name = 'buffer' },
+    })
 })
 
 -- " UltiSnips Bindings
 vim.g.UltiSnipsExpandTrigger="<Leader><Leader>"
-vim.g.UltiSnipsListSnippets="<Leader>s"
+vim.g.UltiSnipsListSnippets="<Leader>x"
 vim.g.UltiSnipsJumpForwardTrigger="<c-j>"
 vim.g.UltiSnipsJumpBackwardTrigger="<c-k>"
 
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline('/', {
-	completion = { autocomplete = false },
-	sources = {
-		-- { name = 'buffer' }
-		{ name = 'buffer', opts = { keyword_pattern = [=[[^[:blank:]].*]=] } }
-	}
+    completion = { autocomplete = false },
+    sources = {
+        -- { name = 'buffer' }
+        { name = 'buffer', opts = { keyword_pattern = [=[[^[:blank:]].*]=] } }
+    }
 })
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
-	completion = { autocomplete = false },
-	sources = cmp.config.sources({
-		{ name = 'path' }
-	}, {
-		{ name = 'cmdline' }
-	})
+    completion = { autocomplete = false },
+    sources = cmp.config.sources({
+        { name = 'path' }
+    }, {
+        { name = 'cmdline' }
+    })
 })
 -- "}}}
 vim.api.nvim_exec('autocmd VimEnter * call vista#RunForNearestMethodOrFunction()', false)
@@ -549,27 +551,27 @@ vim.g.startify_enable_special = 0
 vim.g.startify_relative_path = 1
 
 vim.g.startify_lists = {
-{ type= 'dir',       header= {'   Current Directory: '.. vim.fn.getcwd()}  },
-{ type= 'files',     header= {'   Files'}             },
-{ type= 'sessions',  header= {'   Sessions'}        },
-{ type= 'bookmarks', header= {'   Bookmarks'}       },
+    { type= 'dir',       header= {'   Current Directory: '.. vim.fn.getcwd()}  },
+    { type= 'files',     header= {'   Files'}             },
+    { type= 'sessions',  header= {'   Sessions'}        },
+    { type= 'bookmarks', header= {'   Bookmarks'}       },
 }
 
 vim.g.startify_bookmarks = {
-{ i= '~/.config/nvim/init.lua'  },
-{ b= '~/.bashrc'  },
-{ u= '~/.bashrc.'..vim.env.USER  },
+    { i= '~/.config/nvim/init.lua'  },
+    { b= '~/.bashrc'  },
+    { u= '~/.bashrc.'..vim.env.USER  },
 }
 
 -- Lua is more picky about escaping backslashes
 -- Preferable method is to first put the text
 -- and after the shape is fine, escape them
 vim.g.nabaco = {
-'     _   __            ____            ______        ',
-'    / | / /  ____ _   / __ )  ____ _  / ____/  ____  ',
-'   /  |/ /  / __ `/  / __  | / __ `/ / /      / __ \\ ',
-'  / /|  /  / /_/ /  / /_/ / / /_/ / / /___   / /_/ / ',
-' /_/ |_/   \\__,_/  /_____/  \\__,_/  \\____/   \\____/  ',
+    '     _   __            ____            ______        ',
+    '    / | / /  ____ _   / __ )  ____ _  / ____/  ____  ',
+    '   /  |/ /  / __ `/  / __  | / __ `/ / /      / __ \\ ',
+    '  / /|  /  / /_/ /  / /_/ / / /_/ / / /___   / /_/ / ',
+    ' /_/ |_/   \\__,_/  /_____/  \\__,_/  \\____/   \\____/  ',
 }
 
 -- "vim.g.nabaco = [
@@ -603,14 +605,14 @@ vim.g.startify_custom_header =  'startify#center(g:nabaco) + startify#center(sta
 require'colorizer'.setup(
 {'*';},
 {
-	RGB      = true;         -- #RGB hex codes
-	RRGGBB   = true;         -- #RRGGBB hex codes
-	names    = true;         -- "Name" codes like Blue
-	RRGGBBAA = true;         -- #RRGGBBAA hex codes
-	rgb_fn   = true;         -- CSS rgb() and rgba() functions
-	hsl_fn   = true;         -- CSS hsl() and hsla() functions
-	css      = true;         -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
-	css_fn   = true;         -- Enable all CSS *functions*: rgb_fn, hsl_fn
+    RGB      = true;         -- #RGB hex codes
+    RRGGBB   = true;         -- #RRGGBB hex codes
+    names    = true;         -- "Name" codes like Blue
+    RRGGBBAA = true;         -- #RRGGBBAA hex codes
+    rgb_fn   = true;         -- CSS rgb() and rgba() functions
+    hsl_fn   = true;         -- CSS hsl() and hsla() functions
+    css      = true;         -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+    css_fn   = true;         -- Enable all CSS *functions*: rgb_fn, hsl_fn
 })
 
 vim.g['rainbow#max_level']= 16
@@ -620,23 +622,25 @@ vim.cmd('autocmd FileType * RainbowParentheses')
 -- " }}}
 -- """"""" Key Mappings """""" {{{1
 local map = function(key)
-  -- get the extra options
-  local opts = {noremap = true}
-  for i, v in pairs(key) do
-    if type(i) == 'string' then opts[i] = v end
-  end
+    -- get the extra options
+    local opts = {noremap = true}
+    for i, v in pairs(key) do
+        if type(i) == 'string' then opts[i] = v end
+    end
 
-  -- basic support for buffer-scoped keybindings
-  local buffer = opts.buffer
-  opts.buffer = nil
+    -- basic support for buffer-scoped keybindings
+    local buffer = opts.buffer
+    opts.buffer = nil
 
-  if buffer then
-    vim.api.nvim_buf_set_keymap(0, key[1], key[2], key[3], opts)
-  else
-    vim.api.nvim_set_keymap(key[1], key[2], key[3], opts)
-  end
+    if buffer then
+        vim.api.nvim_buf_set_keymap(0, key[1], key[2], key[3], opts)
+    else
+        vim.api.nvim_set_keymap(key[1], key[2], key[3], opts)
+    end
 end
 
+local wk = require("which-key")
+wk.setup{}
 -- " Make life easier with exiting modes back to normal
 map{'i', 'jk', '<Esc>'}
 map{'v', 'jk', '<Esc>'}
@@ -761,6 +765,21 @@ local on_attach = function(client, bufnr)
 		augroup END
 		]], false)
 	end
+    vim.g.vista_default_executive='nvim_lsp'
+    -- Set autocommands conditional on server_capabilities
+    if client.resolved_capabilities.document_highlight then
+        vim.api.nvim_exec([[
+        hi LspReferenceRead cterm=bold ctermbg=red guibg=Orange
+        hi LspReferenceText cterm=bold ctermbg=red guibg=Orange
+        hi LspReferenceWrite cterm=bold ctermbg=red guibg=Orange
+        augroup lsp_document_highlight
+        autocmd! * <buffer>
+        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+        augroup END
+        ]], false)
+    end
+    require "lsp_signature".on_attach({ hi_parameter = "IncSearch"})
 end
 
 -- Use a loop to conveniently both setup defined servers
@@ -768,30 +787,52 @@ end
 local servers = { "jedi_language_server", "robotframework_ls" }
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 for _, lsp in ipairs(servers) do
-	lspconfig[lsp].setup {
-		on_attach = on_attach;
-		capabilities = capabilities
-	}
+    lspconfig[lsp].setup {
+        on_attach = on_attach;
+        capabilities = capabilities
+    }
 end
 
 lspconfig.clangd.setup{
-	-- cmd = { "clangd", "--background-index", "--cross-file-rename", "--limit-results=0", "-j=$(nproc)" };
-	on_attach = on_attach;
-	capabilities = capabilities;
-	root_dir = function(fname)
-		return lspconfig.util.root_pattern("compile_commands.json")(fname) or
-		lspconfig.util.root_pattern("compile_flags.txt", ".clangd", ".git")(fname);
-	end
+    -- cmd = { "clangd", "--background-index", "--cross-file-rename", "--limit-results=0", "-j=$(nproc)" };
+    on_attach = on_attach;
+    capabilities = capabilities;
+    root_dir = function(fname)
+        return lspconfig.util.root_pattern("compile_commands.json")(fname) or
+        lspconfig.util.root_pattern("compile_flags.txt", ".clangd", ".git")(fname);
+    end
 }
+
+local luadev = require("lua-dev").setup({
+    lsp_config = {
+        on_attach = on_attach; capabilities = capabilities
+    }
+})
+lspconfig.sumneko_lua.setup(luadev)
 
 -- " }}}
 -- LspSaga
-map{'n', '<Leader>lf', "<cmd>Lspsaga lsp_finder<CR>"}
-map{'n', '<silent><leader>ca', '<cmd>Lspsaga code_action<CR>'}
-map{'v', '<silent><leader>ca', '<cmd><C-U>Lspsaga range_code_action<CR>'}
+local find_file = function()
+    local nvim_tree = require('nvim-tree')
+    nvim_tree.toggle()
+    vim.cmd("wincmd w")
+    nvim_tree.find_file({toggle=true})
+    --nvim_tree.find_file()
+end
 
--- " Quick Ack
-map{'n', '/<Leader>', ':Ack!<Space>'}
+wk.register({
+    l = {
+        name = "+LSP",
+        f = {'<cmd>Lspsaga lsp_finder<CR>', 'LSP Saga Finder'},
+        c = {'<cmd>Lspsaga code_action<CR>', 'Code Action'},
+        C = {'<cmd><C-U>Lspsaga range_code_action<CR>', 'Range Code Action', mode='v'}
+    },
+    n = { '<cmd>NvimTreeToggle<CR>', 'File Explorer'},
+    --v = { '<cmd>NvimTreeFindFileToggle<CR>', 'Find Current File'},
+    v = { find_file, 'Find Current File'},
+    s = { '<cmd>Startify<CR>', 'Startify Welcome Screen'}
+}, { prefix = '<Leader>'})
+
 -- " Notes
 map{'n', '<Leader>wn', ':Nack<space>'}
 map{'n', '<Leader>ww', ':FZF $NOTES<cr>'}
@@ -858,4 +899,3 @@ map{'n', '<silent> <F6>', ':!compiler %<cr>'}
 --map{'i', '<silent><expr><tab>', 'pumvisible() ? "<c-n>" : "<tab>"'}
 --map{'i', '<silent><expr><s-tab>', 'pumvisible() ? "<c-p>" : "<s-tab>"'}
 -- " }}}
-
