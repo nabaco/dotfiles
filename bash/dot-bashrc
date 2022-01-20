@@ -85,16 +85,16 @@ ns=`ip netns identify`
 
 if [ "$color_prompt" = yes ]; then
     if [ -n "$ns" ]; then
-        PS1="${reset}${debian_chroot:+($debian_chroot)}${green}${ns}${reset}:${blue}\w${reset}\$ "
+        export PROMPT_COMMAND='PS1="${reset}${debian_chroot:+($debian_chroot)}${green}${ns}${reset}:${blue}\w${reset}\$ "'
     else
-        PS1="${reset}${debian_chroot:+($debian_chroot)}${green}\u@\h${reset}:${blue}\w${reset}\$ "
+        export PROMPT_COMMAND='PS1="$(task_indicator)${reset}${debian_chroot:+($debian_chroot)}${green}\u@\h${reset}:${blue}\w${reset}\$ "'
     fi
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
 unset color_prompt force_color_prompt
 
-export PROMPT_COMMAND='PS1="$(task_indicator)${reset}${debian_chroot:+($debian_chroot)} ${green}\u@\h${reset}:${blue}\w${reset}\$ "'
+#export PROMPT_COMMAND='PS1="$(task_indicator)${reset}${debian_chroot:+($debian_chroot)}${green}\u@\h${reset}:${blue}\w${reset}\$ "'
 
 #}}}
 
@@ -173,7 +173,7 @@ function task_indicator {
     if [ "$overdue" -gt "0" ]; then
         ti+="${red}O:$overdue${reset}|"
     fi
-    echo "$ti"
+    echo "$ti "
 }
 
 # -- Improved X11 forwarding through GNU Screen (or tmux).

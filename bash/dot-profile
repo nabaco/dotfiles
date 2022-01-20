@@ -81,6 +81,3 @@ fi
 
 # Start graphical server if WM not already running.
 [ "$(tty)" = "/dev/tty1" ] && ! pgrep -x "$WM" >/dev/null && exec startx
-if [ -f "$HOME/.cargo/env" ]; then
-    . "$HOME/.cargo/env"
-fi
