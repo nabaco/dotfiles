@@ -32,7 +32,7 @@ done
 NVIM_VERSION="0.6.0"
 echo "Downloading NeoVim v$NVIM_VERSION"
 
-if [ "`id|grep sudo`" == "" ]; then
+if [ "`id|egrep '(sudo|wheel)'`" = "" ]; then
 	mkdir -p ~/.local/usr/bin
 	wget https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim.appimage -O ~/.local/usr/bin/nvim
 	chmod +x ~/.local/usr/bin/nvim
