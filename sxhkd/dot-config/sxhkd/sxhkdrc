@@ -48,6 +48,26 @@ super + shift + p
 super + shift + c
 	dot-config
 
+# Toggle conky
+alt + backslash
+  if [[ $(xrandr | grep ‘*’ | cut -dx -f1 | sort | tail -1) -gt 1024 ]]; then
+    if xdotool search –onlyvisible –classname ‘Conky’ windowunmap; then
+      bspc config -m DVI-1 right_padding 0;
+    else
+      bspc config -m DVI-1 right_padding $CONKY_WIDTH;
+      xdotool search –classname ‘Conky’ windowmap
+      || conky -q -c ~/.config/conky/conky.conf &
+    fi;
+  else
+    xdotool search –onlyvisible –classname ‘Conky’ windowunmap
+    || xdotool search –classname ‘Conky’ windowmap
+    || conky -q -c ~/.config/conky/conky.conf &
+  fi
+
+alt + ctrl + backslash
+  bspc config -m DVI-1 right_padding $CONKY_WIDTH;
+  raise Conky
+
 # Delete current wallpaper
 super + d
 	setbg -d

@@ -49,6 +49,50 @@ function new-post()
 {
     hugo -s $WEBSITE --editor=$VISUAL new blog/"$*".md
 }
+function task-note()
+{
+    # Args: Task ID
+    if (which task > /dev/null);
+    then
+        task=$1
+        alias inb='task add +in'
+        u=$(task _get $task.uuid)
+        d=$(task _get $task.description)
+        t=$(task _get $task.tags)
+        echo "---"
+        echo "tags:[$t]"
+        echo "tw:$u"
+        echo "---"
+        echo "\n# $d"
+        #sed -i 's/tw:/tw:'$u'/' test.md
+    fi
+}
+
+# Taskwarrior GTD Inbox
+if (which task > /dev/null);
+then
+    alias inb='task add +in'
+    fi
+
+if (which bat > /dev/null);
+then
+    alias cat=bat
+elif (which batcat > /dev/null);
+then
+    alias cat=batcat
+fi
+
+if (which exa > /dev/null);
+then
+    alias ls=exa
+elif (which exals > /dev/null);
+then
+    alias ls=exals
+fi
+if (which fdfind > /dev/null);
+then
+    alias fd=fdfind
+fi
 #}}}
 
 # some more ls aliases

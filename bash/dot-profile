@@ -60,6 +60,9 @@ export PAGER="less"
 export READER="zathura"
 export FILE="vifm-start"
 export WM="bspwm"
+if [ -f ~/.config/conky/conky.conf ]; then
+    export CONKY_WIDTH=$(grep 'maximum_width' ~/.config/conky/conky.conf | cut -d'=' -f2)
+fi
 
 # less/man colors
 export LESS=-R

@@ -24,14 +24,14 @@ fi
 
 if [ -f /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
     source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-#    bindkey "$terminfo[kcuu1]" history-substring-search-up
-#    bindkey "$terminfo[kcud1]" history-substring-search-down
+    #    bindkey "$terminfo[kcuu1]" history-substring-search-up
+    #    bindkey "$terminfo[kcud1]" history-substring-search-down
     bindkey '^[[A' history-substring-search-up
     bindkey '^[[B' history-substring-search-down
 elif [ -f $HOME/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
     source $HOME/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
-#    bindkey "$terminfo[kcuu1]" history-substring-search-up
-#    bindkey "$terminfo[kcud1]" history-substring-search-down
+    #    bindkey "$terminfo[kcuu1]" history-substring-search-up
+    #    bindkey "$terminfo[kcud1]" history-substring-search-down
     bindkey '^[[A' history-substring-search-up
     bindkey '^[[B' history-substring-search-down
     bindkey '^[OA' history-substring-search-up
@@ -61,15 +61,16 @@ fi
 
 python_version=$(python3 --version|sed 's/Python \(3\.[0-9]\)\.[0-9]/python\1/')
 if [ -f /lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh ]; then
-	source /lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh
+    source /lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh
 elif [ -f $HOME/.local/lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh ]; then
     source $HOME/.local/lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh
 fi
 
 
-if [ -f ~/shell_aliases ]; then
-then
-	source ~/shell_aliases
+if [ -f ~/.bash_aliases ]; then
+    source ~/.bash_aliases
 fi
 
-source /home/nbarcohx/.config/broot/launcher/bash/br
+if [ -f /home/nbarcohx/.config/broot/launcher/bash/br ]; then
+    source /home/nbarcohx/.config/broot/launcher/bash/br
+fi

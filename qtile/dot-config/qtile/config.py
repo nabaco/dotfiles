@@ -68,6 +68,7 @@ keys = [
     Key([mod, "shift"], "Return", lazy.layout.toggle_split(),
         desc="Toggle between split and unsplit sides of stack"),
     Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
+    Key([mod], "e", lazy.spawn("pcmanfm"), desc="Launch file manager"),
     Key([mod], "space", lazy.spawn("rofi -show run -modi window,run,file-browser"), desc="Launch Rofi"),
     Key([mod], "c", lazy.spawn("dot-config"), desc="Edit common config files"),
 
@@ -154,8 +155,8 @@ def show_keys():
 keys.extend([ Key([mod], "F1", lazy.spawn("sh -c 'echo \"" + show_keys() + "\" | rofi -dmenu -i -mesg \"Keyboard shortcuts\"'"), desc="Print keyboard bindings"), ] )
 
 layouts = [
-    layout.MonadTall(),
-    layout.Bsp(),
+    layout.MonadTall(margin=10),
+    layout.Bsp(margin=10),
     layout.Max(),
     #layout.Stack(num_stacks=2),
     # Try more layouts by unleashing below layouts.
@@ -240,6 +241,7 @@ floating_layout = layout.Floating(float_rules=[
     {'wmclass': 'keepassxc'},
     {'wmclass':'pinentry-gtk-2'},
     {'wmclass':'Conky'},
+    {'wmclass':'copyq'},
 ])
 auto_fullscreen = True
 focus_on_window_activation = "smart"

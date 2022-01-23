@@ -5,8 +5,9 @@
     email = 38861757+nabaco@users.noreply.github.com
 [core]
     excludesFile = ~/.gitignore
-    # For faster opening and editing
-    editor = vim
+    #pager = bat -p
+    pager = less
+    editor = nvim
     # Specify whitespace conventions. Violations will be highlighted in diffs
     whitespace = -indent-with-non-tab,trailing-space,tabwidth=4
     preloadindex = true
@@ -47,8 +48,4 @@
     cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$MERGED\" -c '$wincmd w' -c 'wincmd J'"
 [mergetool]
     prompt = false
-; [mergetool "meld"]
-;     trustExitCode = true
-;     keepTemporaries = false
-;     keepBackup = false
 ;;}}}

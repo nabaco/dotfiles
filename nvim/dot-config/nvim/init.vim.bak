@@ -823,6 +823,11 @@ lua << EOF
         end
         }
 
+        require'lspconfig'.sumneko_lua.setup {
+            on_attach = on_attach;
+            cmd = { "lua-language-server" };
+        }
+
 EOF
 
 let g:which_key_map.l = {

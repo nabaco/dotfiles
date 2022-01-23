@@ -5,6 +5,7 @@ setbg &
 
 # Bind keys
 #sxhkd &
+#polybar > ~/.logs/polybar.log 2&>1 &
 
 # Set keyboard layouts and shortcuts
 setxkbmap -layout us,ru,il -variant ,phonetic, -option 'grp:alt_shift_toggle'
@@ -23,5 +24,6 @@ mpris-proxy &   # Forward midi controls from BT devides to music player
 redshift &      # lower blue light during night
 
 . /etc/X11/xinit/xinitrc.d/50-systemd-user.sh
+/usr/bin/polkit-dumb-agent > ~/.logs/polkit.log 2&>1 &
 #eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
 #export SSH_AUTH_SOCK
