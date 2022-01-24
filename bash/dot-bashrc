@@ -212,7 +212,9 @@ FILES_TO_SOURCE="$HOME/.bashrc.$USER \
                  $HOME/.local/bin/git-completion.bash \
                  $HOME/.fzf.bash \
                  $HOME/.local/bin/fzf/shell/completion.bash \
-                 $HOME/.local/bin/fzf/shell/key-bindings.bash"
+                 $HOME/.local/bin/fzf/shell/key-bindings.bash \
+                 /usr/share/fzf/completion.bash \
+                 /usr/share/fzf/key-bindings.bash"
 
 for file in $FILES_TO_SOURCE; do
     if [ -f "$file" ]; then
