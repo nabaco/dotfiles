@@ -159,21 +159,21 @@ function task_indicator {
     inbox=`task +in +PENDING count`
     urgent=`task +READY urgency\>10 count`
     if [ "$inbox" -gt "0" ]; then
-        ti+="${blue}I:$inbox${reset}|"
+        ti+="${blue}I:$inbox${reset} "
     fi
     if [ "$tomorrow" -gt "0" ]; then
-        ti+="${green}T:$tomorrow${reset}|"
+        ti+="${green}T:$tomorrow${reset} "
     fi
     if [ "$today" -gt "0" ]; then
-        ti+="${yellow}D:$today${reset}|"
+        ti+="${yellow}D:$today${reset} "
     fi
     if [ "$urgent" -gt "0" ]; then
-        ti+="${purple}U:$urgent${reset}|"
+        ti+="${purple}U:$urgent${reset} "
     fi
     if [ "$overdue" -gt "0" ]; then
-        ti+="${red}O:$overdue${reset}|"
+        ti+="${red}O:$overdue${reset} "
     fi
-    echo "$ti "
+    echo "$ti"|tr " " "|"
 }
 
 # -- Improved X11 forwarding through GNU Screen (or tmux).

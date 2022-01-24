@@ -29,9 +29,9 @@
 
 #WingTask sync server
 taskd.server=app.wingtask.com:53589
-taskd.key=~/.wingtask_certs/nachum.barcohen@gmail.com.key.pem
-taskd.ca=~/.wingtask_certs/letsencrypt_root_cert.pem
-taskd.certificate=~/.wingtask_certs/nachum.barcohen@gmail.com.cert.pem
+taskd.key=\/home\/nachum\/.wingtask_certs\/nachum.barcohen@gmail.com.key.pem
+taskd.ca=\/home\/nachum\/.wingtask_certs\/letsencrypt_root_cert.pem
+taskd.certificate=\/home\/nachum\/.wingtask_certs\/nachum.barcohen@gmail.com.cert.pem
 #taskd.credentials=
 #}}}
 
