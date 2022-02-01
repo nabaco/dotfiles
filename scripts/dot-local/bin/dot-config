@@ -1,0 +1,50 @@
+#!/bin/bash
+
+config_dir="$HOME/dotfiles/config"
+
+declare -A configs
+configs=([nvim]="nvim/init.vim"
+    [vifm]="vifm/vifmrc"
+    [picom]="picom/picom.conf"
+    [sxhkd]="sxhkd/sxhkdrc"
+    [bspwm]="bspwm/bspwmrc"
+    [qtile]="qtile/config.py"
+    [rofi]="rofi/config.rasi"
+    [abook]="abook/abookrc"
+    [dunst]="dunst/dunstrc"
+    [scripts]=""
+    [mpd]="mpd/mpd.conf"
+    [mpv]="mpv/mpv.conf"
+    [mutt]="mutt/muttrc"
+    [mutt-mc]="mutt/mailcap"
+    [ncmpcpp]="ncmpcpp/config"
+    [nvim]="nvim/init.vim"
+    [polybar]="polybar/config"
+    [qalculate]="qalculate/qalc.conf"
+    [qutebrowser]="qutebrowser/config.py"
+    [termite]="termite/config"
+    [zathura]="zathura/zathurarc"
+)
+
+app=$(echo "${!configs[*]}" | rofi -dmenu -sep ' ' -p 'Config')
+
+# No choice - stop
+if [ -z "$app" ]
+then
+    exit 0
+fi
+
+if [ "$app" != "scripts" ]
+then
+    config_file="$config_dir/${configs[$app]}"
+else
+    config_file=$(find "$HOME/.local/bin/scripts" -type f|rofi -dmenu)
+fi
+
+# Continue only if there is a choice
+# Will skip if no choice was done in scipts
+if [ -n "$config_file" ]
+then
+    setsid termite -e "nvim $config_file"
+fi
+

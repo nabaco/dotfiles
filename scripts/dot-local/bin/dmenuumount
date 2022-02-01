@@ -1,0 +1,46 @@
+#!/bin/sh
+
+# A dmenu prompt to unmount drives.
+# Provides you with mounted partitions, select one to unmount.
+# Drives mounted at /, /boot and /home will not be options to unmount.
+
+menu="rofi -dmenu -mesg"
+#menu="dmenu -i -p"
+mtpfs="mtpfs"
+#mtpfs="simple-mtpfs"
+
+unmountusb() {
+	[ -z "$drives" ] && exit
+	chosen=$(echo "$drives" | $menu "Which drive to unmount?" | awk -F' - ' '{print $1}' | sed 's/ /\\ /g')
+	[ -z "$chosen" ] && exit
+	echo "$chosen/" |xargs udevil umount -l && notify-send "💻 USB unmounting" "$chosen unmounted."
+	}
+
+unmountandroid() { \
+	chosen=$(awk '/$mtpfs/ {print $2}' /etc/mtab | $menu "Which device to unmount?")
+	[ -z "$chosen" ] && exit
+	udevil umount -l "$chosen" && notify-send "🤖 Android unmounting" "$chosen unmounted."
+	}
+
+asktype() { \
+	case "$(printf "USB\\nAndroid" | $menu "Unmount a USB drive or an Android device?")" in
+		USB) unmountusb ;;
+		Android) unmountandroid ;;
+	esac
+	}
+
+drives=$(lsblk -nrpo "name,type,size,mountpoint,label" | sed 's/ /,/g'|awk -F, '$2=="part"&&$4!~/\/boot|\/home$|SWAP/&&length($4)>1{printf "%s - %s (%s)\n",$4,$5,$3}'|sed 's/\\x20/ /g')
+androids=$(grep $mtpfs /etc/mtab)
+if [ -z "$androids" -a -z "$drives" ]; then
+	umountyn=$(echo -e "Yes\nNo" | $menu "No devices to unmount. Did you mean to mount?")
+	[ "$umountyn" = "Yes" ] && dmenuumount
+elif [ -z "$androids" -a -n "$drives" ]; then
+	echo "Mounted USB drive(s) detected."
+	unmountusb
+elif [ -n "$androids" ]; then
+	echo "Mounted Android device(s) detected."
+	unmountandroid
+else
+	echo "Mounted USB drive(s) and Android device(s) detected."
+	asktype
+fi

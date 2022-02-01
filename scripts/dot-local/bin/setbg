@@ -1,0 +1,35 @@
+#!/bin/bash
+# Sets the background. If given an argument, will set file as background.
+#[ ! -z "$1" ] && cp "$1" ~/.config/wall.png && notify-send -i "$HOME/.config/wall.png" "Wallpaper changed."
+#xwallpaper --zoom ~/.config/wall.png
+
+if test ! -z "$1"
+then
+	if test "$1" == "-d"
+	then
+		image=`cat $HOME/.cache/wal/wal`
+		rm "${image}" && notify-send "Deleted $image" && unset image
+	else
+		image="$1"
+	fi
+fi
+
+DIR="$HOME/wallpapers"
+
+IFS='
+'
+
+if test -z "$image"
+then
+	file_matrix=(`find "${DIR}" -name *.jpg`)
+	num_files=${#file_matrix[*]}
+	image="${file_matrix[$((RANDOM%num_files))]}"
+fi
+
+if test -d "${DIR}"
+then
+	#echo ${image}
+	wal -i ${image} && notify-send "Wallpaper changed to $image."
+fi
+
+exit 0

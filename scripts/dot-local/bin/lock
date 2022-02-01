@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#SIZE=`xrandr|awk '/\*/{print $1}'`
+#WALLPAPER=`cat $HOME/.cache/wal/wal`
+#IMAGE_NAME=`md5sum "$WALLPAPER" | awk '{print $1}'`
+#IMAGE="/tmp/ScreenSaver-$IMAGE_NAME.png"
+#
+#if test ! -e "$IMAGE"
+#then
+	## Clean up previous images
+	#rm /tmp/ScreenSaver*.png
+	#convert "$WALLPAPER" -resize "$SIZE"^ "$IMAGE"
+#fi
+#
+#i3lock -i "$IMAGE" -k --indicator --insidecolor=aaaaaa55 $@
+
+export XSECURELOCK_PAM_SERVICE=xsecurelock 
+export XSECURELOCK_AUTH_BACKGROUND_COLOR=rgbi:0.1/0.1/0.1
+export XSECURELOCK_BLANK_DPMS_STATE=suspend
+
+pkill -x picom; xsecurelock && picom -b

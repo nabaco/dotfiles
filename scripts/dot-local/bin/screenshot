@@ -1,0 +1,18 @@
+#!/bin/sh
+
+POST_COMMAND="mv \$f ~/Pictures/Screenshots/ && echo -n \"\$f\"|xclip && notify-send \"Screenshot taken: \$f\""
+if [ -z "$1" ]
+then
+	scrot 'D_%Y-%m-%d_$wx$h.png' -e "$POST_COMMAND"
+elif [ "$1" == "window" ]
+then
+	pkill picom
+	sleep 1
+	scrot 'W_%Y-%m-%d_$wx$h.png' -u -e "$POST_COMMAND"
+	picom -b
+else
+	pkill picom
+	sleep 1
+	scrot 'S_%Y-%m-%d_$wx$h.png' -s -e "$POST_COMMAND"
+	picom -b
+fi

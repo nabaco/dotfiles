@@ -1,0 +1,4 @@
+#!/bin/sh
+
+#rofi -dmenu -p "$1" <&- && echo
+rofi -dmenu -password -mesg "$1" 
