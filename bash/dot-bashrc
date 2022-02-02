@@ -10,21 +10,91 @@ case $- in
 esac
 
 # Ansi color code variables{{{1
-red="\[\e[0;91m\]"
-blue="\[\e[0;94m\]"
-green="\[\e[0;92m\]"
-yellow="\[\e[0;33m\]"
-purple=" \[\e[0;35m\]"
-white="\[\e[0;97m\]"
-expand_bg="\[\e[K\]"
-blue_bg="\[\e[0;104m\]${expand_bg}"
-red_bg="\[\e[0;101m\]${expand_bg}"
-green_bg="\[\e[0;102m\]${expand_bg}"
-bold="\[\e[1m\]"
-uline="\[\e[4m\]"
-reset="\[\e[0m\]"
+red='\[\e[0;91m\]'
+blue='\[\e[0;94m\]'
+green='\[\e[0;92m\]'
+yellow='\[\e[0;33m\]'
+purple=' \[\e[0;35m\]'
+white='\[\e[0;97m\]'
+expand_bg='\[\e[K\]'
+blue_bg='\[\e[0;104m\]${expand_bg}'
+red_bg='\[\e[0;101m\]${expand_bg}'
+green_bg='\[\e[0;102m\]${expand_bg}'
+bold='\[\e[1m\]'
+uline='\[\e[4m\]'
+reset='\[\e[0m\]'
 #}}}
 
+# Functions {{{1
+TICK="✓"
+CROSS="✗"
+
+URGENT="❗"
+OVERDUE="☠️"
+DUETODAY="😱"
+DUETOMORROW="📅"
+
+function task_indicator {
+    ti=""
+    unset overdue
+    unset today
+    unset tomorrow
+    unset inbox
+    unset urgent
+    overdue=`task +READY +OVERDUE count`
+    today=`task +READY +TODAY count`
+    tomorrow=`task +READY +TOMORROW count`
+    inbox=`task +in +PENDING count`
+    urgent=`task +READY urgency\>10 count`
+    if [ "$inbox" -gt "0" ]; then
+        ti+="${blue@P}I:$inbox${reset@P} "
+    fi
+    if [ "$tomorrow" -gt "0" ]; then
+        ti+="${green@P}T:$tomorrow${reset@P} "
+    fi
+    if [ "$today" -gt "0" ]; then
+        ti+="${yellow@P}D:$today${reset@P} "
+    fi
+    if [ "$urgent" -gt "0" ]; then
+        ti+="${purple@P}U:$urgent${reset@P} "
+    fi
+    if [ "$overdue" -gt "0" ]; then
+        ti+="${red@P}O:$overdue${reset@P} "
+    fi
+    echo $ti|tr -s " " "|"
+}
+
+function ns {
+    namespace=`ip netns id`
+    ns=${namespace:-"\u@\h"}
+    echo ${ns@P}
+}
+
+# -- Improved X11 forwarding through GNU Screen (or tmux).
+# If not in screen or tmux, update the DISPLAY cache.
+# If we are, update the value of DISPLAY to be that in the cache.
+update-x11-forwarding ()
+{
+    if [ -z "$STY" -a -z "$TMUX" ]; then
+        echo $DISPLAY > ~/.display.txt
+    else
+        export DISPLAY=`cat ~/.display.txt`
+    fi
+}
+
+# This is run before every command.
+preexec() {
+    # Don't cause a preexec for PROMPT_COMMAND.
+    # Beware!  This fails if PROMPT_COMMAND is a string containing more than one command.
+    [ "$BASH_COMMAND" = "$PROMPT_COMMAND" ] && return
+
+    update-x11-forwarding
+
+    # Debugging.
+    #echo DISPLAY = $DISPLAY, display.txt = `cat ~/.display.txt`, STY = $STY, TMUX = $TMUX
+}
+trap 'preexec' DEBUG
+#}}}
 # History Configuration {{{1
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -81,20 +151,12 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
-ns=`ip netns identify`
-
 if [ "$color_prompt" = yes ]; then
-    if [ -n "$ns" ]; then
-        export PROMPT_COMMAND='PS1="${reset}${debian_chroot:+($debian_chroot)}${green}${ns}${reset}:${blue}\w${reset}\$ "'
-    else
-        export PROMPT_COMMAND='PS1="$(task_indicator)${reset}${debian_chroot:+($debian_chroot)}${green}\u@\h${reset}:${blue}\w${reset}\$ "'
-    fi
+    PS1='[$(task_indicator)]${reset@P}${debian_chroot:+($debian_chroot)}${green@P}$(ns)${reset@P}:${blue@P}\w${reset@P}${yellow@P}$(__git_ps1 "(%s)")${reset@P}\n\$ '
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
 unset color_prompt force_color_prompt
-
-#export PROMPT_COMMAND='PS1="$(task_indicator)${reset}${debian_chroot:+($debian_chroot)}${green}\u@\h${reset}:${blue}\w${reset}\$ "'
 
 #}}}
 
@@ -105,15 +167,6 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -137,70 +190,6 @@ shopt -s autocd
 # Integrations {{{1
 
 
-# Functions {{{1
-TICK="✓"
-CROSS="✗"
-
-URGENT="❗"
-OVERDUE="☠️"
-DUETODAY="😱"
-DUETOMORROW="📅"
-
-function task_indicator {
-    ti=""
-    unset overdue
-    unset today
-    unset tomorrow
-    unset inbox
-    unset urgent
-    overdue=`task +READY +OVERDUE count`
-    today=`task +READY +TODAY count`
-    tomorrow=`task +READY +TOMORROW count`
-    inbox=`task +in +PENDING count`
-    urgent=`task +READY urgency\>10 count`
-    if [ "$inbox" -gt "0" ]; then
-        ti+="${blue}I:$inbox${reset} "
-    fi
-    if [ "$tomorrow" -gt "0" ]; then
-        ti+="${green}T:$tomorrow${reset} "
-    fi
-    if [ "$today" -gt "0" ]; then
-        ti+="${yellow}D:$today${reset} "
-    fi
-    if [ "$urgent" -gt "0" ]; then
-        ti+="${purple}U:$urgent${reset} "
-    fi
-    if [ "$overdue" -gt "0" ]; then
-        ti+="${red}O:$overdue${reset} "
-    fi
-    echo "$ti"|tr " " "|"
-}
-
-# -- Improved X11 forwarding through GNU Screen (or tmux).
-# If not in screen or tmux, update the DISPLAY cache.
-# If we are, update the value of DISPLAY to be that in the cache.
-update-x11-forwarding ()
-{
-    if [ -z "$STY" -a -z "$TMUX" ]; then
-        echo $DISPLAY > ~/.display.txt
-    else
-        export DISPLAY=`cat ~/.display.txt`
-    fi
-}
-
-# This is run before every command.
-preexec() {
-    # Don't cause a preexec for PROMPT_COMMAND.
-    # Beware!  This fails if PROMPT_COMMAND is a string containing more than one command.
-    [ "$BASH_COMMAND" = "$PROMPT_COMMAND" ] && return
-
-    update-x11-forwarding
-
-    # Debugging.
-    #echo DISPLAY = $DISPLAY, display.txt = `cat ~/.display.txt`, STY = $STY, TMUX = $TMUX
-}
-trap 'preexec' DEBUG
-#}}}
 
 # Apparish: https://github.com/goedel-gang/bash-utils
 # FZF: Expected to source either the first one, or the 2 others, but not all.
@@ -209,12 +198,15 @@ FILES_TO_SOURCE="$HOME/.bashrc.$USER \
                  $HOME/.config/broot/launcher/bash/br \
                  $HOME/.cargo/env \
                  $HOME/.local/bin/appary.sh \
+                 /usr/share/git/completion/git-completion.bash \
                  $HOME/.local/bin/git-completion.bash \
+                 /usr/share/git/completion/git-prompt.sh \
                  $HOME/.fzf.bash \
                  $HOME/.local/bin/fzf/shell/completion.bash \
                  $HOME/.local/bin/fzf/shell/key-bindings.bash \
                  /usr/share/fzf/completion.bash \
-                 /usr/share/fzf/key-bindings.bash"
+                 /usr/share/fzf/key-bindings.bash \
+                 $HOME/.bash_aliases"
 
 for file in $FILES_TO_SOURCE; do
     if [ -f "$file" ]; then

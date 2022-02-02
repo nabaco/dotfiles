@@ -44,10 +44,9 @@ report.in.labels            = ID,Description
 
 rc.report.next.filter=status:pending,+UNBLOCKED
 #report.next.sort=status-,start-,priority-,project+,due+
-context.work=project:work or +work
-context.personal=project:personal or +personal
 # Files
-data.location=~/.task
+data.location=$XDG_DATA_HOME/task/
+hooks.location=$XDG_CONFIG_HOME/task/hooks/
 
 uda.reviewed.type=date
 uda.reviewed.label=Reviewed
@@ -55,4 +54,7 @@ report._reviewed.description=Tasksh review report.  Adjust the filter to your ne
 report._reviewed.columns=uuid
 report._reviewed.sort=reviewed+,modified+
 report._reviewed.filter=( reviewed.none: or reviewed.before:now-6days ) and ( +PENDING or +WAITING )
-context=personal
+context.personal.read=project:personal or +personal
+context.personal.write=project:personal or +personal
+context.work.read=project:work or +work
+context.work.write=project:work or +work

@@ -7,7 +7,7 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
 end
 
 local paq = require "paq" {
-    {"savq/paq-nvim", opt=true}; -- Paq manages itself
+    "savq/paq-nvim"; -- Paq manages itself
     -- Startup time improvers
     'lewis6991/impatient.nvim'; -- To be removed after https://github.com/neovim/neovim/pull/15436
     'nathom/filetype.nvim';
@@ -104,29 +104,29 @@ local paq = require "paq" {
     -- " API documentation
     -- TODO: 'KabbAmine/zeavim.vim'
     -- " The ultimate cheat sheet
-    {'dbeniamine/cheat.sh-vim', opt=true};
+    'dbeniamine/cheat.sh-vim';
     -- " Read GNU Info from vim
     -- "'alx741/vinfo';
     -- TODO: 'HiPhish/info.vim', {'on' : 'Info'};
 
     -- " Notes, to-do, etc
-    {'vimwiki/vimwiki', opt=true};
-    {'vimwiki/utils', opt=true};
+    'vimwiki/vimwiki';
+    'vimwiki/utils';
 
     -- " Task Warrior integration
-    {'tools-life/taskwiki', opt=true};
-    {'farseer90718/vim-taskwarrior', opt=true};
-    {'powerman/vim-plugin-AnsiEsc', opt=true};
+    'tools-life/taskwiki';
+    'farseer90718/vim-taskwarrior';
+    'powerman/vim-plugin-AnsiEsc';
 
     -- " Language specific plugins
-    -- TODO: 'kovetskiy/sxhkd-vim', { 'for': 'sxhkd' };
-    -- TODO: 'chrisbra/csv.vim', { 'for': 'csv' };
-    -- TODO: 'vhdirk/vim-cmake', { 'for': 'cmake' };
-    -- TODO: 'vim-pandoc/vim-pandoc', { 'for': 'markdown' };
-    -- TODO: 'vim-pandoc/vim-pandoc-syntax', { 'for': 'markdown' };
-    -- TODO: 'kergoth/vim-bitbake', { 'for': 'bitbake' };
-    -- TODO: 'Matt-Deacalion/vim-systemd-syntax', { 'for': 'systemd' };
-    -- TODO: 'cespare/vim-toml', { 'for': 'toml' };
+    'kovetskiy/sxhkd-vim';
+    'chrisbra/csv.vim';
+    'vhdirk/vim-cmake';
+    'vim-pandoc/vim-pandoc';
+    'vim-pandoc/vim-pandoc-syntax';
+    'kergoth/vim-bitbake';
+    'Matt-Deacalion/vim-systemd-syntax';
+    'cespare/vim-toml';
     'tmux-plugins/vim-tmux';
     'tmux-plugins/vim-tmux-focus-events';
     'mfukar/robotframework-vim';
@@ -134,8 +134,8 @@ local paq = require "paq" {
     'coddingtonbear/confluencewiki.vim';
 
     -- " PlanUML support and preview
-    -- TODO: 'aklt/plantuml-syntax', { 'for': 'plantuml' };
-    -- TODO: 'scrooloose/vim-slumlord', { 'for': 'plantuml' };
+    'aklt/plantuml-syntax';
+    'scrooloose/vim-slumlord';
 
     -- " Pop-up the built in terminal
     'Lenovsky/nuake';
@@ -143,7 +143,7 @@ local paq = require "paq" {
     -- " Eye Candy
     'morhetz/gruvbox';
     'nvim-lualine/lualine.nvim';
-    {'kyazdani42/nvim-web-devicons', opt=true};
+    'kyazdani42/nvim-web-devicons';
 
     -- " Color colorcodes
     'norcalli/nvim-colorizer.lua';
@@ -438,7 +438,7 @@ cmp.setup.cmdline('/', {
     completion = { autocomplete = false },
     sources = {
         -- { name = 'buffer' }
-        { name = 'buffer', opts = { keyword_pattern = [=[[^[:blank:]].*]=] } }
+        { name = 'buffer', option = { keyword_pattern = [=[[^[:blank:]].*]=] } }
     }
 })
 
@@ -805,7 +805,16 @@ lspconfig.clangd.setup{
 
 local luadev = require("lua-dev").setup({
     lsp_config = {
-        on_attach = on_attach; capabilities = capabilities
+        on_attach = on_attach; capabilities = capabilities;
+        settings = {
+            Lua = {
+                workspace = {
+                    library = {
+                        ['/usr/share/awesome/lib'] = true
+                    }
+                };
+            }
+        }
     }
 })
 lspconfig.sumneko_lua.setup(luadev)

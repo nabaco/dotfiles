@@ -10,33 +10,39 @@ bindkey -e
 zstyle :compinstall filename '/home/nachum/.zshrc'
 
 fpath=(/usr/share/zsh/site-functions/ $fpath)
-if [ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
-    source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-elif [ -f $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
-    source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-fi
 
-if [ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-    source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-elif [ -f $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-    source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
+python_version=$(python3 --version|sed 's/Python \(3\.[0-9]*\)\.[0-9]/python\1/')
+# In places where the same file appears twice, the expectation is that it will be installed
+# only once (either by user or by admin).
+# TODO: Check files and explicitly don't source twice
+plugins=(/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh \
+    /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+    $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+    /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh \
+    $HOME/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh \
+    /usr/share/fzf/completion.zsh \
+    /usr/share/fzf/key-bindings.zsh \
+    $HOME/.local/share/nvim/bundle/fzf/shell/completion.zsh \
+    $HOME/.local/share/nvim/bundle/fzf/shell/key-bindings.zsh \
+    $HOME/.bash_aliases \
+    /home/nbarcohx/.config/broot/launcher/bash/br \
+    /lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh \
+    $HOME/.local/lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh \
+)
 
-if [ -f /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
-    source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-    #    bindkey "$terminfo[kcuu1]" history-substring-search-up
-    #    bindkey "$terminfo[kcud1]" history-substring-search-down
-    bindkey '^[[A' history-substring-search-up
-    bindkey '^[[B' history-substring-search-down
-elif [ -f $HOME/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh ]; then
-    source $HOME/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
-    #    bindkey "$terminfo[kcuu1]" history-substring-search-up
-    #    bindkey "$terminfo[kcud1]" history-substring-search-down
-    bindkey '^[[A' history-substring-search-up
-    bindkey '^[[B' history-substring-search-down
-    bindkey '^[OA' history-substring-search-up
-    bindkey '^[OB' history-substring-search-down
-fi
+for p in $plugins; do
+    if [ -f $p ]; then
+        source $p
+    fi
+done
+
+## zsh-history-substring-search.zsh bindings
+#    bindkey "$terminfo[kcuu1]" history-substring-search-up
+#    bindkey "$terminfo[kcud1]" history-substring-search-down
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+bindkey '^[OA' history-substring-search-up
+bindkey '^[OB' history-substring-search-down
 
 autoload -Uz compinit
 compinit
@@ -51,26 +57,4 @@ then
 
     # To add support for TTYs this line can be optionally added.
     source ~/.cache/wal/colors-tty.sh
-fi
-
-if [ -d /usr/share/fzf ]; then
-    source /usr/share/fzf/*.zsh
-elif [ -d ~/.local/share/nvim/bundle/fzf/shell/ ]; then
-    source ~/.local/share/nvim/bundle/fzf/shell/*.zsh
-fi
-
-python_version=$(python3 --version|sed 's/Python \(3\.[0-9]\)\.[0-9]/python\1/')
-if [ -f /lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh ]; then
-    source /lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh
-elif [ -f $HOME/.local/lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh ]; then
-    source $HOME/.local/lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh
-fi
-
-
-if [ -f ~/.bash_aliases ]; then
-    source ~/.bash_aliases
-fi
-
-if [ -f /home/nbarcohx/.config/broot/launcher/bash/br ]; then
-    source /home/nbarcohx/.config/broot/launcher/bash/br
 fi

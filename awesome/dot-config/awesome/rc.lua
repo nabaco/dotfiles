@@ -265,7 +265,7 @@ globalkeys = gears.table.join(
               {description = "focus the previous screen", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               {description = "jump to urgent client", group = "client"}),
-    awful.key({ modkey,           }, "Tab",
+    awful.key({ "Mod1",           }, "Tab",
         function ()
             awful.client.focus.history.previous()
             if client.focus then
@@ -273,6 +273,8 @@ globalkeys = gears.table.join(
             end
         end,
         {description = "go back", group = "client"}),
+    awful.key({ modkey,           }, "Tab", function () awful.spawn('rofi -modi window -show window') end, -- TODO: checkout window hindding capabilties in Awesome
+               {description = "show windows list", group = "client"}),
 
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
@@ -294,9 +296,9 @@ globalkeys = gears.table.join(
               {description = "increase the number of columns", group = "layout"}),
     awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1, nil, true)    end,
               {description = "decrease the number of columns", group = "layout"}),
-    awful.key({ modkey,           }, "space", function () awful.layout.inc( 1)                end,
+    awful.key({ modkey,           }, "r", function () awful.layout.inc( 1)                end,
               {description = "select next", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1)                end,
+    awful.key({ modkey, "Shift"   }, "r", function () awful.layout.inc(-1)                end,
               {description = "select previous", group = "layout"}),
 
     awful.key({ modkey, "Control" }, "n",
@@ -312,7 +314,8 @@ globalkeys = gears.table.join(
               {description = "restore minimized", group = "client"}),
 
     -- Prompt
-    awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
+    --awful.key({ modkey },            "space",     function () awful.screen.focused().mypromptbox:run() end,
+    awful.key({ modkey },            "space",     function () awful.spawn('rofi -show run') end,
               {description = "run prompt", group = "launcher"}),
 
     awful.key({ modkey }, "x",
@@ -491,7 +494,7 @@ awful.rules.rules = {
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
-      }, properties = { titlebars_enabled = true }
+      }, properties = { titlebars_enabled = false }
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
@@ -500,7 +503,23 @@ awful.rules.rules = {
 }
 -- }}}
 
--- {{{ Signals
+-- {{{ Autorun programs
+local autorun = true
+local autorun_apps =
+{
+   "copyq",
+   "chromium",
+   "keepassxc",
+   "ulauncher --hide-window"
+}
+if autorun then
+   for _, app in pairs(autorun_apps) do
+       awful.spawn(autorun_apps[app])
+   end
+end
+-- }}}
+
+-- {{{ Signals{{{
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function (c)
     -- Set the windows at the slave,
@@ -562,4 +581,4 @@ end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
--- }}}
+-- }}}}}}
