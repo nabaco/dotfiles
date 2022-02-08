@@ -41,11 +41,11 @@ function task_indicator {
     unset tomorrow
     unset inbox
     unset urgent
-    overdue=`task +READY +OVERDUE count`
-    today=`task +READY +TODAY count`
-    tomorrow=`task +READY +TOMORROW count`
-    inbox=`task +in +PENDING count`
-    urgent=`task +READY urgency\>10 count`
+    overdue=`task +READY +OVERDUE count 2> /dev/null`
+    today=`task +READY +TODAY count 2> /dev/null`
+    tomorrow=`task +READY +TOMORROW count 2> /dev/null`
+    inbox=`task +in +PENDING count 2> /dev/null`
+    urgent=`task +READY urgency\>10 count 2> /dev/null`
     if [ "$inbox" -gt "0" ]; then
         ti+="${blue@P}I:$inbox${reset@P} "
     fi

@@ -1,3 +1,4 @@
+# vim: ft=taskrc
 # [Created by task 2.5.3 2/13/2021 21:47:10]
 # Taskwarrior program configuration file.
 # For more documentation, see http://taskwarrior.org or try 'man task', 'man task-color',
@@ -27,14 +28,6 @@
 #include /usr/share/doc/task/rc/no-color.theme
 #}}}
 
-#WingTask sync server
-taskd.server=app.wingtask.com:53589
-taskd.key=\/home\/nachum\/.wingtask_certs\/nachum.barcohen@gmail.com.key.pem
-taskd.ca=\/home\/nachum\/.wingtask_certs\/letsencrypt_root_cert.pem
-taskd.certificate=\/home\/nachum\/.wingtask_certs\/nachum.barcohen@gmail.com.cert.pem
-#taskd.credentials=
-#}}}
-
 #{{{ Inbox report
 report.in.columns           = id,description
 report.in.description       = Inbox
@@ -54,7 +47,8 @@ report._reviewed.description=Tasksh review report.  Adjust the filter to your ne
 report._reviewed.columns=uuid
 report._reviewed.sort=reviewed+,modified+
 report._reviewed.filter=( reviewed.none: or reviewed.before:now-6days ) and ( +PENDING or +WAITING )
+
 context.personal.read=project:personal or +personal
-context.personal.write=project:personal or +personal
+context.personal.write=+personal
 context.work.read=project:work or +work
-context.work.write=project:work or +work
+context.work.write=+work
