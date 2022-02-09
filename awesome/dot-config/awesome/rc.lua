@@ -1,3 +1,12 @@
+-- TODO:
+    -- Setup struts (hot corners)
+    -- Theme the WM
+    -- Improve key bindings
+    -- Add conky side-bar
+    -- Add widgets (calender, hebrew date)
+    -- Add scratchpad (https://blingcorp.github.io/bling/)
+    -- Improve startup apps logic
+
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
@@ -197,7 +206,8 @@ awful.screen.connect_for_each_screen(function(s)
     }
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s })
+    --s.mywibox = awful.wibar({ position = "top", screen = s, height = 25, bg = "#ff7700", fg = "#000000" })
+    s.mywibox = awful.wibar({ position = "top", screen = s, height = 25 })
 
     -- Add widgets to the wibox
     s.mywibox:setup {
@@ -507,14 +517,16 @@ awful.rules.rules = {
 local autorun = true
 local autorun_apps =
 {
-   "copyq",
-   "chromium",
-   "keepassxc",
-   "ulauncher --hide-window"
+    {{'copyq'}, { minimized = true }},
+    {{'chromium'}, { tag = "2" }},
+    {{'keepassxc'}, { minimized = true, floating = true, sticky = true }},
+    {{'ulauncher', '--hide-window'}},
+    {{'nm-applet'}},
+    {{'flameshot'}}
 }
 if autorun then
    for _, app in pairs(autorun_apps) do
-       awful.spawn(autorun_apps[app])
+       awful.spawn(app[1], app[2])
    end
 end
 -- }}}
