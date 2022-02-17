@@ -33,6 +33,10 @@ for file in $backups; do
     fi
 done
 
+echo "Creating local taskrc"
+touch task/dot-config/task/taskrc
+echo "include task-common-rc" > task/dot-config/task/taskrc
+
 echo "Begining flinging..."
 for dir in `find * -maxdepth 0 -type d -not -name "*."`; do
     echo "Flinging $dir"

@@ -1,0 +1,16 @@
+.git/
+.netrwhist
+vifm-help.txt
+vifmimgpdffile
+vifmimgpdfpage
+vifminfo
+vifminfo.json
+vifmrc-backup
+cscope.out
+tags
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+__pycache__
+compile_commands.json
