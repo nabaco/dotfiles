@@ -49,3 +49,7 @@
 [mergetool]
     prompt = false
 ;;}}}
+[gui]
+	fontui = -family \"FiraCode Nerd Font\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
+	fontdiff = -family \"FiraCode Nerd Font Mono\" -size 9 -weight normal -slant roman -underline 0 -overstrike 0
+	spellingdictionary = none
