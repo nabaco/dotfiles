@@ -99,6 +99,7 @@ local paq = require "paq" {
     -- " Some help with the keys
     --'liuchengxu/vim-which-key';
     'folke/which-key.nvim';
+    'b0o/mapx.nvim';
 
     -- " External App Integration
     -- " API documentation
@@ -179,7 +180,7 @@ vim.g.vimsyn_embed = 'l'
 vim.env.GIT_EDITOR = 'nvr -cc split --remote-wait'
 
 -- " Sync clipboards with system
-vim.opt.clipboard = vim.opt.clipboard + 'unnamedplus'
+--vim.opt.clipboard = vim.opt.clipboard + 'unnamedplus'
 
 -- " Line numbering
 vim.opt.number = true
@@ -438,7 +439,7 @@ cmp.setup.cmdline('/', {
     completion = { autocomplete = false },
     sources = {
         -- { name = 'buffer' }
-        { name = 'buffer', option = { keyword_pattern = [=[[^[:blank:]].*]=] } }
+        { name = 'buffer', options = { keyword_pattern = [=[[^[:blank:]].*]=] } }
     }
 })
 
@@ -464,6 +465,7 @@ vim.g.nvim_tree_disable_window_picker = 1
 vim.g.nvim_tree_respect_buf_cwd = 1
 
 require'lspsaga'.init_lsp_saga()
+--require'lspsaga'.setup()
 require'nvim-autopairs'.setup{}
 
 -- " HardTime in all buffers
@@ -621,42 +623,17 @@ vim.cmd('autocmd FileType * RainbowParentheses')
 -- " }}}
 -- " }}}
 -- """"""" Key Mappings """""" {{{1
-local map = function(key)
-    -- get the extra options
-    local opts = {noremap = true}
-    for i, v in pairs(key) do
-        if type(i) == 'string' then opts[i] = v end
-    end
 
-    -- basic support for buffer-scoped keybindings
-    local buffer = opts.buffer
-    opts.buffer = nil
-
-    if buffer then
-        vim.api.nvim_buf_set_keymap(0, key[1], key[2], key[3], opts)
-    else
-        vim.api.nvim_set_keymap(key[1], key[2], key[3], opts)
-    end
-end
-
-local wk = require("which-key")
-wk.setup{}
+local mapx = require'mapx'.setup{ global = true, whichkey = true }
+require("which-key").setup{}
 -- " Make life easier with exiting modes back to normal
-map{'i', 'jk', '<Esc>'}
-map{'v', 'jk', '<Esc>'}
+inoremap('jk', '<Esc>', "Exit insert mode")
+vnoremap('jk', '<Esc>', "Exit visual mode")
 
--- " Open netrw in CWD
--- "map{'n', '<Leader>n', ':Rexplore .<cr>'}
--- "map{'n', '<Leader>N', ':Sexplore .<cr>'}
--- "map('n', \|N :Vexplore .<cr>
--- "  Open netrw in the current file's dir
--- "map{'n', '<Leader>v', ':Explore<cr>'}
--- "map{'n', '<Leader>V', ':Sexplore<cr>'}
--- "map('n', \|V :Vexplore<cr>
-map{'n', '<Leader>n', ':NvimTreeToggle<CR>'}
-map{'n', '<Leader>v', ':NvimTreeFindFile<CR>'}
+nnoremap('<Leader>n', ':NvimTreeToggle<CR>', "File explorer")
+nnoremap('<Leader>v', ':NvimTreeFindFile<CR>', "Current file in file explorer")
 
-map{'n', '<leader>s', '<cmd>Startify<CR>'}
+nnoremap('<leader>s', '<cmd>Startify<CR>', "Home screen")
 
 -- " Cscope and quickfix {{{2
 
@@ -671,44 +648,44 @@ map{'n', '<leader>s', '<cmd>Startify<CR>'}
 -- "9 or a: Find places where this symbol is assigned a value
 
 -- " Jump to result
-map{'n', '<Leader>cs', ':cs find s <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>cg', ':cs find g <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>cc', ':cs find c <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>ct', ':cs find t <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>ce', ':cs find e <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>cf', ':cs find f <C-R>=expand("<cfile>")<CR><CR>'}
-map{'n', '<Leader>ci', ':cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>'}
-map{'n', '<Leader>cd', ':cs find d <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>ca', ':cs find a <C-R>=expand("<cword>")<CR><CR>'}
+nnoremap('<Leader>cs', ':cs find s <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>cg', ':cs find g <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>cc', ':cs find c <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>ct', ':cs find t <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>ce', ':cs find e <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>cf', ':cs find f <C-R>=expand("<cfile>")<CR><CR>')
+nnoremap('<Leader>ci', ':cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>')
+nnoremap('<Leader>cd', ':cs find d <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>ca', ':cs find a <C-R>=expand("<cword>")<CR><CR>')
 
 -- " Open the result in a split
-map{'n', '<Leader>Cs', ':scs find s <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>Cg', ':scs find g <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>Cc', ':scs find c <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>Ct', ':scs find t <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>Ce', ':scs find e <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>Cf', ':scs find f <C-R>=expand("<cfile>")<CR><CR>'}
-map{'n', '<Leader>Ci', ':scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>'}
-map{'n', '<Leader>Cd', ':scs find d <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>Ca', ':scs find a <C-R>=expand("<cword>")<CR><CR>'}
+nnoremap('<Leader>Cs', ':scs find s <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>Cg', ':scs find g <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>Cc', ':scs find c <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>Ct', ':scs find t <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>Ce', ':scs find e <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>Cf', ':scs find f <C-R>=expand("<cfile>")<CR><CR>')
+nnoremap('<Leader>Ci', ':scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>')
+nnoremap('<Leader>Cd', ':scs find d <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>Ca', ':scs find a <C-R>=expand("<cword>")<CR><CR>')
 
 -- " Open the result in a vertical split
-map{'n', '<Leader>CS', ':vert scs find s <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>CG', ':vert scs find g <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>CC', ':vert scs find c <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>CT', ':vert scs find t <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>CE', ':vert scs find e <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>CF', ':vert scs find f <C-R>=expand("<cfile>")<CR><CR>'}
-map{'n', '<Leader>CI', ':vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>'}
-map{'n', '<Leader>CD', ':vert scs find d <C-R>=expand("<cword>")<CR><CR>'}
-map{'n', '<Leader>CA', ':vert scs find a <C-R>=expand("<cword>")<CR><CR>'}
+nnoremap('<Leader>CS', ':vert scs find s <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>CG', ':vert scs find g <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>CC', ':vert scs find c <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>CT', ':vert scs find t <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>CE', ':vert scs find e <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>CF', ':vert scs find f <C-R>=expand("<cfile>")<CR><CR>')
+nnoremap('<Leader>CI', ':vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>')
+nnoremap('<Leader>CD', ':vert scs find d <C-R>=expand("<cword>")<CR><CR>')
+nnoremap('<Leader>CA', ':vert scs find a <C-R>=expand("<cword>")<CR><CR>')
 
 -- " Quickfix bindings
-map{'n', ']q', ':cnext<cr>'}
-map{'n', ']Q', ':clast<cr>'}
-map{'n', '[q', ':cprevious<cr>'}
-map{'n', '[Q', ':cfirst<cr>'}
-map{'n', '<Leader>q', ':ccl<cr>'}
+nnoremap(']q', ':cnext<cr>')
+nnoremap(']Q', ':clast<cr>')
+nnoremap('[q', ':cprevious<cr>')
+nnoremap('[Q', ':cfirst<cr>')
+nnoremap('<Leader>q', ':ccl<cr>')
 
 -- " }}}
 
@@ -717,74 +694,67 @@ local lspconfig = require('lspconfig')
 
 	-- Mappings.
 local on_attach = function(client, bufnr)
-	local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 	local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
 	-- Mappings.
-	local opts = { noremap=true, silent=true }
-	buf_set_keymap('n', '<leader>lD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-	buf_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-	buf_set_keymap('n', '<leader>ld', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-	buf_set_keymap('n', '<leader>lk', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-	buf_set_keymap('n', '<leader>li', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-	buf_set_keymap('n', '<leader>lh', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-	buf_set_keymap('n', '<leader>ls', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
-	buf_set_keymap('n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-	buf_set_keymap('n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-	buf_set_keymap('n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-	buf_set_keymap('n', '<leader>lt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-	buf_set_keymap('n', '<leader>lR', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-	buf_set_keymap('n', '<leader>lr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-	buf_set_keymap('n', '<leader>ds', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-	buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-	buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-	buf_set_keymap('n', '<leader>dq', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-	buf_set_keymap('n', '<leader>lca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+	local opts = { silent=true, buffer=bufnr }
+	nnoremap('<leader>lD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+	--nnoremap('<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+    nnoremap('<c-[>', '<cmd>Lspsaga preview_definition<CR>', opts)
+    nnoremap("<C-u>", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<cr>")
+    nnoremap("<C-d>", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<cr>")
+	nnoremap('<leader>ld', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+	nnoremap('<leader>lk', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+	nnoremap('<leader>li', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+	nnoremap('<leader>lh', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+	nnoremap('<leader>ls', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
+	nnoremap('<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+	nnoremap('<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+	nnoremap('<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+	nnoremap('<leader>lt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+	-- nnoremap('<leader>lR', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+	nnoremap('<leader>lR', '<cmd>Lspsaga rename<CR>', opts)
+	nnoremap('<leader>lr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+	--nnoremap('<leader>ds', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+	nnoremap('<leader>ds', '<cmd>Lspsaga show_line_diagnostics<CR>', opts)
+	-- nnoremap('[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+	-- nnoremap(']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+	nnoremap('[d', '<cmd>Lspsaga diagnostic_jump_prev<CR>', opts)
+	nnoremap(']d', '<cmd>Lspsaga diagnostic_jump_next<CR>', opts)
+	nnoremap('<leader>dq', '<cmd>lua vim.diagnostic.set_loclist()<CR>', opts)
+	nnoremap('<leader>la', '<cmd>Lspsaga code_action<CR>', opts)
+	vnoremap('<leader>la', '<cmd>Lspsaga range_code_action<CR>', opts)
 
 	-- Vista config
-	vim.api.nvim_set_var('vista_default_executive', 'nvim_lsp')
-	buf_set_keymap('n', '<leader>t', '<cmd>Vista finder<CR>', opts)
+    vim.g.vista_default_executive='nvim_lsp'
+	nnoremap('<leader>t', '<cmd>Vista finder<CR>', opts)
 
 	-- Set some keybinds conditional on server capabilities
 	if client.resolved_capabilities.document_formatting then
-		buf_set_keymap("n", "<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+		nnoremap("<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 	elseif client.resolved_capabilities.document_range_formatting then
-		buf_set_keymap("n", "<leader>lf", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+		nnoremap("<leader>lf", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
 	end
 
 	-- Set autocommands conditional on server_capabilities
 	if client.resolved_capabilities.document_highlight then
 		vim.api.nvim_exec([[
-		hi LspReferenceRead cterm=bold ctermbg=red guibg=Orange
-		hi LspReferenceText cterm=bold ctermbg=red guibg=Orange
-		hi LspReferenceWrite cterm=bold ctermbg=red guibg=Orange
-		augroup lsp_document_highlight
-			autocmd! * <buffer>
-			autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-			autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-		augroup END
+            hi LspReferenceRead cterm=bold ctermbg=red guibg=Orange
+            hi LspReferenceText cterm=bold ctermbg=red guibg=Orange
+            hi LspReferenceWrite cterm=bold ctermbg=red guibg=Orange
+            augroup lsp_document_highlight
+                autocmd! * <buffer>
+                autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+                autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+            augroup END
 		]], false)
 	end
-    vim.g.vista_default_executive='nvim_lsp'
-    -- Set autocommands conditional on server_capabilities
-    if client.resolved_capabilities.document_highlight then
-        vim.api.nvim_exec([[
-        hi LspReferenceRead cterm=bold ctermbg=red guibg=Orange
-        hi LspReferenceText cterm=bold ctermbg=red guibg=Orange
-        hi LspReferenceWrite cterm=bold ctermbg=red guibg=Orange
-        augroup lsp_document_highlight
-        autocmd! * <buffer>
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-        augroup END
-        ]], false)
-    end
     require "lsp_signature".on_attach({ hi_parameter = "IncSearch"})
 end
 
 -- Use a loop to conveniently both setup defined servers
 -- and map buffer local keybindings when the language server attaches
-local servers = { "jedi_language_server", "robotframework_ls" }
+local servers = { "jedi_language_server", "robotframework_ls", "bashls" }
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 for _, lsp in ipairs(servers) do
     lspconfig[lsp].setup {
@@ -829,82 +799,79 @@ local find_file = function()
     --nvim_tree.find_file()
 end
 
-wk.register({
-    l = {
-        name = "+LSP",
-        f = {'<cmd>Lspsaga lsp_finder<CR>', 'LSP Saga Finder'},
-        c = {'<cmd>Lspsaga code_action<CR>', 'Code Action'},
-        C = {'<cmd><C-U>Lspsaga range_code_action<CR>', 'Range Code Action', mode='v'}
-    },
-    n = { '<cmd>NvimTreeToggle<CR>', 'File Explorer'},
-    --v = { '<cmd>NvimTreeFindFileToggle<CR>', 'Find Current File'},
-    v = { find_file, 'Find Current File'},
-    s = { '<cmd>Startify<CR>', 'Startify Welcome Screen'}
-}, { prefix = '<Leader>'})
+mapx.nname("<leader>l", "LSP")
+--wk.register({
+--    l = {
+--        name = "+LSP",
+--        f = {'<cmd>Lspsaga lsp_finder<CR>', 'LSP Saga Finder'},
+--        c = {'<cmd>Lspsaga code_action<CR>', 'Code Action'},
+--        C = {'<cmd><C-U>Lspsaga range_code_action<CR>', 'Range Code Action', mode='v'}
+--    },
+--    n = { '<cmd>NvimTreeToggle<CR>', 'File Explorer'},
+--    --v = { '<cmd>NvimTreeFindFileToggle<CR>', 'Find Current File'},
+--    v = { find_file, 'Find Current File'},
+--    s = { '<cmd>Startify<CR>', 'Startify Welcome Screen'}
+--}, { prefix = '<Leader>'})
 
 -- " Notes
-map{'n', '<Leader>wn', ':Nack<space>'}
-map{'n', '<Leader>ww', ':FZF $NOTES<cr>'}
+nnoremap('<Leader>wn', ':Nack<space>')
+nnoremap('<Leader>ww', ':FZF $NOTES<cr>')
 
 -- " Insert date/time
-map{'i', '<leader>d', '<C-r>=strftime("%a %d.%m.%Y %H:%M")<cr>'}
-map{'i', '<leader>D', '<C-r>=strftime("%d.%m.%y")<cr>'}
+inoremap('<leader>d', '<C-r>=strftime("%a %d.%m.%Y %H:%M")<cr>')
+inoremap('<leader>D', '<C-r>=strftime("%d.%m.%y")<cr>')
 
 
-map{'n', ',', '<Plug>(easymotion-prefix))'}
+map(',', '<Plug>(easymotion-prefix))')
 
 -- " Turn off search highlight
-map{'n', '<Leader>/', ':noh<cr>'}
-
--- " Fuzzy-find lite
-map{'n', '<Leader><space>', ':e ./**/'}
--- "map{'n', '<Leader><cr>', ':buffer'}
+nnoremap('<Leader>/', ':noh<cr>')
 
 -- " FZF bindings
-map{'n', '<Leader><cr>', '<CMD>Buffers<CR>'}
-map{'n', '<Leader>f', '<CMD>FZF<CR>'}
-map{'n', '<Leader>t', '<CMD>Tags<CR>'}
-map{'n', '<Leader>T', '<CMD>BTags<CR>'}
-map{'n', '<Leader>m', '<CMD>Commits<CR>'}
-map{'n', '<Leader>M', '<CMD>BCommits<CR>'}
+nnoremap('<Leader><cr>', '<CMD>Buffers<CR>')
+nnoremap('<Leader>f', '<CMD>FZF<CR>')
+nnoremap('<Leader>t', '<CMD>Tags<CR>')
+nnoremap('<Leader>T', '<CMD>BTags<CR>')
+nnoremap('<Leader>m', '<CMD>Commits<CR>')
+nnoremap('<Leader>M', '<CMD>BCommits<CR>')
 
 -- " Start a Git command
-map{'n', '<Leader>gg', ':Git<Space>'}
-map{'n', '<Leader>gs', ':Git status<CR>'}
-map{'n', '<Leader>gv', ':Magit<CR>'}
--- "map{'n', '<Leader>gcm', ':Git commit<CR>'}
-map{'n', '<Leader>gd', ':Git diff<CR>'}
-map{'n', '<Leader>gc', ':Gdiffsplit<CR>'}
-map{'n', '<Leader>gb', ':MerginalToggle<CR>'}
+nnoremap('<Leader>gg', ':Git<Space>')
+nnoremap('<Leader>gs', ':Git status<CR>')
+nnoremap('<Leader>gv', ':Magit<CR>')
+-- "nnoremap('<Leader>gcm', ':Git commit<CR>')
+nnoremap('<Leader>gd', ':Git diff<CR>')
+nnoremap('<Leader>gc', ':Gdiffsplit<CR>')
+nnoremap('<Leader>gb', ':MerginalToggle<CR>')
 
 -- " Spellchecking Bindings
-map{'i', '<m-f>', '<C-G>u<Esc>[s1z=`]a<C-G>u'}
-map{'n', '<m-f>', '[s1z=<c-o>'}
+inoremap('<m-f>', '<C-G>u<Esc>[s1z=`]a<C-G>u')
+nnoremap('<m-f>', '[s1z=<c-o>')
 
 -- " Toggle whitespaces
-map{'n', '<F2>', ':set list! <CR>'}
+nnoremap('<F2>', ':set list! <CR>')
 -- " Toggle spell checking
-map{'n', '<F3>', ':setlocal spell! spelllang=en<CR>'}
+nnoremap('<F3>', ':setlocal spell! spelllang=en<CR>')
 -- " real make
-map{'', '<silent> <F5>', ':make<cr><cr><cr>'}
+nnoremap('<silent> <F5>', ':make<cr><cr><cr>')
 -- " GNUism, for building recursively
-map{'', '<silent> <s-F5>', ':make -w<cr><cr><cr>'}
+nnoremap('<silent> <s-F5>', ':make -w<cr><cr><cr>')
 -- " Toggle the tags bar
-map{'n', '<F8>', ':Vista<CR>'}
+nnoremap('<F8>', ':Vista<CR>')
 
 -- " Ctags in previw/split window
-map{'n', '<C-w><C-]>', '<C-w>}'}
-map{'n', '<C-w>}', '<C-w><C-]>'}
+nnoremap('<C-w><C-]>', '<C-w>}')
+nnoremap('<C-w>}', '<C-w><C-]>')
 
 -- " Nuake Bindings
-map{'n', '<Leader>`', ':Nuake<CR>'}
-map{'i', '<Leader>`', '<C-\\><C-n>:Nuake<CR>'}
-map{'t', '<Leader>`', '<C-\\><C-n>:Nuake<CR>'}
+nnoremap('<Leader>`', ':Nuake<CR>')
+inoremap('<Leader>`', '<C-\\><C-n>:Nuake<CR>')
+tnoremap('<Leader>`', '<C-\\><C-n>:Nuake<CR>')
 
 -- " Compile file (Markdown, LaTeX, etc)
 -- " TODO: Auto-recognize build system
-map{'n', '<silent> <F6>', ':!compiler %<cr>'}
+nnoremap('<silent> <F6>', ':!compiler %<cr>')
 
---map{'i', '<silent><expr><tab>', 'pumvisible() ? "<c-n>" : "<tab>"'}
---map{'i', '<silent><expr><s-tab>', 'pumvisible() ? "<c-p>" : "<s-tab>"'}
+--inoremap('<silent><expr><tab>', 'pumvisible() ? "<c-n>" : "<tab>"')
+--inoremap('<silent><expr><s-tab>', 'pumvisible() ? "<c-p>" : "<s-tab>"')
 -- " }}}
