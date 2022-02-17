@@ -34,8 +34,19 @@ for file in $backups; do
 done
 
 echo "Creating local taskrc"
-touch task/dot-config/task/taskrc
 echo "include task-common-rc" > task/dot-config/task/taskrc
+read -p "Enter config hash: " HASH
+if [ "$HASH" = "" ]; then
+    echo "Got empty hash - skipping"
+else
+    WINGTASK_ZIP="/tmp/$USER-wingtask-config-$$.zip"
+    curl https://app.wingtask.com/api/configs/$HASH --output $WINGTASK_ZIP
+    unzip $WINGTASK_ZIP -d /tmp
+    mv /tmp/wingtask_configuration/wingtask_certs ~/.wingtask_certs
+    grep taskd /tmp/wingtask_configuration/taskrc >> task/dot-config/task/taskrc
+    rm -rf /tmp/wingtask_configuration
+    rm $WINGTASK_ZIP
+fi
 
 echo "Begining flinging..."
 for dir in `find * -maxdepth 0 -type d -not -name "*."`; do
@@ -61,7 +72,7 @@ install_neovim() {
 NVIM_VERSION="0.6.1"
 if [ -f /usr/bin/nvim ]; then
     echo "NeoVim is installed by the package manager - Skipping installation"
-elif ! which nvim; then
+elif ! which nvim > /dev/null; then
     install_neovim $NVIM_VERSION
 else
     wanted_nvim_sha=`curl --silent --location https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim.appimage.sha256sum|cut --delimiter=" " --fields=1`
