@@ -1,0 +1,49 @@
+# XScreenSaver Preferences File
+# Written by xscreensaver-settings 6.02 for nachum on Thu Mar 17 22:51:31 2022.
+# https://www.jwz.org/xscreensaver/
+
+timeout:	0:10:00
+cycle:		0:10:00
+lock:		False
+lockTimeout:	0:00:00
+passwdTimeout:	0:00:30
+visualID:	default
+installColormap:    True
+verbose:	False
+splash:		True
+splashDuration:	0:00:05
+demoCommand:	xscreensaver-demo
+nice:		10
+fade:		True
+unfade:		False
+fadeSeconds:	0:00:03
+ignoreUninstalledPrograms:False
+font:		*-medium-r-*-140-*-m-*
+dpmsEnabled:	False
+dpmsQuickOff:	False
+dpmsStandby:	2:00:00
+dpmsSuspend:	2:00:00
+dpmsOff:	4:00:00
+grabDesktopImages:  False
+grabVideoFrames:    False
+chooseRandomImages: True
+imageDirectory:	/home/nachum/wallpapers
+
+mode:		random
+selected:	-1
+
+textMode:	file
+textLiteral:	XScreenSaver
+textFile:	
+textProgram:	fortune
+textURL:	https://en.wikipedia.org/w/index.php?title=Special:NewPages&feed=rss
+dialogTheme:	default
+
+programs:								      \
+				xmatrix -root -phone +972505754998	    \n\
+  GL: 				glmatrix -root				    \n\
+
+
+pointerHysteresis:  10
+authWarningSlack:   20
+

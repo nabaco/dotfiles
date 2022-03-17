@@ -14,3 +14,4 @@ GSYMS
 GTAGS
 __pycache__
 compile_commands.json
+.cache
