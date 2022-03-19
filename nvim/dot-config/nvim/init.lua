@@ -127,25 +127,27 @@ vim.opt.tags='./tags,**5/tags,tags;~'
 -- "                   ^ in any subfolder of working dir
 -- "           ^ sibling of open file
 
---[[ TODO
+vim.cmd[[
+    augroup highlight_yank
+        autocmd!
+        autocmd TextYankPost * silent! lua vim.highlight.on_yank({timeout='1000'})
+    augroup END
+]]
 
+vim.cmd[[
+    augroup autoreconf
+        autocmd!
+        autocmd BufWritePost *sxhkdrc !pkill -USR1 -x sxhkd
+        autocmd BufWritePost *init.vim source ~/.config/nvim/init.vim
+        autocmd BufWritePost *init.lua source <afile>
+        autocmd BufWritePost *bspwmrc !bspc wm -r
+        autocmd BufWritePost *picom.conf !pkill -x picom && picom -b
+        autocmd BufWritePost *mpd.conf !mpd --kill && mpd
+        autocmd BufWritePost *termite/config !killall -USR1 termite
+        autocmd BufWritePost *qtile/config.py !qtile-cmd -o cmd -f restart > /dev/null 2&>1
+    augroup END
+]]
 
-augroup highlight_yank
-autocmd!
-autocmd TextYankPost * silent! lua vim.highlight.on_yank({timeout='1000'})
-augroup END
-
-autocmd BufWritePost *sxhkdrc !pkill -USR1 -x sxhkd
-autocmd BufWritePost *init.vim source ~/.config/nvim/init.vim
-autocmd BufWritePost *init.lua source ~/.config/nvim/init.lua
-autocmd BufWritePost *bspwmrc !bspc wm -r
-autocmd BufWritePost *picom.conf !pkill -x picom && picom -b
-autocmd BufWritePost *mpd.conf !mpd --kill && mpd
-autocmd BufWritePost *termite/config !killall -USR1 termite
-autocmd BufWritePost *qtile/config.py !qtile-cmd -o cmd -f restart > /dev/null 2&>1
--- " }}}
-
- ]]
 vim.g.python_host_prog = '/usr/bin/python'
 vim.g.python3_host_prog = '/usr/bin/python3'
 
@@ -308,13 +310,15 @@ cmp.setup.cmdline('/', {
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
-    completion = { autocomplete = false },
-    sources = cmp.config.sources({
-        { name = 'path' }
-    }, {
-        { name = 'cmdline' }
-    })
+    -- completion = { autocomplete = false, completeopt = 'menu' },
+    view = { entries = {name = 'native'}},
+    -- sources = cmp.config.sources({
+    --     { name = 'path' }
+    -- }, {
+    --     { name = 'cmdline' }
+    -- })
 })
+
 -- "}}}
 vim.api.nvim_exec('autocmd VimEnter * call vista#RunForNearestMethodOrFunction()', false)
 require'lualine'.setup{
@@ -482,7 +486,14 @@ vim.cmd('autocmd FileType * RainbowParentheses')
 -- " }}}
 -- """"""" Key Mappings """""" {{{1
 
-local mapx = require'mapx'.setup{ global = true, whichkey = true }
+if not vim.g.mapx then
+    mapx = require'mapx'.setup{ global = true, whichkey = true }
+    -- When sourcing this file a second time, Neovim throws an error on the line above.
+    -- Seems like mapx tries to map again all of its commands and finds a conflict (with itself).
+    -- This is a workaround to run above line only once in a running Neovim instance.
+    vim.g.mapx = 1
+end
+
 require("which-key").setup{}
 -- " Make life easier with exiting modes back to normal
 inoremap('jk', '<Esc>', "Exit insert mode")
