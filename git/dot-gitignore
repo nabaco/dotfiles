@@ -14,4 +14,6 @@ GSYMS
 GTAGS
 __pycache__
 compile_commands.json
+taskrc
 .cache
+packer_compiled.lua

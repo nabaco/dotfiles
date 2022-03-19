@@ -1,177 +1,40 @@
--- """"""" Plug management """"""""{{{1
+-- Automatically bootstrap packer.
+-- Define in path, and if not there, download it.
+-- Based on the global PACKER_BOOTSTRAP variable, install all the plugins (through "require").
+-- The plugins file is included conditionally, since packer compiles all the plugins data into
+-- a file that is in the path and is included by default.
+-- This done in hope of the most optimal lazy loading.
+-- Packer itself is only required when doing plugins management.
+-- The autocmd should handle that.
 
-local install_path = vim.fn.stdpath('data')..'/site/pack/paqs/start/paq-nvim'
-if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-    PAQ_BOOTSTRAP = vim.fn.system({'git', 'clone', '--depth', '1', 'https://github.com/savq/paq-nvim.git', install_path})
-    vim.cmd('packadd paq-nvim')
+local fn = vim.fn
+local install_path = fn.stdpath('data')..'/site/pack/packer/opt/packer.nvim'
+if fn.empty(fn.glob(install_path)) > 0 then
+  PACKER_BOOTSTRAP = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+  require('plugins')
 end
 
-local paq = require "paq" {
-    "savq/paq-nvim"; -- Paq manages itself
-    -- Startup time improvers
-    'lewis6991/impatient.nvim'; -- To be removed after https://github.com/neovim/neovim/pull/15436
-    'nathom/filetype.nvim';
-    -- " Get used to proper Vim movement
-    'takac/vim-hardtime';
+-- Automatically install plugins after updating the plugin file
+-- Placing the autocmd here, since the plugins file is not always included
 
-    -- " Add some additional text objects and attack them
-    'wellle/targets.vim';
+vim.cmd([[
+  augroup packer_user_config
+    autocmd!
+    autocmd BufWritePost plugins.lua source <afile> | PackerSync
+  augroup end
+]])
 
-    -- " Reposition cursor in the last position up file reopening
-    'farmergreg/vim-lastplace';
 
-    -- " Git support
-    'tpope/vim-fugitive'; -- "Only for FZF integration
-    'idanarye/vim-merginal'; -- "Branch TUI based on fugitive
-    'jreybert/vimagit'; -- "Easier stage/commit workflow
-    'airblade/vim-gitgutter'; -- "Show changes live + 'hunk/change' text object
-    'rhysd/git-messenger.vim'; -- "Git blame in bubbles
-
-    --if vim.fn.has("Win32") then
-    --    { 'Shougo/vimproc.vim', run='nmake'};
-    --end
-
-    -- " Vim Rooter - needed for all the git plugins to work correctly,
-    -- " in a multi-repo environment
-    'airblade/vim-rooter';
-
-    -- " Puts all vim navigation keys on drugs! f,t,w,b,e etc..
-    'easymotion/vim-easymotion';
-
-    -- " Ultimate fuzzy search + Multi-entry selection UI.
-    -- TODO: if fn.empty(fn.glob('/usr/bin/fzf')) > 0 then
-    -- " Binary is installed through package manager.
-    -- " Install just the latest plugin without installing FZF itself
-    --    'junegunn/fzf';
-    -- else
-    {'junegunn/fzf', run=vim.fn["fzf#install()"]};
-    --end
-    'junegunn/fzf.vim';
-
-    -- " Alternative file contents search
-    'mileszs/ack.vim';
-
-    -- " Autocompletion
-    'neovim/nvim-lspconfig';
-    --'glepnir/lspsaga.nvim';
-    'tami5/lspsaga.nvim';
-    'liuchengxu/vista.vim';
-    'weilbith/nvim-lsp-smag';
-    {'hrsh7th/cmp-nvim-lsp', branch='main'};
-    {'hrsh7th/cmp-buffer', branch='main'};
-    {'hrsh7th/cmp-path', branch='main'};
-    {'hrsh7th/cmp-cmdline', branch='main'};
-    {'hrsh7th/nvim-cmp', branch='main'};
-    {'quangnguyen30192/cmp-nvim-ultisnips', branch='main'};
-    'ray-x/lsp_signature.nvim';
-    'folke/lua-dev.nvim';
-
-    -- " File browsing
-    'kyazdani42/nvim-tree.lua';
-    -- " Ranger file manager integration
-    {'kevinhwang91/rnvimr', run='make sync'};
-
-    -- " A - for switching between source and header files
-    'vim-scripts/a.vim';
-
-    -- " UltiSnips
-    'SirVer/ultisnips';
-    'honza/vim-snippets';
-
-    -- " Remove extraneous whitespace when edit mode is exited
-    'thirtythreeforty/lessspace.vim';
-
-    -- " Bracket completion
-    'windwp/nvim-autopairs';
-
-    -- " Tpope's plugins
-    'tpope/vim-surround'; -- "surround vim
-    'tpope/vim-repeat'; -- "Enable repeating supported plugin maps with .
-    'tpope/vim-eunuch'; -- "Unix commands from Vim
-    'tpope/vim-commentary'; -- "Comment blocks
-    -- " It appears I don't need that since Startify does the same
-    -- "'tpope/obsession' -- "Vim session management
-
-    -- " Imporve % for if..else and such
-    -- " Does Neovim need this? I think Neovim has it built in
-    -- "'adelarsq/vim-matchit';
-
-    -- " Some help with the keys
-    --'liuchengxu/vim-which-key';
-    'folke/which-key.nvim';
-    'b0o/mapx.nvim';
-
-    -- " External App Integration
-    -- " API documentation
-    -- TODO: 'KabbAmine/zeavim.vim'
-    -- " The ultimate cheat sheet
-    'dbeniamine/cheat.sh-vim';
-    -- " Read GNU Info from vim
-    -- "'alx741/vinfo';
-    -- TODO: 'HiPhish/info.vim', {'on' : 'Info'};
-
-    -- " Notes, to-do, etc
-    'vimwiki/vimwiki';
-    'vimwiki/utils';
-
-    -- " Task Warrior integration
-    'tools-life/taskwiki';
-    'farseer90718/vim-taskwarrior';
-    'powerman/vim-plugin-AnsiEsc';
-
-    -- " Language specific plugins
-    'kovetskiy/sxhkd-vim';
-    'chrisbra/csv.vim';
-    'vhdirk/vim-cmake';
-    'vim-pandoc/vim-pandoc';
-    'vim-pandoc/vim-pandoc-syntax';
-    'kergoth/vim-bitbake';
-    'Matt-Deacalion/vim-systemd-syntax';
-    'cespare/vim-toml';
-    'tmux-plugins/vim-tmux';
-    'tmux-plugins/vim-tmux-focus-events';
-    'mfukar/robotframework-vim';
-    'MTDL9/vim-log-highlighting';
-    'coddingtonbear/confluencewiki.vim';
-
-    -- " PlanUML support and preview
-    'aklt/plantuml-syntax';
-    'scrooloose/vim-slumlord';
-
-    -- " Pop-up the built in terminal
-    'Lenovsky/nuake';
-
-    -- " Eye Candy
-    'morhetz/gruvbox';
-    'nvim-lualine/lualine.nvim';
-    'kyazdani42/nvim-web-devicons';
-
-    -- " Color colorcodes
-    'norcalli/nvim-colorizer.lua';
-    -- " Color brackets
-    'junegunn/rainbow_parentheses.vim';
-
-    -- " Start screen
-    'mhinz/vim-startify';
-
-    -- " Highlight same words as under cursor
-    'RRethy/vim-illuminate';
-
-    -- " Use pywal theme
-    -- "'dylanaraps/wal.vim';
-}
-
-if PAQ_BOOTSTRAP then
-    paq.install()
-end
 require('impatient')
--- " }}}
 -- """"""" General Vim Config """""""{{{1
 
 vim.opt.termguicolors = true
 -- " Colorscheme wal
-vim.cmd('colorscheme gruvbox')
-vim.g.gruvbox_contrast_dark = 'hard'
+vim.g.gruvbox_material_background = 'hard'
+vim.g.gruvbox_material_enable_italic = 1
+vim.g.gruvbox_material_enable_bold = 1
+vim.g.gruvbox_material_ui_contrast = 'high'
+vim.cmd[[colorscheme gruvbox-material]]
 
 -- " Highlight embedded lua code
 vim.g.vimsyn_embed = 'l'
@@ -264,7 +127,7 @@ vim.opt.tags='./tags,**5/tags,tags;~'
 -- "                   ^ in any subfolder of working dir
 -- "           ^ sibling of open file
 
---[[ NABACO
+--[[ TODO
 
 
 augroup highlight_yank
@@ -282,7 +145,7 @@ autocmd BufWritePost *termite/config !killall -USR1 termite
 autocmd BufWritePost *qtile/config.py !qtile-cmd -o cmd -f restart > /dev/null 2&>1
 -- " }}}
 
-NABACO ]]
+ ]]
 vim.g.python_host_prog = '/usr/bin/python'
 vim.g.python3_host_prog = '/usr/bin/python3'
 
@@ -455,14 +318,9 @@ cmp.setup.cmdline(':', {
 -- "}}}
 vim.api.nvim_exec('autocmd VimEnter * call vista#RunForNearestMethodOrFunction()', false)
 require'lualine'.setup{
-    options = { theme = 'gruvbox' },
+    options = { theme = 'gruvbox-material' },
     sections = { lualine_c = {'filename', 'b:vista_nearest_method_or_function'} }
 }
-
-require'nvim-tree'.setup{auto_close = true}
-vim.g.nvim_tree_quit_on_open = 1
-vim.g.nvim_tree_disable_window_picker = 1
-vim.g.nvim_tree_respect_buf_cwd = 1
 
 require'lspsaga'.init_lsp_saga()
 --require'lspsaga'.setup()
@@ -692,10 +550,7 @@ nnoremap('<Leader>q', ':ccl<cr>')
 -- " Language Server{{{2
 local lspconfig = require('lspconfig')
 
-	-- Mappings.
 local on_attach = function(client, bufnr)
-	local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
 	-- Mappings.
 	local opts = { silent=true, buffer=bufnr }
 	nnoremap('<leader>lD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
@@ -721,12 +576,13 @@ local on_attach = function(client, bufnr)
 	-- nnoremap(']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
 	nnoremap('[d', '<cmd>Lspsaga diagnostic_jump_prev<CR>', opts)
 	nnoremap(']d', '<cmd>Lspsaga diagnostic_jump_next<CR>', opts)
-	nnoremap('<leader>dq', '<cmd>lua vim.diagnostic.set_loclist()<CR>', opts)
+	nnoremap('<leader>dq', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
 	nnoremap('<leader>la', '<cmd>Lspsaga code_action<CR>', opts)
 	vnoremap('<leader>la', '<cmd>Lspsaga range_code_action<CR>', opts)
+	cmd("LspDiag", function() vim.diagnostic.setloclist() end, {nargs = 0})
 
 	-- Vista config
-    vim.g.vista_default_executive='nvim_lsp'
+	vim.g.vista_default_executive='nvim_lsp'
 	nnoremap('<leader>t', '<cmd>Vista finder<CR>', opts)
 
 	-- Set some keybinds conditional on server capabilities
@@ -790,30 +646,24 @@ local luadev = require("lua-dev").setup({
 lspconfig.sumneko_lua.setup(luadev)
 
 -- " }}}
--- LspSaga
-local find_file = function()
-    local nvim_tree = require('nvim-tree')
-    nvim_tree.toggle()
-    vim.cmd("wincmd w")
-    nvim_tree.find_file({toggle=true})
-    --nvim_tree.find_file()
-end
+
+require'nvim-treesitter.configs'.setup {
+  -- One of "all", "maintained" (parsers with maintainers), or a list of languages
+  ensure_installed = "maintained",
+
+  -- Install languages synchronously (only applied to `ensure_installed`)
+  sync_install = false,
+
+  -- List of parsers to ignore installing
+  ignore_install = { "javascript" },
+
+  highlight = {
+    -- `false` will disable the whole extension
+    enable = true,
+    }
+}
 
 mapx.nname("<leader>l", "LSP")
---wk.register({
---    l = {
---        name = "+LSP",
---        f = {'<cmd>Lspsaga lsp_finder<CR>', 'LSP Saga Finder'},
---        c = {'<cmd>Lspsaga code_action<CR>', 'Code Action'},
---        C = {'<cmd><C-U>Lspsaga range_code_action<CR>', 'Range Code Action', mode='v'}
---    },
---    n = { '<cmd>NvimTreeToggle<CR>', 'File Explorer'},
---    --v = { '<cmd>NvimTreeFindFileToggle<CR>', 'Find Current File'},
---    v = { find_file, 'Find Current File'},
---    s = { '<cmd>Startify<CR>', 'Startify Welcome Screen'}
---}, { prefix = '<Leader>'})
-
--- " Notes
 nnoremap('<Leader>wn', ':Nack<space>')
 nnoremap('<Leader>ww', ':FZF $NOTES<cr>')
 
@@ -822,7 +672,7 @@ inoremap('<leader>d', '<C-r>=strftime("%a %d.%m.%Y %H:%M")<cr>')
 inoremap('<leader>D', '<C-r>=strftime("%d.%m.%y")<cr>')
 
 
-map(',', '<Plug>(easymotion-prefix))')
+map(',', '<Plug>(easymotion-prefix)')
 
 -- " Turn off search highlight
 nnoremap('<Leader>/', ':noh<cr>')
@@ -875,3 +725,4 @@ nnoremap('<silent> <F6>', ':!compiler %<cr>')
 --inoremap('<silent><expr><tab>', 'pumvisible() ? "<c-n>" : "<tab>"')
 --inoremap('<silent><expr><s-tab>', 'pumvisible() ? "<c-p>" : "<s-tab>"')
 -- " }}}
+
