@@ -331,7 +331,7 @@ require'lspsaga'.init_lsp_saga()
 require'nvim-autopairs'.setup{}
 
 -- " HardTime in all buffers
-vim.g.hardtime_default_on = 0
+vim.g.hardtime_default_on = 1
 vim.g.hardtime_showmsg = 1
 vim.g.hardtime_ignore_buffer_patterns = { "NvimTree.*" }
 vim.g.hardtime_ignore_quickfix = 1
@@ -498,6 +498,8 @@ require("which-key").setup{}
 -- " Make life easier with exiting modes back to normal
 inoremap('jk', '<Esc>', "Exit insert mode")
 vnoremap('jk', '<Esc>', "Exit visual mode")
+inoremap('<Esc>', '<Nop>')
+vnoremap('<Esc>', '<Nop>')
 
 nnoremap('<Leader>n', ':NvimTreeToggle<CR>', "File explorer")
 nnoremap('<Leader>v', ':NvimTreeFindFile<CR>', "Current file in file explorer")
