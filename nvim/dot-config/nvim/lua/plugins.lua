@@ -20,7 +20,7 @@ vim.cmd[[packadd packer.nvim]]
 
 -- Plugins declaration.
 -- TODO: Include profiling (passed to the startup function) to try to optimize further
-return require('packer').startup(function(use)
+return require('packer').startup({function(use)
     -- Packer can manage itself
     use { 'wbthomason/packer.nvim', opt=true, cmd={'Packer*'} }
 
@@ -252,6 +252,12 @@ return require('packer').startup(function(use)
         -- When running Neovim for the first time, you load the config before having the actual
         -- plugins installed, which causes a lot of error messages and a mess. So better exit,
         -- so that the user re-enters into a proper environemt/experience.
-        vim.cmd[[quit]]
+        --vim.cmd[[quit]]
+        vim.cmd[[autocmd User PackerComplete quitall]]
     end
-end)
+end,
+config = {
+	git = {
+		clone_timeout = 180
+	}
+}})
