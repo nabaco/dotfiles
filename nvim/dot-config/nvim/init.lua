@@ -423,6 +423,7 @@ vim.g.startify_lists = {
 
 vim.g.startify_bookmarks = {
     { i= '~/.config/nvim/init.lua'  },
+    { p= '~/.config/nvim/lua/plugins.lua'  },
     { b= '~/.bashrc'  },
     { u= '~/.bashrc.'..vim.env.USER  },
 }
@@ -662,7 +663,7 @@ lspconfig.sumneko_lua.setup(luadev)
 
 require'nvim-treesitter.configs'.setup {
   -- One of "all", "maintained" (parsers with maintainers), or a list of languages
-  ensure_installed = "maintained",
+  --ensure_installed = "maintained",
 
   -- Install languages synchronously (only applied to `ensure_installed`)
   sync_install = false,

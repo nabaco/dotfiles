@@ -69,7 +69,7 @@ install_neovim() {
 }
 
 
-NVIM_VERSION="0.6.1"
+NVIM_VERSION="0.7.2"
 if [ -f /usr/bin/nvim ]; then
     echo "NeoVim is installed by the package manager - Skipping installation"
 elif ! which nvim > /dev/null; then
@@ -83,3 +83,6 @@ else
         echo "NeoVim was found and is up-to-date"
     fi
 fi
+
+# Provision NeoVim
+nvim --headless -c 'autocmd User PackerComplete quitall'

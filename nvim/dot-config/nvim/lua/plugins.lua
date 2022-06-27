@@ -230,7 +230,8 @@ return require('packer').startup({function(use)
     use { 'sainnhe/gruvbox-material' }
     use 'nvim-lualine/lualine.nvim'
     use 'kyazdani42/nvim-web-devicons'
-
+    -- Hide Ascii Espace Chars
+    use { 'vim-scripts/AnsiEsc.vim' }
     -- Color colorcodes
     use 'norcalli/nvim-colorizer.lua'
     -- Color brackets
