@@ -93,7 +93,7 @@ return require('packer').startup({function(use)
         requires = {
             {'hrsh7th/cmp-nvim-lsp', branch='main'},
             {'hrsh7th/cmp-buffer', branch='main', after='nvim-cmp'},
-            -- {'hrsh7th/cmp-cmdline', branch='main', after='nvim-cmp'},
+            {'hrsh7th/cmp-cmdline', branch='main', after='nvim-cmp'},
             {'hrsh7th/cmp-path', branch='main', after='nvim-cmp'},
             {'quangnguyen30192/cmp-nvim-ultisnips', branch='main', after='nvim-cmp'},
             {'lukas-reineke/cmp-under-comparator', after='nvim-cmp'}
