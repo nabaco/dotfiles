@@ -37,6 +37,7 @@ report.in.labels            = ID,Description
 #}}}
 
 rc.report.next.filter=status:pending,+UNBLOCKED
+uda.priority.values=H,M,,L
 #report.next.sort=status-,start-,priority-,project+,due+
 # Files
 data.location=$XDG_DATA_HOME/task/
