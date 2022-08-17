@@ -301,7 +301,7 @@ require'lspsaga'.init_lsp_saga()
 require'nvim-autopairs'.setup{}
 
 -- " HardTime in all buffers
-vim.g.hardtime_default_on = 1
+vim.g.hardtime_default_on = 0
 vim.g.hardtime_showmsg = 1
 vim.g.hardtime_ignore_buffer_patterns = { "NvimTree.*", "help" }
 vim.g.hardtime_ignore_quickfix = 1
