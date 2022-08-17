@@ -18,9 +18,15 @@ PackerSync will work due to the lazy-loadin config for packer below.
 -- Packer is set as optional, so load it manually.
 vim.cmd[[packadd packer.nvim]]
 
+-- Use a protected call so we don't error out on first use
+local status_ok, packer = pcall(require, "packer")
+if not status_ok then
+  return
+end
+
 -- Plugins declaration.
 -- TODO: Include profiling (passed to the startup function) to try to optimize further
-return require('packer').startup({function(use)
+return packer.startup({function(use)
     -- Packer can manage itself
     use { 'wbthomason/packer.nvim', opt=true, cmd={'Packer*'} }
 
@@ -249,7 +255,7 @@ return require('packer').startup({function(use)
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
     if PACKER_BOOTSTRAP then
-        require('packer').sync()
+        packer.sync()
         -- When running Neovim for the first time, you load the config before having the actual
         -- plugins installed, which causes a lot of error messages and a mess. So better exit,
         -- so that the user re-enters into a proper environemt/experience.

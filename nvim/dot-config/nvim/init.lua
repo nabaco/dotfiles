@@ -11,6 +11,7 @@ local fn = vim.fn
 local install_path = fn.stdpath('data')..'/site/pack/packer/opt/packer.nvim'
 if fn.empty(fn.glob(install_path)) > 0 then
   PACKER_BOOTSTRAP = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+  print "Installing packer close and reopen Neovim..."
   require('plugins')
 end
 
@@ -469,8 +470,8 @@ require("which-key").setup{}
 -- " Make life easier with exiting modes back to normal
 inoremap('jk', '<Esc>', "Exit insert mode")
 vnoremap('jk', '<Esc>', "Exit visual mode")
-inoremap('<Esc>', '<Nop>')
-vnoremap('<Esc>', '<Nop>')
+-- inoremap('<Esc>', '<Nop>')
+-- vnoremap('<Esc>', '<Nop>')
 
 nnoremap('<Leader>n', ':NvimTreeToggle<CR>', "File explorer")
 nnoremap('<Leader>v', ':NvimTreeFindFile<CR>', "Current file in file explorer")
@@ -594,7 +595,7 @@ end
 
 -- Use a loop to conveniently both setup defined servers
 -- and map buffer local keybindings when the language server attaches
-local servers = { "jedi_language_server", "robotframework_ls", "bashls" }
+local servers = { "jedi_language_server", "robotframework_ls", "bashls", "rust_analyzer" }
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 for _, lsp in ipairs(servers) do
     lspconfig[lsp].setup {
