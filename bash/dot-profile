@@ -12,36 +12,46 @@
 
 export TZ="Asia/Jerusalem"
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.local/bin" ] ; then
-    PATH="$HOME/.local/bin:$PATH"
-fi
+# Credit to https://superuser.com/a/39995/1536362
+pathappend() {
+    REQ_DIR=$1
+    if [ -d "$REQ_DIR" ] && [[ ":$PATH:" != *":$REQ_DIR:"* ]]; then
+        PATH="${PATH:+"$PATH:"}$REQ_DIR"
+    fi
+}
 
-if [ -d "$HOME/.local/usr/bin" ] ; then
-    PATH="$HOME/.local/usr/bin:$PATH"
-fi
+pathprepend() {
+    REQ_DIR=$1
+    if [ -d "$REQ_DIR" ] && [[ ":$PATH:" != *":$REQ_DIR:"* ]]; then
+        PATH="$REQ_DIR${PATH:+":$PATH"}"
+    fi
+}
 
-if [ -d "$HOME/.local/usr/local/bin" ] ; then
-    export PATH=$HOME/.local/usr/local/bin:$PATH
-fi
+# Set PATH so it includes user's private bin if it exists
+DIRS_TO_PREPEND="
+    $HOME/.local/bin \
+    $HOME/.local/usr/bin \
+    $HOME/.local/usr/local/bin \
+    "
+
+for dir in $DIRS_TO_PREPEND; do
+    pathprepend $dir
+done
 
 # Ruby exports
 if [ -d $HOME/gems ]; then
     export GEM_HOME=$HOME/gems
-    export PATH=$HOME/gems/bin:$PATH
+    pathprepend $HOME/gems/bin
 fi
 
 # Add Doom Emacs to PATH
 if [ -d $HOME/.emacs.d/bin ]; then
-    export PATH=$HOME/.emacs.d/bin/:$PATH
+    pathprepend $HOME/.emacs.d/bin/
 fi
-
-# Add local binaries and scripts to the PATH
-export PATH=$HOME/.local/usr/local/bin:$PATH
 
 WSL=`grep microsoft /proc/version`
 if [ -n "$WSL" ]; then
-    export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
+    export DISPLAY=$(grep "nameserver 172" /etc/resolv.conf | cut -d " " -f 2):0
     export NOTES=/mnt/c/Users/$USER/Nextcloud-BC/Notes/
 else
     export NOTES=$HOME/Nextcloud/Notes/
@@ -83,6 +93,9 @@ if [ -n "$BASH_VERSION" ]; then
     if [ -f "$HOME/.bashrc" ]; then
 	. "$HOME/.bashrc"
     fi
+else
+    # Since this is sources anyway inside bashrc
+    . "$HOME/.cargo/env"
 fi
 
 # Start graphical server if WM not already running.

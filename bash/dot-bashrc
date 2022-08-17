@@ -206,7 +206,9 @@ FILES_TO_SOURCE="$HOME/.bashrc.$USER \
                  $HOME/.local/bin/fzf/shell/key-bindings.bash \
                  /usr/share/fzf/completion.bash \
                  /usr/share/fzf/key-bindings.bash \
-                 $HOME/.bash_aliases"
+                 $HOME/.bash_aliases \
+                 $HOME/.local/usr/bin/todoist_functions_fzf_bash.sh \
+                 $HOME/.cargo/env"
 
 for file in $FILES_TO_SOURCE; do
     if [ -f "$file" ]; then
