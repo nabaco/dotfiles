@@ -1,8 +1,11 @@
-;;{{{ General Git config
+# vim: ft=gitconfig
+#{{{ General Git config
 # This is Git's per-user configuration file.
 [user]
     name = Nachum Barcohen
     email = 38861757+nabaco@users.noreply.github.com
+[include]
+    path = ~/.gitconfig.local
 [core]
     excludesFile = ~/.gitignore
     #pager = bat -p
@@ -28,9 +31,9 @@
     ps = push
     pl = pull
     ctags = !.git/hooks/ctags
-;;}}}
+#}}}
 
-;;{{{ Git diffs/merges config
+#{{{ Git diffs/merges config
 
 [diff]
     tool = vimdiff
@@ -48,7 +51,7 @@
     cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$MERGED\" -c '$wincmd w' -c 'wincmd J'"
 [mergetool]
     prompt = false
-;;}}}
+#}}}
 [gui]
 	fontui = -family \"FiraCode Nerd Font\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
 	fontdiff = -family \"FiraCode Nerd Font Mono\" -size 9 -weight normal -slant roman -underline 0 -overstrike 0

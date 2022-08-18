@@ -1,4 +1,4 @@
-# vim ft=sh
+# vim:filetype=sh
 # Colors for coreutils {{{1
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -26,14 +26,22 @@ fi
 # Requires bd on system and in PATH
 # https://github.com/vigneshwaranr/bd
 __icd () {
-    [ "${1}" == "-" ] && \cd - || {
-        [ -d "${1}" ] && \cd "${1}" || . bd -si "${1}"
-    }
+    if [ "${1}" == "-" ]; then
+        cd -
+    elif [ -d "${1}" ]; then
+        cd "${1}"
+    elif (which bd &> /dev/null); then
+        . bd -si "${1}"
+    fi
 }
 
 function man()
 {
-    command man "$1"| col -bx |bat -l man -p
+    if [[ "$(type cat)" = *"bat"* ]]; then
+        command man "$1" | col -bx | bat -l man -p
+    else
+        command man "$1"
+    fi
 }
 
 function new-note()
@@ -45,10 +53,12 @@ function new-meeting()
 {
     $VISUAL "$NOTES/`date +%F` - $* - Meeting Minutes.md"
 }
+
 function new-post()
 {
     hugo -s $WEBSITE --editor=$VISUAL new blog/"$*".md
 }
+
 function task-note()
 {
     # Args: Task ID
@@ -68,42 +78,48 @@ function task-note()
     fi
 }
 
+mkDir () {
+    mkdir ${1}; cd ${1}
+}
+
 # Taskwarrior GTD Inbox
 if (which task &> /dev/null);
 then
     alias inb='task add +in'
-    fi
+fi
 
 if (which bat &> /dev/null);
 then
-    alias cat=bat
+    alias cat="bat -p"
 elif (which batcat &> /dev/null);
 then
-    alias cat=batcat
+    alias cat="batcat -p"
+    alias bat="batcat"
 fi
 
 if (which exa &> /dev/null);
 then
-    alias ls=exa
+    alias ls="exa"
+    alias ll="exa -l"
+    alias la="exa -A"
 elif (which exals &> /dev/null);
 then
-    alias ls=exals
+    alias ls="exals"
+    alias ll="exals -l"
+    alias la="exals -A"
+else
+    alias ll='ls -alF'
+    alias la='ls -A'
+    alias l='ls -CF'
 fi
+
 if (which fdfind &> /dev/null);
 then
     alias fd=fdfind
 fi
 #}}}
 
-# some more ls aliases
-#alias ll='ls -alF'
-#alias la='ls -A'
-#alias l='ls -CF'
-alias ls="exa"
-alias ll="exa -l"
-alias la="exa -A"
-alias cat="bat -p"
-
+# Some more ls aliases
 alias h="history"
 alias cd=__icd
 
@@ -120,7 +136,7 @@ alias vifm='vifmrun'
 alias purge='sudo pacman -Rcsn'
 alias pacman='sudo pacman'
 
-alias nf='fd -e md . $NOTES|fzf --print0|xargs -0 $EDITOR'
+alias nf='fd -e md . $NOTES | fzf --print0 | xargs -0 $EDITOR'
 alias notes='$EDITOR $NOTES'
 alias scratch='$EDITOR $NOTES/Unsorted/`date +%F-%H%M%S` - Scratch.md'
 
