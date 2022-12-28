@@ -69,7 +69,7 @@ install_neovim() {
 }
 
 
-NVIM_VERSION="0.7.2"
+NVIM_VERSION="0.8.1"
 if [ -f /usr/bin/nvim ]; then
     echo "NeoVim is installed by the package manager - Skipping installation"
 elif ! which nvim > /dev/null; then

@@ -680,7 +680,7 @@ lspconfig.sumneko_lua.setup({})
 
 require'nvim-treesitter.configs'.setup {
   -- One of "all", or a list of languages
-  ensure_installed = { c, lua, markdown, markdown_inline, python, nix },
+  ensure_installed = { "c", "lua", "help", "markdown", "markdown_inline", "python", "nix", "rust", "bash", "yaml" },
 
   -- Install languages synchronously (only applied to `ensure_installed`)
   sync_install = false,
