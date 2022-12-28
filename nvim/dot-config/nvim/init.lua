@@ -40,6 +40,10 @@ vim.cmd[[colorscheme gruvbox-material]]
 -- " Highlight embedded lua code
 vim.g.vimsyn_embed = 'l'
 
+-- In case no tags are available from the LSP Server,
+-- or I turned of the LSP client, use regular tags (e.g. ctags)
+vim.g.lsp_smag_fallback_tags = 1
+
 -- " Set environment variable to be able to start vim in :terminal
 vim.env.GIT_EDITOR = 'nvr -cc split --remote-wait'
 
@@ -59,6 +63,18 @@ vim.opt.splitbelow=true
 
 -- " Hide buffer when closed
 vim.opt.hidden=true
+-- " Close nvim/tab if NvimTree is the last one open
+vim.o.confirm = true
+vim.api.nvim_create_autocmd("BufEnter", {
+  group = vim.api.nvim_create_augroup("NvimTreeClose", {clear = true}),
+  pattern = "NvimTree_*",
+  callback = function()
+    local layout = vim.api.nvim_call_function("winlayout", {})
+    if layout[1] == "leaf" and vim.api.nvim_buf_get_option(vim.api.nvim_win_get_buf(layout[2]), "filetype") == "NvimTree" and layout[3] == nil then vim.cmd("confirm quit") end
+  end
+})
+
+require("nvim-tree").setup { actions = {open_file = {quit_on_open = true}} }
 
 -- " Vimdiff to open vertical splits
 -- " I don't understand how can anyone work otherwise
@@ -108,6 +124,7 @@ vim.opt.wildignore = vim.opt.wildignore + '*.so,*.swp,*.zip,*.o,*.la'
 vim.opt.wildignorecase = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+vim.opt.inccommand = "split"
 
 -- " Enable per project .vimrc
 vim.opt.exrc = true
@@ -533,6 +550,33 @@ nnoremap('<Leader>q', ':ccl<cr>')
 -- " }}}
 
 -- " Language Server{{{2
+local luadev = require("neodev").setup({})
+--     lsp_config = {
+--         on_attach = on_attach; capabilities = capabilities;
+--         settings = {
+--             Lua = {
+--                 workspace = {
+--                     library = {
+--                         ['/usr/share/awesome/lib'] = true
+--                     }
+--                 };
+--             }
+--         }
+--     }
+-- })
+
+require("nvim-semantic-tokens").setup {
+  preset = "default",
+  highlighters = { require 'nvim-semantic-tokens.table-highlighter' },
+  -- preset = "theHamsta",
+  -- highlighters is a list of modules following the interface of nvim-semantic-tokens.table-highlighter or
+  -- function with the signature: highlight_token(ctx, token, highlight) where
+  --        ctx (as defined in :h lsp-handler)
+  --        token  (as defined in :h vim.lsp.semantic_tokens.on_full())
+  --        highlight (a helper function that you can call (also multiple times) with the determined highlight group(s) as the only parameter)
+  --highlighters = { require 'nvim-semantic-tokens.table-highlighter'}
+}
+
 local lspconfig = require('lspconfig')
 
 local on_attach = function(client, bufnr)
@@ -570,15 +614,16 @@ local on_attach = function(client, bufnr)
 	vim.g.vista_default_executive='nvim_lsp'
 	nnoremap('<leader>t', '<cmd>Vista finder<CR>', opts)
 
+    local caps = client.server_capabilities
 	-- Set some keybinds conditional on server capabilities
-	if client.resolved_capabilities.document_formatting then
+	if caps.document_formatting then
 		nnoremap("<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-	elseif client.resolved_capabilities.document_range_formatting then
+	elseif caps.document_range_formatting then
 		nnoremap("<leader>lf", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
 	end
 
 	-- Set autocommands conditional on server_capabilities
-	if client.resolved_capabilities.document_highlight then
+	if caps.document_highlight then
 		vim.api.nvim_exec([[
             hi LspReferenceRead cterm=bold ctermbg=red guibg=Orange
             hi LspReferenceText cterm=bold ctermbg=red guibg=Orange
@@ -590,13 +635,28 @@ local on_attach = function(client, bufnr)
             augroup END
 		]], false)
 	end
+
+    -- Semantic tokens setup
+    if caps.semanticTokensProvider and caps.semanticTokensProvider.full then
+        local augroup = vim.api.nvim_create_augroup("SemanticTokens", {})
+        vim.api.nvim_create_autocmd({"TextChanged", "InsertLeave"}, {
+        -- vim.api.nvim_create_autocmd({"InsertLeave","CursorHold","TextChanged"}, {
+            group = augroup,
+            buffer = bufnr,
+            callback = function()
+                vim.lsp.buf.semantic_tokens_full()
+            end,
+        })
+        -- fire it first time on load as well
+      vim.lsp.buf.semantic_tokens_full()
+    end
     require "lsp_signature".on_attach({ hi_parameter = "IncSearch"})
 end
 
 -- Use a loop to conveniently both setup defined servers
 -- and map buffer local keybindings when the language server attaches
 local servers = { "jedi_language_server", "robotframework_ls", "bashls", "rust_analyzer" }
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 for _, lsp in ipairs(servers) do
     lspconfig[lsp].setup {
         on_attach = on_attach;
@@ -614,21 +674,7 @@ lspconfig.clangd.setup{
     end
 }
 
-local luadev = require("lua-dev").setup({
-    lsp_config = {
-        on_attach = on_attach; capabilities = capabilities;
-        settings = {
-            Lua = {
-                workspace = {
-                    library = {
-                        ['/usr/share/awesome/lib'] = true
-                    }
-                };
-            }
-        }
-    }
-})
-lspconfig.sumneko_lua.setup(luadev)
+lspconfig.sumneko_lua.setup({})
 
 -- " }}}
 
@@ -710,4 +756,3 @@ nnoremap('<silent> <F6>', ':!compiler %<cr>')
 --inoremap('<silent><expr><tab>', 'pumvisible() ? "<c-n>" : "<tab>"')
 --inoremap('<silent><expr><s-tab>', 'pumvisible() ? "<c-p>" : "<s-tab>"')
 -- " }}}
-

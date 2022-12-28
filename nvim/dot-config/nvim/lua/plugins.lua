@@ -59,6 +59,7 @@ return packer.startup({function(use)
     -- Vim Rooter - needed for all the git plugins to work correctly,
     -- in a multi-repo environment
     use 'airblade/vim-rooter'
+    use { 'aymericbeaumet/vim-symlink', requires = { 'moll/vim-bbye' } }
 
     -- Puts all vim navigation keys on drugs! f,t,w,b,e etc..
     use 'easymotion/vim-easymotion'
@@ -90,6 +91,7 @@ return packer.startup({function(use)
     }
     -- TODO: Setup extra tools as if LSP (shellcheck?)
     use { 'jose-elias-alvarez/null-ls.nvim', requires = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' } }
+    use { 'theHamsta/nvim-semantic-tokens' }
 
 
     -- Autocompletion

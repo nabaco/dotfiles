@@ -9,13 +9,15 @@
 [core]
     excludesFile = ~/.gitignore
     #pager = bat -p
-    pager = less
+    pager = less -i
     editor = nvim
     # Specify whitespace conventions. Violations will be highlighted in diffs
     whitespace = -indent-with-non-tab,trailing-space,tabwidth=4
     preloadindex = true
 [init]
     templatedir = ~/.config/git/
+[push]
+    default = current
 [rebase]
     autosquash = true
 [color]
