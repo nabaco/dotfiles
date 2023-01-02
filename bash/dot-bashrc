@@ -35,32 +35,33 @@ DUETODAY="😱"
 DUETOMORROW="📅"
 
 function task_indicator {
-    ti=""
+    ti="["
+    if ! which todoist &> /dev/null; then echo ""; return 0; fi
     unset overdue
     unset today
     unset tomorrow
     unset inbox
     unset urgent
-    overdue=`task +READY +OVERDUE count 2> /dev/null`
-    today=`task +READY +TODAY count 2> /dev/null`
-    tomorrow=`task +READY +TOMORROW count 2> /dev/null`
-    inbox=`task +in +PENDING count 2> /dev/null`
-    urgent=`task +READY urgency\>10 count 2> /dev/null`
-    if [ "$inbox" -gt "0" ]; then
-        ti+="${blue@P}I:$inbox${reset@P} "
-    fi
-    if [ "$tomorrow" -gt "0" ]; then
-        ti+="${green@P}T:$tomorrow${reset@P} "
-    fi
-    if [ "$today" -gt "0" ]; then
-        ti+="${yellow@P}D:$today${reset@P} "
-    fi
-    if [ "$urgent" -gt "0" ]; then
-        ti+="${purple@P}U:$urgent${reset@P} "
-    fi
-    if [ "$overdue" -gt "0" ]; then
+    overdue=`todoist list --filter overdue | wc -l 2> /dev/null`
+    today=`todoist list --filter today | wc -l 2> /dev/null`
+    tomorrow=`todoist list --filter tomorrow | wc -l 2> /dev/null`
+    inbox=`todoist list --filter \#inbox | wc -l 2> /dev/null`
+    #urgent=`task +READY urgency\>10 count 2> /dev/null`
+    # if [ "$overdue" -gt "0" ]; then
         ti+="${red@P}O:$overdue${reset@P} "
-    fi
+    # fi
+    # if [ "$urgent" -gt "0" ]; then
+        # ti+="${purple@P}U:$urgent${reset@P} "
+    # fi
+    # if [ "$today" -gt "0" ]; then
+        ti+="${yellow@P}D:$today${reset@P} "
+    # fi
+    # if [ "$tomorrow" -gt "0" ]; then
+        ti+="${green@P}T:$tomorrow${reset@P} "
+    # fi
+    # if [ "$inbox" -gt "0" ]; then
+        ti+="${blue@P}I:$inbox${reset@P}]"
+    # fi
     echo $ti|tr -s " " "|"
 }
 
@@ -152,7 +153,7 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 if [ "$color_prompt" = yes ]; then
-    PS1='[$(task_indicator)]${reset@P}${debian_chroot:+($debian_chroot)}${green@P}$(ns)${reset@P}:${blue@P}\w${reset@P}${yellow@P}$(__git_ps1 "(%s)")${reset@P}\n\$ '
+    PS1='$(task_indicator)${reset@P}${debian_chroot:+($debian_chroot)}${green@P}$(ns)${reset@P}:${blue@P}\w${reset@P}${yellow@P}$(__git_ps1 "(%s)")${reset@P}\n\$ '
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi

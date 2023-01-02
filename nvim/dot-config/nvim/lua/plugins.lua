@@ -206,8 +206,8 @@ return packer.startup({function(use)
     }
 
     -- Task Warrior integration
-    use 'tools-life/taskwiki'
-    use 'farseer90718/vim-taskwarrior'
+    -- use 'tools-life/taskwiki'
+    -- use 'farseer90718/vim-taskwarrior'
     use 'powerman/vim-plugin-AnsiEsc'
 
     -- Language specific plugins

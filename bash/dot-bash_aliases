@@ -59,34 +59,9 @@ function new-post()
     hugo -s $WEBSITE --editor=$VISUAL new blog/"$*".md
 }
 
-function task-note()
-{
-    # Args: Task ID
-    if (which task &> /dev/null);
-    then
-        task=$1
-        alias inb='task add +in'
-        u=$(task _get $task.uuid)
-        d=$(task _get $task.description)
-        t=$(task _get $task.tags)
-        echo "---"
-        echo "tags:[$t]"
-        echo "tw:$u"
-        echo "---"
-        echo "\n# $d"
-        #sed -i 's/tw:/tw:'$u'/' test.md
-    fi
-}
-
 mkDir () {
     mkdir ${1}; cd ${1}
 }
-
-# Taskwarrior GTD Inbox
-if (which task &> /dev/null);
-then
-    alias inb='task add +in'
-fi
 
 if (which bat &> /dev/null);
 then
@@ -140,8 +115,6 @@ alias nf='fd -e md . $NOTES | fzf --print0 | xargs -0 $EDITOR'
 alias notes='$EDITOR $NOTES'
 alias scratch='$EDITOR $NOTES/Unsorted/`date +%F-%H%M%S` - Scratch.md'
 
-alias inb='task add +in'
-alias work='task +work'
 alias nn=new-note
 alias nm=new-meeting
 alias np=new-post

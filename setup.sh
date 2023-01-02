@@ -33,21 +33,6 @@ for file in $backups; do
     fi
 done
 
-echo "Creating local taskrc"
-echo "include task-common-rc" > task/dot-config/task/taskrc
-read -p "Enter config hash: " HASH
-if [ "$HASH" = "" ]; then
-    echo "Got empty hash - skipping"
-else
-    WINGTASK_ZIP="/tmp/$USER-wingtask-config-$$.zip"
-    curl https://app.wingtask.com/api/configs/$HASH --output $WINGTASK_ZIP
-    unzip $WINGTASK_ZIP -d /tmp
-    mv /tmp/wingtask_configuration/wingtask_certs ~/.wingtask_certs
-    grep taskd /tmp/wingtask_configuration/taskrc >> task/dot-config/task/taskrc
-    rm -rf /tmp/wingtask_configuration
-    rm $WINGTASK_ZIP
-fi
-
 echo "Begining flinging..."
 for dir in `find * -maxdepth 0 -type d -not -name "*."`; do
     echo "Flinging $dir"
@@ -86,3 +71,14 @@ fi
 
 # Provision NeoVim
 nvim --headless -c 'autocmd User PackerComplete quitall'
+TODOIST_CLI_VERSION="0.18.0"
+if [ "$(todoist --version | cut -d' ' -f3)" != "$TODOIST_CLI_VERSION" ]; then
+    echo "Installing Todoist CLI"
+    mkdir -p ~/.local/usr/bin
+    wget https://github.com/sachaos/todoist/releases/download/v${TODOIST_CLI_VERSION}/todoist_linux_amd64 -O ~/.local/usr/bin/todoist
+    chmod +x ~/.local/usr/bin/todoist
+    # Sync cache. If for the first time, it will request API key
+    todoist sync
+    mkdir -p $XDG_DATA_HOME/bash-completion
+    wget https://github.com/sachaos/todoist/raw/v${TODOIST_CLI_VERSION}/todoist_functions_fzf_bash.sh -O $HOME/.local/usr/bin/todoist_functions_fzf_bash.sh
+fi
