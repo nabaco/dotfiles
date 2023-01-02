@@ -51,8 +51,8 @@ fi
 
 WSL=`grep microsoft /proc/version`
 if [ -n "$WSL" ]; then
-    export DISPLAY=$(grep "nameserver 172" /etc/resolv.conf | cut -d " " -f 2):0
-    export NOTES=/mnt/c/Users/$USER/Nextcloud-BC/Notes/
+    # export DISPLAY=$(grep "nameserver 172" /etc/resolv.conf | cut -d " " -f 2):0
+    export NOTES=/mnt/c/Users/$USER/Nextcloud/Notes/
 else
     export NOTES=$HOME/Nextcloud/Notes/
 fi

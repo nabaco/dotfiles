@@ -111,9 +111,9 @@ alias vifm='vifmrun'
 alias purge='sudo pacman -Rcsn'
 alias pacman='sudo pacman'
 
-alias nf='fd -e md . $NOTES | fzf --print0 | xargs -0 $EDITOR'
-alias notes='$EDITOR $NOTES'
-alias scratch='$EDITOR $NOTES/Unsorted/`date +%F-%H%M%S` - Scratch.md'
+alias nf='fd -e md . $NOTES | fzf --print0 | xargs -0 $VISUAL'
+alias notes='$VISUAL $NOTES'
+alias scratch='$VISUAL $NOTES/Unsorted/`date +%F-%H%M%S` - Scratch.md'
 
 alias nn=new-note
 alias nm=new-meeting

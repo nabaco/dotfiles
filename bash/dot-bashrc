@@ -154,6 +154,24 @@ fi
 
 if [ "$color_prompt" = yes ]; then
     PS1='$(task_indicator)${reset@P}${debian_chroot:+($debian_chroot)}${green@P}$(ns)${reset@P}:${blue@P}\w${reset@P}${yellow@P}$(__git_ps1 "(%s)")${reset@P}\n\$ '
+    if [ -n "$NVIM" ]; then
+        :
+    elif [ -z "$TMUX" ]; then
+        # OSC 1337 for CWD tracking by the terminal
+        export PS1=${PS1}'\[\e]1337;CurrentDir=${PWD}\a\]'
+    else
+        if [ $(echo "$(echo $TERM_PROGRAM_VERSION | sed 's/\([0-9]\.[0-9]\)[a-z]/\1/') < 3.3" | bc) -eq 0 ]; then
+            # OSC 7 support was introduced in tmux 3.3a
+            # tmux.conf requires requires:
+            #   set -as terminal-overrides '*:Swd=\E]1337;CurrentDir='
+            #   set -as terminal-features '*:osc7'
+            #   set -g set-titles on
+            export PS1=${PS1}'\[\e]7;${PWD}\a\]'
+        else
+            # Otherwise pass OSC 1337 with tmux passthrough
+            export PS1=${PS1}'\[\ePtmux;\e\e]1337;CurrentDir=${PWD}\a\e\\\]'
+        fi
+    fi
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
