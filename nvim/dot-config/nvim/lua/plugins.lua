@@ -28,7 +28,7 @@ end
 -- TODO: Include profiling (passed to the startup function) to try to optimize further
 return packer.startup({function(use)
     -- Packer can manage itself
-    use { 'wbthomason/packer.nvim', opt=true, cmd={'Packer*'} }
+use { 'wbthomason/packer.nvim', opt=true, cmd={'PackerSync'} }
 
     -- Startup time improvers
     use 'lewis6991/impatient.nvim' -- To be removed after https://github.com/neovim/neovim/pull/15436

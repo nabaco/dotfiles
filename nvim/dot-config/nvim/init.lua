@@ -213,10 +213,20 @@ cmp.setup({
         documentation = cmp.config.window.bordered({zindex = 120}),
     },
     mapping = cmp.mapping.preset.insert({
-        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<S-Space>'] = cmp.mapping.complete(),
-        ['<CR>'] = cmp.mapping.confirm({ select = false }),
+        ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), {'i', 'c'}),
+        ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), {'i', 'c'}),
+        ['<S-Space>'] = cmp.mapping(cmp.mapping.complete(), {'i', 'c'}),
+        ['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
+        ['<CR>'] = cmp.mapping({
+            i = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false }),
+            -- c = function(fallback)
+            --     if cmp.visible() then
+            --         cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
+            --     else
+            --         fallback()
+            --     end
+            -- end
+        }),
         ["<Tab>"] = cmp.mapping({
             c = function()
                 if cmp.visible() then
@@ -229,14 +239,14 @@ cmp.setup({
                 if cmp.visible() then
                     cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
                 elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-                    vim.fn["UltiSnips#JumpForwards"]()
+                    vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
                 else
                     fallback()
                 end
             end,
             s = function(fallback)
                 if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-                    vim.fn["UltiSnips#JumpForwards"]()
+                    vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
                 else
                     fallback()
                 end
@@ -254,14 +264,48 @@ cmp.setup({
                 if cmp.visible() then
                     cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
                 elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-                    vim.fn["UltiSnips#JumpBackwards"]()
+                    return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
                 else
                     fallback()
                 end
             end,
             s = function(fallback)
                 if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-                    vim.fn["UltiSnips#JumpBackwards"]()
+                    return vim.api.nvim_feedkeys( t("<Plug>(ultisnips_jump_backward)"), 'm', true)
+                else
+                    fallback()
+                end
+            end
+        }),
+        ['<Down>'] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
+        ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
+        ['<C-n>'] = cmp.mapping({
+            c = function()
+                if cmp.visible() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                else
+                    vim.api.nvim_feedkeys(t('<Down>'), 'n', true)
+                end
+            end,
+            i = function(fallback)
+                if cmp.visible() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                else
+                    fallback()
+                end
+            end
+        }),
+        ['<C-p>'] = cmp.mapping({
+            c = function()
+                if cmp.visible() then
+                    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+                else
+                    vim.api.nvim_feedkeys(t('<Up>'), 'n', true)
+                end
+            end,
+            i = function(fallback)
+                if cmp.visible() then
+                    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
                 else
                     fallback()
                 end
@@ -280,8 +324,10 @@ cmp.setup({
 -- " UltiSnips Bindings
 vim.g.UltiSnipsExpandTrigger="<Leader><Leader>"
 vim.g.UltiSnipsListSnippets="<Leader>x"
-vim.g.UltiSnipsJumpForwardTrigger="<c-j>"
-vim.g.UltiSnipsJumpBackwardTrigger="<c-k>"
+vim.g.UltiSnipsJumpForwardTrigger='<Plug>(ultisnips_jump_forward)'
+vim.g.UltiSnipsJumpBackwardTrigger='<Plug>(ultisnips_jump_backward)'
+--vim.g.UltiSnipsRemoveSelectModeMappings = 0
+
 
 
 -- `/` cmdline setup.
@@ -352,7 +398,7 @@ vim.cmd('autocmd BufEnter * Rooter') -- " Still autochange the directory
 vim.g.rooter_silent_chdir = 1
 vim.g.rooter_change_directory_for_non_project_files = 'current'
 vim.g.rooter_resolve_links = 1
-vim.g.rooter_patterns = {'compile_commands.json', '.git'}
+vim.g.rooter_patterns = {'compile_commands.json', '.git', 'Cargo.toml'}
 
 -- " If your terminal's background is white (light theme), uncomment the following
 -- " to make EasyMotion's cues much easier to read.
@@ -655,7 +701,7 @@ end
 
 -- Use a loop to conveniently both setup defined servers
 -- and map buffer local keybindings when the language server attaches
-local servers = { "jedi_language_server", "robotframework_ls", "bashls", "rust_analyzer" }
+local servers = { "jedi_language_server", "robotframework_ls", "bashls"}--, "rust_analyzer" }
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 for _, lsp in ipairs(servers) do
     lspconfig[lsp].setup {
@@ -663,6 +709,19 @@ for _, lsp in ipairs(servers) do
         capabilities = capabilities
     }
 end
+
+lspconfig.rust_analyzer.setup{
+    on_attach = on_attach;
+    capabilities = capabilities;
+    settings = {
+        ['rust-analyzer'] = {
+            checkOnSave = {
+                command = "clippy";
+            }
+        }
+    }
+
+}
 
 lspconfig.clangd.setup{
     -- cmd = { "clangd", "--background-index", "--cross-file-rename", "--limit-results=0", "-j=$(nproc)" };
