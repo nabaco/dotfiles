@@ -115,6 +115,11 @@ alias nf='fd -e md . $NOTES | fzf --print0 | xargs -0 $VISUAL'
 alias notes='$VISUAL $NOTES'
 alias scratch='$VISUAL $NOTES/Unsorted/`date +%F-%H%M%S` - Scratch.md'
 
+alias next='todoist list --filter "@next" --priority'
+alias next-work='todoist list --filter "@next & ##work" --priority'
+alias next-personal='todoist list --filter "##personal & ((today | overdue) | @next)" --priority'
+alias q='todoist quick'
+
 alias nn=new-note
 alias nm=new-meeting
 alias np=new-post

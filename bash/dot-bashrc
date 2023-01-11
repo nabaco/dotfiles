@@ -41,17 +41,17 @@ function task_indicator {
     unset today
     unset tomorrow
     unset inbox
-    unset urgent
-    overdue=`todoist list --filter overdue | wc -l 2> /dev/null`
-    today=`todoist list --filter today | wc -l 2> /dev/null`
-    tomorrow=`todoist list --filter tomorrow | wc -l 2> /dev/null`
-    inbox=`todoist list --filter \#inbox | wc -l 2> /dev/null`
-    #urgent=`task +READY urgency\>10 count 2> /dev/null`
+    unset next
+    overdue=`todoist list --filter 'overdue' | wc --lines 2> /dev/null`
+    today=`todoist list --filter 'today & ! overdue' | wc --lines 2> /dev/null`
+    tomorrow=`todoist list --filter 'tomorrow' | wc --lines 2> /dev/null`
+    inbox=`todoist list --filter '#inbox' | wc --lines 2> /dev/null`
+    next=`todoist list --filter '@next' | wc --lines 2> /dev/null`
     # if [ "$overdue" -gt "0" ]; then
         ti+="${red@P}O:$overdue${reset@P} "
     # fi
     # if [ "$urgent" -gt "0" ]; then
-        # ti+="${purple@P}U:$urgent${reset@P} "
+         ti+="${purple@P}N:$next${reset@P} "
     # fi
     # if [ "$today" -gt "0" ]; then
         ti+="${yellow@P}D:$today${reset@P} "
