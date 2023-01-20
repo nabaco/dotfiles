@@ -1,0 +1,18 @@
+theme = "gruvbox"
+[editor]
+true-color = true
+color-modes = true                                                                                                                          
+line-number = "relative"
+cursorline = true
+rulers = [80]
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+[editor.indent-guides]
+render = true
+character = "⸽"
+[editor.whitespace]
+render = "all"
+[editor.statusline]
+right = ["diagnostics","selections","file-type","position","spacer","position-percentage","total-line-numbers","file-encoding"]

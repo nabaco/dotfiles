@@ -1,0 +1,15 @@
+[[language]]
+name = "c"
+indent = { tab-width = 4, unit = "    " }
+roots = [".git","compile_commands.json"]
+language-server = { command = "clangd", args = ["--clang-tidy","--header-insertion=iwyu","--header-insertion-decorators","--malloc-trim","--folding-ranges","--use-dirty-headers" ]}
+
+[[language]]
+name = "cpp"
+indent = { tab-width = 4, unit = "    " }
+roots = [".git","compile_commands.json"]
+language-server = { command = "clangd", args = ["--clang-tidy","--header-insertion=iwyu","--header-insertion-decorators","--malloc-trim","--folding-ranges","--use-dirty-headers" ]}
+
+[[language]]
+name = "python"
+file-types = ["py","pyi","py3","pyw","ptl",".pythonstartup",".pythonrc","SConstruct"]
