@@ -9,11 +9,19 @@
 [core]
     excludesFile = ~/.gitignore
     #pager = bat -p
-    pager = less -i
-    editor = nvim
+    #pager = less -i
+    pager = delta
+    editor = hx
     # Specify whitespace conventions. Violations will be highlighted in diffs
     whitespace = -indent-with-non-tab,trailing-space,tabwidth=4
     preloadindex = true
+[interactive]
+    diffFilter = delta --color-only
+[delta]
+    navigate = true    # use n and N to move between diff sections
+    light = false      # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
+    side-by-side = true
+    line-sumbers = true
 [init]
     templatedir = ~/.config/git/
 [push]
@@ -42,14 +50,18 @@
 
 [diff]
     tool = vimdiff
+    colorMoved = default
 [difftool "vimdiff"]
     cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+[difftool "helix"]
+    cmd = "hx --vsplit \"$LOCAL\" \"$REMOTE\""
 [difftool]
     prompt = false
 ;[difftool "meld"]
 ;    trustExitCode = true
 [merge]
     tool = vimdiff
+    conflictstyle = diff3
 [mergetool]
     prompt = false
 [mergetool "vimdiff"]
