@@ -13,3 +13,9 @@ language-server = { command = "clangd", args = ["--clang-tidy","--header-inserti
 [[language]]
 name = "python"
 file-types = ["py","pyi","py3","pyw","ptl",".pythonstartup",".pythonrc","SConstruct"]
+
+[[language]]
+name = "rust"
+
+[language.config]
+checkOnSave = { command = "clippy" }
