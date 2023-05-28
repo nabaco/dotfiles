@@ -227,7 +227,8 @@ FILES_TO_SOURCE="$HOME/.bashrc.$USER \
                  /usr/share/fzf/key-bindings.bash \
                  $HOME/.bash_aliases \
                  $HOME/.local/usr/bin/todoist_functions_fzf_bash.sh \
-                 $HOME/.cargo/env"
+                 $HOME/.cargo/env \
+                 $HOME/.local/etc/lfcd.sh"
 
 for file in $FILES_TO_SOURCE; do
     if [ -f "$file" ]; then
@@ -239,3 +240,9 @@ if [ -f ~/.local/usr/bin/bb ]; then
     eval "$(~/.local/usr/bin/bb init -)"
 fi
 #}}}
+
+tere() {
+    local result=$(command tere "$@")
+    [ -n "$result" ] && cd -- "$result"
+}
+
