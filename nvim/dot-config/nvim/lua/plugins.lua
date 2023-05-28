@@ -28,7 +28,7 @@ end
 -- TODO: Include profiling (passed to the startup function) to try to optimize further
 return packer.startup({function(use)
     -- Packer can manage itself
-use { 'wbthomason/packer.nvim', opt=true, cmd={'PackerSync'} }
+    use { 'wbthomason/packer.nvim', opt=true, cmd={'PackerSync'} }
 
     -- Startup time improvers
     use 'lewis6991/impatient.nvim' -- To be removed after https://github.com/neovim/neovim/pull/15436
@@ -67,7 +67,7 @@ use { 'wbthomason/packer.nvim', opt=true, cmd={'PackerSync'} }
     -- Install just the latest plugin without installing FZF itself
     --    'junegunn/fzf'
     -- else
-    use {'junegunn/fzf', run=vim.fn["fzf#install"]()}
+    use {'junegunn/fzf', run=function() vim.fn["fzf#install"]() end}
     --end
     use 'junegunn/fzf.vim'
     use {'junegunn/vim-peekaboo'} -- Peek into registers ", @, <C-R>
@@ -118,7 +118,8 @@ use { 'wbthomason/packer.nvim', opt=true, cmd={'PackerSync'} }
         cmd='Trouble',
         opt=true,
     }
-    use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
+    use {'nvim-treesitter/nvim-treesitter'}
+    --use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
 
     -- Automatically add 'end' in languages like lua
     use 'RRethy/nvim-treesitter-endwise'
@@ -260,7 +261,7 @@ use { 'wbthomason/packer.nvim', opt=true, cmd={'PackerSync'} }
         -- plugins installed, which causes a lot of error messages and a mess. So better exit,
         -- so that the user re-enters into a proper environemt/experience.
         --vim.cmd[[quit]]
-        vim.cmd[[autocmd User PackerComplete quitall]]
+        --vim.cmd[[autocmd User PackerComplete quitall]]
     end
 end,
 config = {

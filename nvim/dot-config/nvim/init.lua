@@ -13,6 +13,7 @@ if fn.empty(fn.glob(install_path)) > 0 then
   PACKER_BOOTSTRAP = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
   print "Installing packer close and reopen Neovim..."
   require('plugins')
+  return
 end
 
 -- Automatically install plugins after updating the plugin file
@@ -753,7 +754,7 @@ lspconfig.lua_ls.setup({})
 
 require'nvim-treesitter.configs'.setup {
   -- One of "all", or a list of languages
-  ensure_installed = { "c", "lua", "help", "markdown", "markdown_inline", "python", "nix", "rust", "bash", "yaml" },
+  ensure_installed = { "c", "lua", "markdown", "markdown_inline", "python", "nix", "rust", "bash", "yaml" },
 
   -- Install languages synchronously (only applied to `ensure_installed`)
   sync_install = false,

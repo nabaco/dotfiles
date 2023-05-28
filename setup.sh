@@ -6,6 +6,8 @@
 set -e
 
 XDG_USER_CONFIG_DIR="$HOME/.config"
+mkdir -p ~/.local/usr/bin
+export PATH="~/.local/usr/bin:$PATH"
 
 # Due to https://github.com/aspiers/stow/issues/33
 # I switched to fling
@@ -15,7 +17,7 @@ if ! which fling > /dev/null || [ `fling version` != "$FLING_VERSION" ]; then
     echo "Fling not found, downloading..."
     FLING_PACKAGE="fling_${FLING_VERSION}_linux_amd64.tar.gz"
     wget https://github.com/bbkane/fling/releases/download/v$FLING_VERSION/$FLING_PACKAGE
-    tar -xvzf $FLING_PACKAGE --directory $HOME/.local/bin/ fling
+    tar -xvzf $FLING_PACKAGE --directory $HOME/.local/usr/bin/ fling
     rm $FLING_PACKAGE
 else
     if [ `fling version` = "$FLING_VERSION" ]; then
@@ -33,6 +35,7 @@ for file in $backups; do
     fi
 done
 
+mkdir -p ~/.config
 echo "Begining flinging..."
 for dir in `find * -maxdepth 0 -type d -not -name "*."`; do
     echo "Flinging $dir"
@@ -43,7 +46,6 @@ install_neovim() {
     local NVIM_VERSION=$1
     echo "Downloading NeoVim v$NVIM_VERSION"
     if [ "`id|egrep '(sudo|wheel)'`" = "" ]; then
-        mkdir -p ~/.local/usr/bin
         wget https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim.appimage -O ~/.local/usr/bin/nvim
         chmod +x ~/.local/usr/bin/nvim
     else
