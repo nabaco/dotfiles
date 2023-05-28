@@ -9,7 +9,7 @@ XDG_USER_CONFIG_DIR="$HOME/.config"
 
 # Due to https://github.com/aspiers/stow/issues/33
 # I switched to fling
-FLING_VERSION="0.0.17"
+FLING_VERSION="0.0.18"
 echo "Checking fling's presence"
 if ! which fling > /dev/null || [ `fling version` != "$FLING_VERSION" ]; then
     echo "Fling not found, downloading..."
@@ -53,7 +53,7 @@ install_neovim() {
     fi
 }
 
-NVIM_VERSION="0.8.2"
+NVIM_VERSION="0.9.0"
 if [ -f /usr/bin/nvim ]; then
     echo "NeoVim is installed by the package manager - Skipping installation"
 elif ! which nvim > /dev/null; then

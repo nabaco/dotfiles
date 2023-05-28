@@ -32,9 +32,6 @@ use { 'wbthomason/packer.nvim', opt=true, cmd={'PackerSync'} }
 
     -- Startup time improvers
     use 'lewis6991/impatient.nvim' -- To be removed after https://github.com/neovim/neovim/pull/15436
-    use 'nathom/filetype.nvim' -- Replaces native filetype.vim for faster startup
-    -- TODO: Move all custom filetypes to filetype.setup()
-    -- https://github.com/nathom/filetype.nvim
 
     -- Get used to proper Vim movement
     use 'takac/vim-hardtime'
@@ -70,7 +67,7 @@ use { 'wbthomason/packer.nvim', opt=true, cmd={'PackerSync'} }
     -- Install just the latest plugin without installing FZF itself
     --    'junegunn/fzf'
     -- else
-    use {'junegunn/fzf', run=vim.fn["fzf#install()"]}
+    use {'junegunn/fzf', run=vim.fn["fzf#install"]()}
     --end
     use 'junegunn/fzf.vim'
     use {'junegunn/vim-peekaboo'} -- Peek into registers ", @, <C-R>
@@ -165,7 +162,8 @@ use { 'wbthomason/packer.nvim', opt=true, cmd={'PackerSync'} }
     use 'windwp/nvim-autopairs'
 
     -- Tpope's plugins
-    use 'tpope/vim-surround' --surround vim
+    -- use 'tpope/vim-surround' --surround vim
+    use 'machakann/vim-sandwich'
     use 'tpope/vim-repeat' --Enable repeating supported plugin maps with .
     use 'tpope/vim-eunuch' --Unix commands from Vim
     -- It appears I don't need that since Startify does the same

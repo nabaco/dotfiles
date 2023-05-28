@@ -32,7 +32,9 @@ require('impatient')
 vim.opt.termguicolors = true
 -- " Colorscheme wal
 vim.g.gruvbox_material_background = 'hard'
-vim.g.gruvbox_material_enable_italic = 1
+-- Italics are currently poorly rendered in Microsoft Terminal
+vim.g.gruvbox_material_enable_italic = 0
+vim.g.gruvbox_material_disable_italic_comment = 1
 vim.g.gruvbox_material_enable_bold = 1
 vim.g.gruvbox_material_ui_contrast = 'high'
 vim.cmd[[colorscheme gruvbox-material]]
@@ -130,8 +132,11 @@ vim.opt.inccommand = "split"
 vim.opt.exrc = true
 vim.opt.secure = true
 
--- " Don't load default filetypes.vim on startup
-vim.g.did_load_filetypes = 1
+-- " Don't load default filetypes.vim on startup, for speed
+vim.g.do_filetype_lua = true
+-- A value of 0 for this variable disables filetype.vim.
+-- A value of 1 disables both filetype.vim and filetype.lua (which you probably don’t want).
+vim.g.did_load_filetypes = false
 
 -- " Integrate RipGrep
 if vim.fn.executable('rg') then
@@ -363,6 +368,15 @@ require'lualine'.setup{
 require'lspsaga'.init_lsp_saga()
 --require'lspsaga'.setup()
 require'nvim-autopairs'.setup{}
+
+vim.filetype.add({
+  extension = {
+    lua = "lua",
+    bbappend = "bitbake",
+    bbclass = "bitbake",
+    bb = "bitbake",
+  }
+})
 
 -- " HardTime in all buffers
 vim.g.hardtime_default_on = 0
@@ -724,7 +738,7 @@ lspconfig.rust_analyzer.setup{
 }
 
 lspconfig.clangd.setup{
-    -- cmd = { "clangd", "--background-index", "--cross-file-rename", "--limit-results=0", "-j=$(nproc)" };
+    cmd = { "clangd", "--background-index", "--limit-results=0", "-j="..io.popen("nproc"):read() };
     on_attach = on_attach;
     capabilities = capabilities;
     root_dir = function(fname)
@@ -733,7 +747,7 @@ lspconfig.clangd.setup{
     end
 }
 
-lspconfig.sumneko_lua.setup({})
+lspconfig.lua_ls.setup({})
 
 -- " }}}
 
