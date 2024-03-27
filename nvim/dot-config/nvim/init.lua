@@ -452,68 +452,6 @@ vim.g['pandoc#completion#bib#mode']='citeproc'
 -- " PlantUML path
 vim.g.plantuml_executable_script='java -jar $NFS/plantuml.jar'
 
--- " Startify {{{2
-
-vim.g.startify_session_autoload = 1
-vim.g.startify_session_delete_buffers = 1
-vim.g.startify_change_to_vcs_root = 0 -- " Rooter does that better
-vim.g.startify_change_to_dir = 0 -- " Rooter does that
-vim.g.startify_fortune_use_unicode = 1
-vim.g.startify_session_persistence = 1
-vim.g.startify_enable_special = 0
-vim.g.startify_relative_path = 1
-
-vim.g.startify_lists = {
-    { type= 'dir',       header= {'   Current Directory: '.. vim.fn.getcwd()}  },
-    { type= 'files',     header= {'   Files'}             },
-    { type= 'sessions',  header= {'   Sessions'}        },
-    { type= 'bookmarks', header= {'   Bookmarks'}       },
-}
-
-vim.g.startify_bookmarks = {
-    { i= '~/.config/nvim/init.lua'  },
-    { p= '~/.config/nvim/lua/plugins.lua'  },
-    { b= '~/.bashrc'  },
-    { u= '~/.bashrc.'..vim.env.USER  },
-}
-
--- Lua is more picky about escaping backslashes
--- Preferable method is to first put the text
--- and after the shape is fine, escape them
-vim.g.nabaco = {
-    '     _   __            ____            ______        ',
-    '    / | / /  ____ _   / __ )  ____ _  / ____/  ____  ',
-    '   /  |/ /  / __ `/  / __  | / __ `/ / /      / __ \\ ',
-    '  / /|  /  / /_/ /  / /_/ / / /_/ / / /___   / /_/ / ',
-    ' /_/ |_/   \\__,_/  /_____/  \\__,_/  \\____/   \\____/  ',
-}
-
--- "vim.g.nabaco = [
--- "            \ '   ) ',
--- "            \ ' ( /(            (             ( ',
--- "            \ ' )\())     )   ( )\      )     )\ ',
--- "            \ '((_)\   ( /(   )((_)  ( /(   (((_)    ( ',
--- "            \ ' _((_)  )(_)) ((_)_   )(_))  )\___    )\ ',
--- "            \ '| \| | ((_)_   | _ ) ((_)_  ((/ __|  ((_) ',
--- "            \ '| .` | / _` |  | _ \ / _` |  | (__  / _ \ ',
--- "            \ '|_|\_| \__,_|  |___/ \__,_|   \___| \___/ ',
--- "            \]
-
--- "vim.g.nabaco = [
--- "\ '  __  __            ____              ____            __ ',
--- "\ ' /\ \/\ \          /\  _`\           /\  _`\         /\ \ ',
--- "\ ' \ \ `\\ \     __  \ \ \L\ \     __  \ \ \/\_\    ___\ \ \ ',
--- "\ '  \ \ , ` \  /`__`\ \ \  _ <`  /`__`\ \ \ \/_/_  / __`\ \ \ ',
--- "\ '   \ \ \`\ \/\ \L\.\_\ \ \L\ \/\ \L\.\_\ \ \L\ \/\ \L\ \ \_\ ',
--- "\ '    \ \_\ \_\ \__/.\_\\ \____/\ \__/.\_\\ \____/\ \____/\/\_\ ',
--- "\ '     \/_/\/_/\/__/\/_/ \/___/  \/__/\/_/ \/___/  \/___/  \/_/ ',
--- "\]
-
-
-vim.g.startify_custom_header =  'startify#center(g:nabaco) + startify#center(startify#fortune#boxed())'
-
--- " }}}
-
 -- " Colorizer && Rainbow {{{2
 
 require'colorizer'.setup(
@@ -553,8 +491,6 @@ vnoremap('jk', '<Esc>', "Exit visual mode")
 
 nnoremap('<Leader>n', ':NvimTreeToggle<CR>', "File explorer")
 nnoremap('<Leader>v', ':NvimTreeFindFile<CR>', "Current file in file explorer")
-
-nnoremap('<leader>s', '<cmd>Startify<CR>', "Home screen")
 
 -- " Cscope and quickfix {{{2
 
@@ -784,7 +720,7 @@ nnoremap('<Leader>/', ':noh<cr>')
 
 -- " FZF bindings
 nnoremap('<Leader><cr>', '<CMD>Buffers<CR>')
-nnoremap('<Leader>f', '<CMD>FZF<CR>')
+nnoremap('<Leader>f', '<CMD>Files<CR>')
 nnoremap('<Leader>t', '<CMD>Tags<CR>')
 nnoremap('<Leader>T', '<CMD>BTags<CR>')
 nnoremap('<Leader>m', '<CMD>Commits<CR>')
