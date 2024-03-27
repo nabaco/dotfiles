@@ -554,7 +554,7 @@ vnoremap('jk', '<Esc>', "Exit visual mode")
 nnoremap('<Leader>n', ':NvimTreeToggle<CR>', "File explorer")
 nnoremap('<Leader>v', ':NvimTreeFindFile<CR>', "Current file in file explorer")
 
-nnoremap('<leader>s', '<cmd>Startify<CR>', "Home screen")
+-- nnoremap('<leader>s', '<cmd>Startify<CR>', "Home screen")
 
 -- " Cscope and quickfix {{{2
 
@@ -784,7 +784,7 @@ nnoremap('<Leader>/', ':noh<cr>')
 
 -- " FZF bindings
 nnoremap('<Leader><cr>', '<CMD>Buffers<CR>')
-nnoremap('<Leader>f', '<CMD>FZF<CR>')
+nnoremap('<Leader>f', '<CMD>Files<CR>')
 nnoremap('<Leader>t', '<CMD>Tags<CR>')
 nnoremap('<Leader>T', '<CMD>BTags<CR>')
 nnoremap('<Leader>m', '<CMD>Commits<CR>')

@@ -46,7 +46,7 @@ return packer.startup({function(use)
     use 'tpope/vim-fugitive' --The power of git in vim
     use {'idanarye/vim-merginal', requires='vim-fugitive'} --Branch TUI based on fugitive
     use {'jreybert/vimagit', opt=true, cmd={'Magit', 'MagitOnly'}} --Easier stage/commit workflow
-    use 'airblade/vim-gitgutter' --Show changes live + 'hunk/change' text object
+    use {'airblade/vim-gitgutter', branch='main'} --Show changes live + 'hunk/change' text object
     use {'rhysd/git-messenger.vim', opt=true, cmd='GitMessenger', keys='<Leader>gm'} --Git blame in bubbles
 
     --if vim.fn.has("Win32") then
@@ -217,7 +217,7 @@ return packer.startup({function(use)
     use 'vim-pandoc/vim-pandoc'
     use 'vim-pandoc/vim-pandoc-syntax'
     use 'kergoth/vim-bitbake'
-    use 'Matt-Deacalion/vim-systemd-syntax'
+    use {'https://codeberg.org/Dokana/vim-systemd-syntax', branch='trunk'}
     use 'cespare/vim-toml'
     use 'tmux-plugins/vim-tmux'
     use 'tmux-plugins/vim-tmux-focus-events'
@@ -245,7 +245,14 @@ return packer.startup({function(use)
     use 'junegunn/rainbow_parentheses.vim'
 
     -- Start screen
-    use 'mhinz/vim-startify'
+    -- use 'mhinz/vim-startify'
+    use {
+        'goolord/alpha-nvim',
+        requires = { 'nvim-tree/nvim-web-devicons' },
+        config = function ()
+            require('alpha-config')
+        end
+    }
 
     -- Highlight same words as under cursor
     use 'RRethy/vim-illuminate'
