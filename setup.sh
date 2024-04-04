@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # For debug only
 #set -x
@@ -11,7 +11,7 @@ export PATH="~/.local/usr/bin:$PATH"
 
 # Due to https://github.com/aspiers/stow/issues/33
 # I switched to fling
-FLING_VERSION="0.0.18"
+FLING_VERSION="0.0.20"
 echo "Checking fling's presence"
 if ! which fling > /dev/null || [ `fling version` != "$FLING_VERSION" ]; then
     echo "Fling not found, downloading..."
@@ -55,7 +55,7 @@ install_neovim() {
     fi
 }
 
-NVIM_VERSION="0.9.2"
+NVIM_VERSION="0.9.5"
 if [ -f /usr/bin/nvim ]; then
     echo "NeoVim is installed by the package manager - Skipping installation"
 elif ! which nvim > /dev/null; then
@@ -73,7 +73,7 @@ fi
 # Provision NeoVim
 nvim --headless --noplugin -u NONE -c 'luafile ~/.config/nvim/lua/plugins.lua' -c 'PackerSync'  -c 'autocmd User PackerComplete quitall'
 
-TODOIST_CLI_VERSION="0.18.0"
+TODOIST_CLI_VERSION="0.20.0"
 if [ "$(todoist --version | cut -d' ' -f3)" != "$TODOIST_CLI_VERSION" ]; then
     echo "Installing Todoist CLI"
     mkdir -p ~/.local/usr/bin
