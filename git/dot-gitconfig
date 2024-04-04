@@ -18,8 +18,11 @@
     templatedir = ~/.config/git/
 [push]
     default = current
+[pull]
+    rebase = true
 [rebase]
     autosquash = true
+    autostash = true
 [color]
     ui = auto
 [alias]
