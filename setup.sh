@@ -71,7 +71,7 @@ else
 fi
 
 # Provision NeoVim
-nvim --headless --noplugin -u NONE -c 'luafile ~/.config/nvim/lua/plugins.lua' -c 'PackerSync'  -c 'autocmd User PackerComplete quitall'
+nvim --headless "+Lazy! sync" +qa
 
 TODOIST_CLI_VERSION="0.20.0"
 if [ "$(todoist --version | cut -d' ' -f3)" != "$TODOIST_CLI_VERSION" ]; then

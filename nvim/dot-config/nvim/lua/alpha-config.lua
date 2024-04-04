@@ -1,3 +1,7 @@
+-----------------------------------
+--         Alpha Greeter         --
+-----------------------------------
+
 local alpha = require'alpha'
 local startify = require'alpha.themes.startify'
 
@@ -25,6 +29,7 @@ startify.section.top_buttons.val = {
     startify.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
 }
 
+local rtp = vim.api.nvim_list_runtime_paths()[1]
 local bookmarks = {
     type = "group",
     val = {
@@ -32,7 +37,7 @@ local bookmarks = {
         { type = "text", val = "Bookmarks" },
         { type = "padding", val = 1 },
         startify.button("i", " init.lua", "<CMD>edit $MYVIMRC<CR>"),
-        startify.button("p", " plugins.lua", "<CMD>edit ~/.config/nvim/lua/plugins.lua<CR>"),
+        startify.button("p", " plugins.lua", "<CMD>edit "..rtp.."/lua/plugins/init.lua<CR>"),
         startify.button("b", " bashrc", "<CMD>edit ~/.bashrc<CR>"),
         startify.button("l", " bashrc."..vim.env.USER, "<CMD>edit ~/.bashrc."..vim.env.USER.."<CR>"),
     }
