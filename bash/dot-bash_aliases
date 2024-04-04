@@ -25,8 +25,8 @@ fi
 # Otherwise, attempt to find it above and cd it
 # Requires bd on system and in PATH
 # https://github.com/vigneshwaranr/bd
-__icd () {
-    if [ "${1}" == "-" ]; then
+function __icd () {
+    if [ "${1}" = "-" ]; then
         cd -
     elif [ -d "${1}" ]; then
         cd "${1}"

@@ -220,6 +220,7 @@ FILES_TO_SOURCE="$HOME/.bashrc.$USER \
                  /usr/share/git/completion/git-completion.bash \
                  $HOME/.local/bin/git-completion.bash \
                  /usr/share/git/completion/git-prompt.sh \
+                 /usr/share/git-core/contrib/completion/git-prompt.sh \
                  $HOME/.fzf.bash \
                  $HOME/.local/bin/fzf/shell/completion.bash \
                  $HOME/.local/bin/fzf/shell/key-bindings.bash \
