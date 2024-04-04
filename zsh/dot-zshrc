@@ -1,3 +1,4 @@
+# vim: ft=zsh
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.zsh/histfile
 HISTSIZE=10000
@@ -7,34 +8,57 @@ setopt autocd extendedglob nomatch notify
 bindkey -e
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
-zstyle :compinstall filename '/home/nachum/.zshrc'
+zstyle :compinstall filename '$HOME/.zshrc'
 
-fpath=(/usr/share/zsh/site-functions/ $fpath)
+fpath=(/usr/share/zsh/functions/ $fpath)
+export PATH
 
 python_version=$(python3 --version|sed 's/Python \(3\.[0-9]*\)\.[0-9]/python\1/')
 # In places where the same file appears twice, the expectation is that it will be installed
 # only once (either by user or by admin).
 # TODO: Check files and explicitly don't source twice
-plugins=(/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh \
+plugins=( \
+    /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh \
+    $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh \
     /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
     $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
     /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh \
     $HOME/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh \
+    $HOME/.fzf.zsh \
     /usr/share/fzf/completion.zsh \
     /usr/share/fzf/key-bindings.zsh \
-    $HOME/.local/share/nvim/bundle/fzf/shell/completion.zsh \
-    $HOME/.local/share/nvim/bundle/fzf/shell/key-bindings.zsh \
-    $HOME/.bash_aliases \
-    /home/nbarcohx/.config/broot/launcher/bash/br \
     /lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh \
     $HOME/.local/lib/$python_version/site-packages/powerline/bindings/zsh/powerline.zsh \
+    $HOME/.zsh/plugins/bd/bd.zsh \
+    $HOME/.bashrc.$USER \
+    $HOME/.bash_aliases \
+    $HOME/.config/broot/launcher/bash/br \
 )
 
 for p in $plugins; do
     if [ -f $p ]; then
+        # echo "Sourcing $p"
         source $p
     fi
 done
+
+autoload -Uz vcs_info
+
+# This runs before every prompt.
+precmd() {
+    vcs_info
+    update-x11-forwarding
+    # Debugging.
+    # echo DISPLAY = $DISPLAY, display.txt = `cat ~/.display.txt`, STY = $STY, TMUX = $TMUX
+}
+
+zstyle ':vcs_info:*' formats '(%F{green}%b%f)'
+
+# TODO: Do this intelligently
+# Enable in dev environment and disable powershell above
+# setopt PROMPT_SUBST
+# PS1='%F{003}%~%f${vcs_info_msg_0_}
+# $ '
 
 ## zsh-history-substring-search.zsh bindings
 #    bindkey "$terminfo[kcuu1]" history-substring-search-up
@@ -58,3 +82,15 @@ then
     # To add support for TTYs this line can be optionally added.
     source ~/.cache/wal/colors-tty.sh
 fi
+
+# -- Improved X11 forwarding through GNU Screen (or tmux).
+# If not in screen or tmux, update the DISPLAY cache.
+# If we are, update the value of DISPLAY to be that in the cache.
+function update-x11-forwarding ()
+{
+    if [ -z "$STY" -a -z "$TMUX" ]; then
+        echo $DISPLAY > ~/.display.txt
+    else
+        export DISPLAY=`cat ~/.display.txt`
+    fi
+}
