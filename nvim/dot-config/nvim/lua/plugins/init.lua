@@ -9,16 +9,16 @@ end
 -- Plugins declaration.
 return {
     -- Packer can manage itself
-    { 'folke/lazy.nvim', cmd='LazySync' },
+    { 'folke/lazy.nvim', cmd = 'LazySync' },
 
     -- Some help with the key mappings
     -- supplies proper lua commands similar to vim's commands for mapping
     -- Which Key (similar to Emacs' plugin) supplies help pop-ups to remind of key bindings
     -- NOTE: I'm placing it on top, as to be able to use it in configuration scripts of other plugins
-    {'b0o/mapx.nvim', dependencies='folke/which-key.nvim'},
+    { 'b0o/mapx.nvim',   dependencies = 'folke/which-key.nvim' },
 
     -- Add some additional text objects and attack them
-    -- 'wellle/targets.vim',
+    {'wellle/targets.vim', event='VeryLazy'},
 
     -- Incerement numbers intelligently
     {
@@ -26,9 +26,9 @@ return {
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
             "b0o/mapx.nvim"
-       },
-       keys = {'<c-a>', '<c-x>'},
-        config = function ()
+        },
+        keys = { '<c-a>', '<c-x>' },
+        config = function()
             require('dial-config')
         end
     },
@@ -36,58 +36,14 @@ return {
     -- Reposition cursor in the last position upon file reopening
     'farmergreg/vim-lastplace',
 
-    -- == Git support == {{{
-    {
-        --The power of git in vim
-        'tpope/vim-fugitive',
-        cmd = 'Git',
-    },
-    {
-        --Branch TUI based on fugitive
-        'idanarye/vim-merginal',
-        dependencies = 'vim-fugitive',
-        cmd = {
-            'Merginal',
-            'MerginalToggle'
-        }
-    },
-    {
-        -- Easier stage/commit workflow
-        'jreybert/vimagit',
-        cmd = {'Magit', 'MagitOnly'}
-    },
-    -- {
-    --     "NeogitOrg/neogit",
-    --     dependencies = {
-    --         "nvim-lua/plenary.nvim",         -- required
-    --         "sindrets/diffview.nvim",        -- optional - Diff integration
-    --         -- Only one of these is needed, not both.
-    --         -- "nvim-telescope/telescope.nvim", -- optional
-    --         "ibhagwan/fzf-lua",              -- optional
-    --     },
-    --     config = true
-    -- },
-    {
-        --Show changes live + 'hunk/change' text object
-        'airblade/vim-gitgutter',
-        branch='main',
-        event='VeryLazy',
-        config = function()
-            --  Let GitGutter do its thing on large files
-            vim.g.gitgutter_max_signs=50000
-        end,
-    },
-    {'rhysd/git-messenger.vim', cmd='GitMessenger', keys='<Leader>gm'}, --Git blame in bubbles
-    --- }}}
-
     --if vim.fn.has("Win32") then
     --    { 'Shougo/vimproc.vim', run='nmake'},
     --end
-    {'skywind3000/asyncrun.vim', cmd = 'AsyncRun'},
+    { 'skywind3000/asyncrun.vim', cmd = 'AsyncRun' },
 
     -- Vim Rooter - needed for all the git plugins to work correctly,
     -- in a multi-repo environment
-    {'airblade/vim-rooter', cmd = 'Rooter'},
+    { 'airblade/vim-rooter',      cmd = 'Rooter' },
     {
         'aymericbeaumet/vim-symlink',
         dependencies = {
@@ -97,7 +53,7 @@ return {
     },
 
     -- Puts all vim navigation keys on drugs! f,t etc..
-   {
+    {
         "folke/flash.nvim",
         event = "VeryLazy",
         ---@type Flash.Config
@@ -106,16 +62,17 @@ return {
                 char = {
                     jump_labels = true
                 }
-            }},
-            -- stylua: ignore
-            keys = {
-                --     { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-                { "<leader>c", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-                -- { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-                -- { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-                { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
-            },
+            }
         },
+        -- stylua: ignore
+        keys = {
+            --     { "s", mode = { "n", "x", "o" }, function() require('flash').jump() end, desc = "Flash" },
+            { "<leader>c", mode = { "n", "x", "o" }, function() require('flash').treesitter() end, desc = "Flash Treesitter" },
+            -- { "r", mode = "o", function() require('flash').remote() end, desc = "Remote Flash" },
+            -- { "R", mode = { "o", "x" }, function() require('flash').treesitter_search() end, desc = "Treesitter Search" },
+            { "<c-s>",     mode = { "c" },           function() require('flash').toggle() end,     desc = "Toggle Flash Search" },
+        },
+    },
 
     -- Ultimate fuzzy search + Multi-entry selection UI.
     {
@@ -133,10 +90,11 @@ return {
             },
         },
         config = function()
-            require("fzf-lua").setup()
-            require("fzf-lua").setup_fzfvim_cmds() -- backward compatability
+            require('fzf-lua').setup()
+            require('fzf-lua').setup_fzfvim_cmds() -- backward compatability
         end,
         cmd = {
+            "FzfLua",
             "FZF",
             "Files",
             "GFiles",
@@ -167,17 +125,17 @@ return {
     {
         -- Peek into registers ", @, <C-R>
         'junegunn/vim-peekaboo',
-        keys = {"\"", "@"},
+        keys = { "\"", "@" },
         event = "InsertEnter",
     },
-    {'kevinhwang91/nvim-bqf', ft = 'qf'}, -- Quickfix buffer improvements
+    { 'kevinhwang91/nvim-bqf', ft = 'qf' }, -- Quickfix buffer improvements
 
     -- Alternative file contents search
     {
         'mileszs/ack.vim',
         cmd = { "Ack", "AckAdd", "AckFile", "AckHelp", "AckWindow", "AckFromSearch" },
     },
-    {'romainl/vim-cool', keys="/"}, -- Remove search highlighting when not required
+    { 'romainl/vim-cool',      keys = "/" }, -- Remove search highlighting when not required
 
     -- TreeSitter
     {
@@ -198,6 +156,9 @@ return {
                 ensure_installed = { "c", "lua", "markdown", "markdown_inline", "python", "nix", "rust", "bash", "yaml", "vimdoc" },
                 -- Install languages synchronously (only applied to `ensure_installed`)
                 sync_install = false,
+                auto_install = false,
+                ignore_install = {},
+                modules = {},
                 highlight = { enable = true },
                 endwise = { enable = true }, -- Autocomplete 'end' in lua and such
             })
@@ -217,7 +178,7 @@ return {
             'nvim-tree/nvim-web-devicons', -- optional, for file icon
         },
         config = function()
-            require'nvim-tree'.setup{
+            require('nvim-tree').setup {
                 actions = {
                     open_file = {
                         quit_on_open = true,
@@ -230,20 +191,20 @@ return {
             --  Close nvim/tab if NvimTree is the last one open
             vim.o.confirm = true
             vim.api.nvim_create_autocmd("BufEnter", {
-                group = vim.api.nvim_create_augroup("NvimTreeClose", {clear = true}),
+                group = vim.api.nvim_create_augroup("NvimTreeClose", { clear = true }),
                 pattern = "NvimTree_*",
                 callback = function()
                     local layout = vim.api.nvim_call_function("winlayout", {})
                     if layout[1] == "leaf" and
                         vim.api.nvim_buf_get_option(vim.api.nvim_win_get_buf(layout[2]), "filetype") == "NvimTree" and
                         layout[3] == nil
-                        then
-                            vim.cmd("confirm quit")
-                        end
+                   then
+                        vim.cmd("confirm quit")
+                    end
                 end
             })
         end,
-        cmd={'NvimTreeToggle', 'NvimTreeFindFile'}
+        cmd = { 'NvimTreeToggle', 'NvimTreeFindFile' }
     },
 
     -- Visualize undo history
@@ -254,30 +215,52 @@ return {
     },
 
     -- A - for switching between source and header files
-    {'vim-scripts/a.vim', cmd='A'},
+    { 'vim-scripts/a.vim',              cmd = 'A' },
 
     -- Remove extraneous whitespace when edit mode is exited
-    {'thirtythreeforty/lessspace.vim', event = "InsertEnter"},
+    { 'thirtythreeforty/lessspace.vim', event = "InsertEnter" },
 
     -- Sandwich text between things
     {
         'machakann/vim-sandwich',
         keys = {
-            {"sr", mode = {'n', 'x'}},
-            {"sa", mode = {'n', 'x'}},
-            {"sd", mode = {'n', 'x'}}
+            { "sr", mode = { 'n', 'x' } },
+            { "sa", mode = { 'n', 'x' } },
+            { "sd", mode = { 'n', 'x' } }
         },
     },
 
     -- Tpope's plugins, because he requires a special place :)
     'tpope/vim-repeat', --Enable repeating supported plugin maps with .
-    'tpope/vim-eunuch', --Unix commands from Vim
+    {
+        --Unix commands from Vim
+        'tpope/vim-eunuch',
+        cmd = {
+            "Remove",
+            "Unlink",
+            "Delete",
+            "Copy",
+            "Duplicate",
+            "Move",
+            "Rename",
+            "Chmod",
+            "Mkdir",
+            "Mkdir",
+            "Cfind",
+            "Lfind",
+            "Clocate",
+            "Llocate",
+            "SudoEdit",
+            "SudoWrite",
+            "Wall",
+        },
+    },
     -- TODO: Check what's my current state with sessions
     -- It appears I don't need that since Startify does the same
     --'tpope/obsession', --Vim session management
     {
         'numToStr/Comment.nvim', -- Commenting powers, includes blocks and not only lines
-        event='VeryLazy',
+        event = 'VeryLazy',
         config = function()
             require('Comment').setup()
         end
@@ -289,7 +272,7 @@ return {
 
     -- The ultimate cheat sheet
     -- NOTE: Re-consider given current AI integrations
-    {'dbeniamine/cheat.sh-vim', lazy=true},
+    { 'dbeniamine/cheat.sh-vim',                        lazy = true },
 
     -- TODO: Read GNU Info from vim
     -- 'alx741/vinfo',
@@ -300,32 +283,76 @@ return {
         'lukas-reineke/headlines.nvim',
         dependencies = "nvim-treesitter/nvim-treesitter",
         config = true, -- or `opts = {}`
-        ft='markdown',
+        ft = 'markdown',
     },
 
     -- Language specific plugins
-    {'kovetskiy/sxhkd-vim', ft='sxhkd'},
-    {'chrisbra/csv.vim', ft='csv'},
-    {'vhdirk/vim-cmake', ft='cmake'},
-    {'vim-pandoc/vim-pandoc', ft='markdown'}, -- Utilities, not syntax
-    {'vim-pandoc/vim-pandoc-syntax', ft='markdown'},
-    {'kergoth/vim-bitbake', ft='bitbake'},
-    {'https://codeberg.org/Dokana/vim-systemd-syntax', branch='trunk', ft='systemd'},
-    {'cespare/vim-toml', ft='toml'},
-    {'tmux-plugins/vim-tmux', ft='tmux'},
-    {'mfukar/robotframework-vim', ft='robot'},
-    {'coddingtonbear/confluencewiki.vim', ft='confluencewiki'},
-    {'aklt/plantuml-syntax', ft='plantuml'},
-    {'scrooloose/vim-slumlord', ft='plantuml'}, -- Preview
+    { 'kovetskiy/sxhkd-vim',                            ft = 'sxhkd' },
+    { 'chrisbra/csv.vim',                               ft = 'csv' },
+    { 'vhdirk/vim-cmake',                               ft = 'cmake' },
+    { 'vim-pandoc/vim-pandoc',                          ft = 'markdown' }, -- Utilities, not syntax
+    { 'vim-pandoc/vim-pandoc-syntax',                   ft = 'markdown' },
+    { 'kergoth/vim-bitbake',                            ft = 'bitbake' },
+    { 'https://codeberg.org/Dokana/vim-systemd-syntax', branch = 'trunk',   ft = 'systemd' },
+    { 'cespare/vim-toml',                               ft = 'toml' },
+    { 'tmux-plugins/vim-tmux',                          ft = 'tmux' },
+    { 'mfukar/robotframework-vim',                      ft = 'robot' },
+    { 'coddingtonbear/confluencewiki.vim',              ft = 'confluencewiki' },
+    { 'aklt/plantuml-syntax',                           ft = 'plantuml' },
+    { 'scrooloose/vim-slumlord',                        ft = 'plantuml' }, -- Preview
 
     -- When reading logfiles with Ansi Escape codes dumped in them,
     -- conceal the escape code and show the text with the proper color
-    {'powerman/vim-plugin-AnsiEsc', ft='log'},
-    {'MTDL9/vim-log-highlighting', ft='log'},
+    { 'powerman/vim-plugin-AnsiEsc',                    ft = 'log' },
+    { 'MTDL9/vim-log-highlighting',                     ft = 'log' },
 
-    -- Pop-up the built in terminal
-    {'Lenovsky/nuake', cmd='Nuake'},
-    {'voldikss/vim-floaterm', cmd='FloatermNew'},
+    -- Utilities for builtin terminal
+    {
+        'voldikss/vim-floaterm',
+        cmd = 'FloatermNew',
+        config = function()
+            vim.api.nvim_create_autocmd({ "FileType" }, {
+                pattern = "floaterm",
+                command = "set norelativenumber nonumber",
+            })
+        end,
+        keys = {
+            {
+                "<leader>gl",
+                function()
+                    vim.cmd.FloatermNew({
+                        "--height=0.9",
+                        "--width=0.9",
+                        "--wintype=float",
+                        "--name=lazygit",
+                        "--autoclose=2",
+                        "lazygit",
+                    })
+                end,
+                desc = "LazyGit"
+            },
+            {
+                --Pop-up terminal quake style
+                "<leader>`",
+                function()
+                    if vim.fn["floaterm#terminal#get_bufnr"]("quake") < 0 then
+                        vim.cmd.FloatermNew({
+                            "--height=0.3",
+                            "--wintype=split",
+                            "--name=quake",
+                            "--autoclose=2",
+                            "--title=Quake",
+                            "--position=bottom"
+                        })
+                    else
+                        vim.cmd.FloatermToggle("quake")
+                    end
+                end,
+                mode = { 'n', 'i', 't' },
+                desc = "Quake terminal"
+            }
+        }
+    },
 
     -- Highlight and present TODOs and such
     {
@@ -337,18 +364,13 @@ return {
 
     -- Eye Candy
     {
-	    'sainnhe/gruvbox-material',
-	    priority=1000,
-	    config = function()
-		    vim.g.gruvbox_material_background = 'hard'
-		    vim.g.gruvbox_material_enable_italic = 1
-		    vim.g.gruvbox_material_disable_italic_comment = 1
-		    vim.g.gruvbox_material_enable_bold = 1
-		    vim.g.gruvbox_material_ui_contrast = 'high'
-		    vim.cmd[[colorscheme gruvbox-material]]
-	    end,
+        'sainnhe/gruvbox-material',
+        priority = 1000,
+        config = function()
+        end,
     },
-    {'nvim-lualine/lualine.nvim'},
+   -- { "ellisonleao/gruvbox.nvim", priority = 1000 , config = true, opts = {}},
+    { 'nvim-lualine/lualine.nvim' },
 
     -- Color colorcodes
     {
@@ -361,25 +383,14 @@ return {
     -- Color brackets
     {
         'junegunn/rainbow_parentheses.vim',
-        event='VeryLazy',
+        event = 'VeryLazy',
         config = function()
             vim.g['rainbow#max_level'] = 16
-            vim.g['rainbow#pairs'] = {{'(', ')'}, {'[', ']'}, {'{', '}'}}
-            vim.cmd[[RainbowParentheses]]
-        end,
-    },
-
-    -- Start screen
-    -- use 'mhinz/vim-startify'
-    {
-        'goolord/alpha-nvim',
-        dependencies = { 'nvim-tree/nvim-web-devicons' },
-        lazy = vim.argc == 0,
-        config = function()
-            require('alpha-config')
+            vim.g['rainbow#pairs'] = { { '(', ')' }, { '[', ']' }, { '{', '}' } }
+            vim.cmd [[RainbowParentheses]]
         end,
     },
 
     -- Highlight same words as under cursor
-    {'RRethy/vim-illuminate', event='VeryLazy'},
+    { 'RRethy/vim-illuminate',    event = 'VeryLazy' },
 }

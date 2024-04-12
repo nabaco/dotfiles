@@ -5,14 +5,14 @@
 -- Automatically bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable", -- latest stable release
-    lazypath,
-  })
+    vim.fn.system({
+        "git",
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git",
+        "--branch=stable", -- latest stable release
+        lazypath,
+    })
 end
 
 -- Load lazy.nvim. It will take control from there
@@ -57,46 +57,46 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 
 --  Enable mouse, but in normal mode
-vim.opt.mouse='n'
+vim.opt.mouse = 'n'
 
 --  Open split the sane way
-vim.opt.splitright=true
-vim.opt.splitbelow=true
+vim.opt.splitright = true
+vim.opt.splitbelow = true
 
 --  Hide buffer when closed
-vim.opt.hidden=true
+vim.opt.hidden = true
 
 --  Vimdiff to open vertical splits
 --  I don't understand how can anyone work otherwise
 vim.opt.diffopt = vim.opt.diffopt + 'vertical'
 
 --  Start scrolling three lines before the horizontal window border
-vim.opt.scrolloff=3
-vim.opt.sidescrolloff=10
+vim.opt.scrolloff = 3
+vim.opt.sidescrolloff = 10
 
 --  Show matching brackets
 vim.opt.showmatch = true
 
 --  persist the undo tree for each file
-vim.opt.undofile=true
+vim.opt.undofile = true
 
 --  Highlight edge column
-vim.opt.colorcolumn='100'
+vim.opt.colorcolumn = '100'
 vim.opt.cursorline = true
 --  Let plugins show effects after 500ms, not 4s
 --vim.opt.updatetime=500
 --  Show whitespaces
-vim.opt.listchars = {tab = '| ', space = '·', trail = '·', extends = '·', precedes = '·', nbsp = '·', eol = '¬'}
+vim.opt.listchars = { tab = '| ', space = '·', trail = '·', extends = '·', precedes = '·', nbsp = '·', eol = '¬' }
 
 --  Indentation options
-vim.opt.tabstop=4
-vim.opt.expandtab=true
-vim.opt.softtabstop=4
-vim.opt.shiftwidth=4
+vim.opt.tabstop = 4
+vim.opt.expandtab = true
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
 
 --  Vim folds
-vim.opt.foldmethod='marker'
-vim.opt.foldlevel=1
+vim.opt.foldmethod = 'marker'
+vim.opt.foldlevel = 1
 
 --  save the file when switch buffers, make it etc.
 vim.opt.autowriteall = true
@@ -124,25 +124,25 @@ vim.g.did_load_filetypes = false
 
 --  Integrate RipGrep
 if vim.fn.executable('rg') then
-    vim.opt.grepprg="rg --with-filename --no-heading $* /dev/null"
+    vim.opt.grepprg = "rg --with-filename --no-heading $* /dev/null"
 end
 
 --  Tags magic {{{2
 
-vim.opt.tags='./tags,**5/tags,tags;~'
+vim.opt.tags = './tags,**5/tags,tags;~'
 --                          ^ in working dir, or parents
 --                    ^ in any subfolder of working dir
 --            ^ sibling of open file
 -- }}}
 
-vim.cmd[[
+vim.cmd [[
     augroup highlight_yank
         autocmd!
         autocmd TextYankPost * silent! lua vim.highlight.on_yank({timeout='1000'})
     augroup END
 ]]
 
-vim.cmd[[
+vim.cmd [[
     augroup autoreconf
         autocmd!
         autocmd BufWritePost *sxhkdrc !pkill -USR1 -x sxhkd
@@ -158,7 +158,7 @@ vim.cmd[[
 
 --  Vim's built in AutoComplete configuration {{{2
 --  Don't let autocomplete affect usual typing habits
-vim.opt.completeopt='menuone,noinsert,noselect'
+vim.opt.completeopt = 'menuone,noinsert,noselect'
 --                   |        |          ^ Don't select anything in the menu
 --                   |        |            without my interaction
 --                   |        ^ Don't insert text without my interaction
@@ -175,32 +175,32 @@ require("lazy").setup("plugins")
 -- """""" Plugins Configuration """"""{{{1
 
 -- Statusbar configuration
-require'lualine'.setup{
+-- vim.cmd.colorscheme("gruvbox")
+vim.g.gruvbox_material_background = 'hard'
+vim.g.gruvbox_material_enable_italic = 1
+vim.g.gruvbox_material_disable_italic_comment = 1
+vim.g.gruvbox_material_enable_bold = 1
+vim.g.gruvbox_material_ui_contrast = 'high'
+vim.cmd.colorscheme('gruvbox-material')
+require('lualine').setup {
     options = { theme = 'gruvbox-material' },
-    sections = { lualine_c = {'filename', 'b:vista_nearest_method_or_function'} }
 }
 
 vim.filetype.add({
-  extension = {
-    bbappend = "bitbake",
-    bbclass = "bitbake",
-    bb = "bitbake",
-  }
+    extension = {
+        bbappend = "bitbake",
+        bbclass = "bitbake",
+        bb = "bitbake",
+    }
 })
 
---  Git plugins configuration
-
---  Vimagit config
---  Go straight into insert mode when committing
-vim.cmd('autocmd User VimagitEnterCommit startinsert')
-
 --  Vim Rooter Config
-vim.g.rooter_manual_only = 1 --  Improves Vim startup time
+vim.g.rooter_manual_only = 1         --  Improves Vim startup time
 vim.cmd('autocmd BufEnter * Rooter') --  Still autochange the directory
 vim.g.rooter_silent_chdir = 1
 vim.g.rooter_change_directory_for_non_project_files = 'current'
 vim.g.rooter_resolve_links = 1
-vim.g.rooter_patterns = {'compile_commands.json', '.git', 'Cargo.toml'}
+vim.g.rooter_patterns = { 'compile_commands.json', '.git', 'Cargo.toml' }
 
 --  Ack config
 vim.g.ackprg = 'rg --vimgrep --smart-case'
@@ -223,100 +223,88 @@ command! Scratch exe "e $NOTES/Scratch/".strftime("%F-%H%M%S").".md"
 -- let $FZF_DEFAULT_COMMAND = 'rg --files -g ""'
 
 --  Pandoc configuration
-vim.g['pandoc#command#custom_open']='zathura'
-vim.g['pandoc#command#prefer_pdf']=1
-vim.g['pandoc#command#autoexec_command']="Pandoc! pdf"
-vim.g['pandoc#completion#bib#mode']='citeproc'
+vim.g['pandoc#command#custom_open'] = 'zathura'
+vim.g['pandoc#command#prefer_pdf'] = 1
+vim.g['pandoc#command#autoexec_command'] = "Pandoc! pdf"
+vim.g['pandoc#completion#bib#mode'] = 'citeproc'
 
 --  PlantUML path
-vim.g.plantuml_executable_script='java -jar $NFS/plantuml.jar'
+vim.g.plantuml_executable_script = 'java -jar $NFS/plantuml.jar'
 
 -- For kernel development
-vim.api.nvim_create_user_command("Kernel", "source "..vim.api.nvim_list_runtime_paths()[1].."/linux-kernel.vim", {})
+vim.api.nvim_create_user_command("Kernel", "source " .. vim.api.nvim_list_runtime_paths()[1] .. "/linux-kernel.vim", {})
 
 -- """""" Key Mappings """""" {{{1
 
 if not vim.g.mapx then
-    mapx = require'mapx'.setup{ global = true, whichkey = true }
+    require('mapx').setup { global = true, whichkey = true }
     -- When sourcing this file a second time, Neovim throws an error on the line above.
     -- Seems like mapx tries to map again all of its commands and finds a conflict (with itself).
     -- This is a workaround to run above line only once in a running Neovim instance.
     vim.g.mapx = 1
 end
 
-require("which-key").setup{}
+require('which-key').setup {}
 
-nnoremap('<Leader>n', ':NvimTreeToggle<CR>', "File explorer")
-nnoremap('<Leader>v', ':NvimTreeFindFile<CR>', "Current file in file explorer")
+nnoremap('<Leader>n', '<CMD>NvimTreeToggle<CR>', "File explorer")
+nnoremap('<Leader>v', '<CMD>NvimTreeFindFile<CR>', "Current file in file explorer")
 
 --  Quickfix bindings
-nnoremap(']q', ':cnext<cr>')
-nnoremap(']Q', ':clast<cr>')
-nnoremap('[q', ':cprevious<cr>')
-nnoremap('[Q', ':cfirst<cr>')
-nnoremap('<Leader>q', ':ccl<cr>')
+nnoremap(']q', '<CMD>cnext<CR>')
+nnoremap(']Q', '<CMD>clast<CR>')
+nnoremap('[q', '<CMD>cprevious<CR>')
+nnoremap('[Q', '<CMD>cfirst<CR>')
+nnoremap('<Leader>q', '<CMD>ccl<CR>')
 
 --  }}}
 
 --  }}}
 
 nnoremap('<Leader>wn', ':Nack<space>')
-nnoremap('<Leader>ww', ':FZF $NOTES<cr>')
+nnoremap('<Leader>ww', '<CMD>FZF $NOTES<CR>')
 
 --  Insert date/time
-inoremap('<leader>d', '<C-r>=strftime("%a %d.%m.%Y %H:%M")<cr>')
-inoremap('<leader>D', '<C-r>=strftime("%d.%m.%y")<cr>')
-
-
-map(',', '<Plug>(easymotion-prefix)')
+inoremap('<leader>d', '<C-r>=strftime("%a %d.%m.%Y %H:%M")<CR>')
+inoremap('<leader>D', '<C-r>=strftime("%d.%m.%y")<CR>')
 
 --  Turn off search highlight
-nnoremap('<Leader>/', ':noh<cr>')
+nnoremap('<Leader>/', '<CMD>noh<CR>')
 
 --  FZF bindings
-nnoremap('<Leader><cr>', '<CMD>Buffers<CR>')
+nnoremap('<Leader><CR>', '<CMD>Buffers<CR>')
 nnoremap('<Leader>f', '<CMD>Files<CR>')
-nnoremap('<Leader>t', '<CMD>Tags<CR>')
-nnoremap('<Leader>T', '<CMD>BTags<CR>')
-nnoremap('<Leader>M', '<CMD>FzfLua git_commits --no-mergres<CR>')
-nnoremap('<Leader>m', '<CMD>FzfLua git_bcommits --no-mergres<CR>')
-
---  Start a Git command
-nnoremap('<Leader>gg', ':Git<Space>')
-nnoremap('<Leader>gs', ':Git status<CR>')
-nnoremap('<Leader>gv', ':Magit<CR>')
--- nnoremap('<Leader>gcm', ':Git commit<CR>')
-nnoremap('<Leader>gd', ':Git diff<CR>')
-nnoremap('<Leader>gc', ':Gdiffsplit<CR>')
-nnoremap('<Leader>gb', ':MerginalToggle<CR>')
+nnoremap('<Leader>t', '<CMD>FzfLua lsp_live_workspace_symbols<CR>', "Search symbols")
+nnoremap('<Leader>T', '<CMD>FzfLua lsp_document_symbols<CR>', "Search symbols in document")
+nnoremap('<Leader>M', '<CMD>FzfLua git_commits --no-merges<CR>', "Git commits")
+nnoremap('<Leader>m', '<CMD>FzfLua git_bcommits --no-merges<CR>', "Git buffer commits")
 
 --  Spellchecking Bindings
-inoremap('<m-f>', '<C-G>u<Esc>[s1z=`]a<C-G>u')
-nnoremap('<m-f>', '[s1z=<c-o>')
+inoremap('<m-f>', '<C-G>u<Esc>[s1z=`]a<C-G>u', "Fix spelling")
+nnoremap('<m-f>', '[s1z=<c-o>', "Fix spelling")
 
 --  Toggle whitespaces
-nnoremap('<F2>', ':set list! <CR>')
+nnoremap('<F2>', '<CMD>set list! <CR>', "Toggle whitespaces")
 --  Toggle spell checking
-nnoremap('<F3>', ':setlocal spell! spelllang=en<CR>')
+nnoremap('<F3>', '<CMD>setlocal spell! spelllang=en<CR>')
 --  real make
-nnoremap('<silent> <F5>', ':make<cr><cr><cr>')
+nnoremap('<silent> <F5>', '<CMD>make<CR><CR><CR>')
 --  GNUism, for building recursively
-nnoremap('<silent> <s-F5>', ':make -w<cr><cr><cr>')
+nnoremap('<silent> <s-F5>', '<CMD>make -w<CR><CR><CR>')
 --  Toggle the tags bar
-nnoremap('<F8>', ':Vista!!<CR>')
+nnoremap('<F8>', '<CMD>Lspsaga outline<CR>')
 
 --  Ctags in previw/split window
 nnoremap('<C-w><C-]>', '<C-w>}')
 nnoremap('<C-w>}', '<C-w><C-]>')
 
---  Nuake Bindings
-nnoremap('<Leader>`', ':Nuake<CR>')
-inoremap('<Leader>`', '<C-\\><C-n>:Nuake<CR>')
-tnoremap('<Leader>`', '<C-\\><C-n>:Nuake<CR>')
+-- --  Nuake Bindings
+-- nnoremap('<Leader>`', '<CMD>Nuake<CR>')
+-- inoremap('<Leader>`', '<C-\\><C-n>:Nuake<CR>')
+-- tnoremap('<Leader>`', '<C-\\><C-n>:Nuake<CR>')
 
 --  Compile file (Markdown, LaTeX, etc)
 --  TODO: Auto-recognize build system
-nnoremap('<silent> <F6>', ':!compiler %<cr>')
+nnoremap('<silent> <F6>', '<CMD>!compiler %<CR>')
 
 --inoremap('<silent><expr><tab>', 'pumvisible() ? "<c-n>" : "<tab>"')
 --inoremap('<silent><expr><s-tab>', 'pumvisible() ? "<c-p>" : "<s-tab>"')
