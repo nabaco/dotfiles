@@ -2,27 +2,24 @@
 --       Plugin Management       --
 -----------------------------------
 
-if vim.fn.argc() > 0 then
-    vim.keymap.set('n', "<leader>s", "<CMD>Lazy load alpha-nvim <BAR> Alpha<CR>")
-end
-
 -- Plugins declaration.
 return {
-    -- Packer can manage itself
-    { 'folke/lazy.nvim', cmd = 'LazySync' },
+    -- Lazy can manage itself
+    { 'folke/lazy.nvim',    cmd = 'LazySync' },
 
     -- Some help with the key mappings
     -- supplies proper lua commands similar to vim's commands for mapping
     -- Which Key (similar to Emacs' plugin) supplies help pop-ups to remind of key bindings
     -- NOTE: I'm placing it on top, as to be able to use it in configuration scripts of other plugins
-    { 'b0o/mapx.nvim',   dependencies = 'folke/which-key.nvim' },
+    { 'b0o/mapx.nvim',      dependencies = 'folke/which-key.nvim', version = false },
 
     -- Add some additional text objects and attack them
-    {'wellle/targets.vim', event='VeryLazy'},
+    { 'wellle/targets.vim', event = 'VeryLazy' },
 
     -- Incerement numbers intelligently
     {
         'monaqa/dial.nvim',
+        version = false,
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
             "b0o/mapx.nvim"
@@ -34,16 +31,30 @@ return {
     },
 
     -- Reposition cursor in the last position upon file reopening
-    'farmergreg/vim-lastplace',
+    {'farmergreg/vim-lastplace'},
 
-    --if vim.fn.has("Win32") then
-    --    { 'Shougo/vimproc.vim', run='nmake'},
-    --end
-    { 'skywind3000/asyncrun.vim', cmd = 'AsyncRun' },
+    -- Run scripts async from neovim - I'm not sure whether it is really needed
+    -- given neovim's built in job support
+    { 'skywind3000/asyncrun.vim',       cmd = 'AsyncRun' },
 
     -- Vim Rooter - needed for all the git plugins to work correctly,
     -- in a multi-repo environment
-    { 'airblade/vim-rooter',      cmd = 'Rooter' },
+    {
+        'airblade/vim-rooter',
+        cmd = 'Rooter',
+        config = function()
+            --  Vim Rooter Config
+            vim.g.rooter_manual_only = 1         --  Improves Vim startup time
+            vim.cmd('autocmd BufEnter * Rooter') --  Still autochange the directory
+            vim.g.rooter_silent_chdir = 1
+            vim.g.rooter_change_directory_for_non_project_files = 'current'
+            vim.g.rooter_resolve_links = 1
+            vim.g.rooter_patterns = { 'compile_commands.json', '.git', 'Cargo.toml' }
+        end
+    },
+
+    -- Follow a symlink and change CWD to the final location
+    -- Helps a lot with symlinked dotfiles and git support
     {
         'aymericbeaumet/vim-symlink',
         dependencies = {
@@ -58,9 +69,19 @@ return {
         event = "VeryLazy",
         ---@type Flash.Config
         opts = {
+            -- When starting a search, flash adds labels next to matches,
+            -- by finding all potential matches to the search pattern in the current visible window,
+            -- and adding labels with letters that are not in those matches. Issue starts if
+            -- the search is fuzzy, which it is with 'cmp', so this resolves the issue.
+            search = {
+                mode = "fuzzy"
+            },
             modes = {
                 char = {
                     jump_labels = true
+                },
+                search = {
+                    enabled = true
                 }
             }
         },
@@ -73,6 +94,69 @@ return {
             { "<c-s>",     mode = { "c" },           function() require('flash').toggle() end,     desc = "Toggle Flash Search" },
         },
     },
+
+    -- hop.nvim {{{
+    -- hop.nvim is currently disabled in favor of flash, since flash has support for immediate jump
+    -- upon search, even though hop has much more functionality, similar to easymotion.
+    {
+        'smoka7/hop.nvim',
+        enabled = false,
+        opts = {
+            keys = 'etovxqpdygfblzhckisuran'
+        },
+        config = true,
+        keys = {
+            {
+                'f',
+                function()
+                    require('hop').hint_char1({ direction = require('hop.hint').HintDirection.AFTER_CURSOR })
+                end,
+                mode = { 'n', 'x', 'o' }
+            },
+            {
+                'F',
+                function()
+                    require('hop').hint_char1({ direction = require('hop.hint').HintDirection.BEFORE_CURSOR })
+                end,
+                mode = { 'n', 'x', 'o' },
+            },
+            {
+                't',
+                function()
+                    require('hop').hint_char1({
+                        direction = require('hop.hint').HintDirection.AFTER_CURSOR,
+                        hint_offset = -1,
+                    })
+                end,
+                mode = { 'n', 'x', 'o' },
+            },
+            {
+                'T',
+                function()
+                    require('hop').hint_char1({
+                        direction = require('hop.hint').HintDirection.BEFORE_CURSOR,
+                        hint_offset = -1,
+                    })
+                end,
+                mode = { 'n', 'x', 'o' },
+            },
+            {
+                ',w',
+                function()
+                    require('hop').hint_words({ direction = require('hop.hint').HintDirection.AFTER_CURSOR })
+                end,
+                mode = { 'n', 'x', 'o' }
+            },
+            {
+                ',b',
+                function()
+                    require('hop').hint_words({ direction = require('hop.hint').HintDirection.BEFORE_CURSOR })
+                end,
+                mode = { 'n', 'x', 'o' },
+            },
+        }
+    },
+    --}}}
 
     -- Ultimate fuzzy search + Multi-entry selection UI.
     {
@@ -87,6 +171,16 @@ return {
                         vim.fn["fzf#install"]()
                     end
                 end,
+                config = function()
+                    local m = require('mapx')
+                    --  FZF bindings
+                    m.nnoremap('<Leader><CR>', '<CMD>Buffers<CR>')
+                    m.nnoremap('<Leader>f', '<CMD>Files<CR>')
+                    m.nnoremap('<Leader>t', '<CMD>FzfLua lsp_live_workspace_symbols<CR>', "Search symbols")
+                    m.nnoremap('<Leader>T', '<CMD>FzfLua lsp_document_symbols<CR>', "Search symbols in document")
+                    m.nnoremap('<Leader>M', '<CMD>FzfLua git_commits --no-merges<CR>', "Git commits")
+                    m.nnoremap('<Leader>m', '<CMD>FzfLua git_bcommits --no-merges<CR>', "Git buffer commits")
+                end
             },
         },
         config = function()
@@ -120,28 +214,72 @@ return {
             "Maps",
             "Helptags",
             "Filetypes",
+        },
+        keys = {
+            { '<leader>rg', function() vim.cmd.FzfLua("grep_cword") end },
+            { '<leader>RG', function() vim.cmd.FzfLua("grep_cWORD") end },
         }
     },
+
+    -- Peek into registers ", @, <C-R>
     {
-        -- Peek into registers ", @, <C-R>
         'junegunn/vim-peekaboo',
         keys = { "\"", "@" },
         event = "InsertEnter",
     },
-    { 'kevinhwang91/nvim-bqf', ft = 'qf' }, -- Quickfix buffer improvements
+
+    -- Quickfix buffer improvements
+    {
+        'kevinhwang91/nvim-bqf',
+        ft = 'qf',
+        config = function()
+            vim.api.nvim_create_autocmd({ "FileType" }, {
+                pattern = "qf",
+                command = "nnoremap <buffer><silent> q :cclose<CR>",
+            })
+        end,
+    },
 
     -- Alternative file contents search
     {
         'mileszs/ack.vim',
         cmd = { "Ack", "AckAdd", "AckFile", "AckHelp", "AckWindow", "AckFromSearch" },
+        config = function()
+            vim.g.ackprg = 'rg --vimgrep --smart-case'
+            vim.g.ackhighlight = 1
+            --  Auto close the Quickfix list after pressing '<enter>' on a list item
+            vim.g.ack_autoclose = 1
+            --  Any empty ack search will search for the word the cursor is on
+            vim.g.ack_use_cword_for_empty_search = 1
+            --  Don't jump to first match
+            vim.cmd.cnoreabbrev("Ack", "Ack!")
+            --[[ Leaving this here for reference, currently not used
+            command! -nargs=1 Nack Ack! "<args>" $NOTES/**
+            command! -nargs=1 Note e $NOTES/Scratch/<args>.md
+            command! Scratch exe "e $NOTES/Scratch/".strftime("%F-%H%M%S").".md"
+            nnoremap('<Leader>wn', ':Nack<space>')
+            nnoremap('<Leader>ww', '<CMD>Files $NOTES<CR>')
+            ]]
+        end
     },
-    { 'romainl/vim-cool',      keys = "/" }, -- Remove search highlighting when not required
+
+    -- Remove search highlighting when not required
+    {
+        -- 'romainl/vim-cool',
+        'nvimdev/hlsearch.nvim',
+        keys = { "/", "*", "#" },
+        -- Calling this manually to enable lazy loading
+        config = function()
+            require('hlsearch').setup()
+            vim.cmd.doautocmd('BufWinEnter')
+        end
+    },
 
     -- TreeSitter
     {
         'nvim-treesitter/nvim-treesitter',
-        -- ft = {'c', 'bash', 'python', 'rust', 'markdown', 'lua', 'nix', 'yaml', 'vimdoc'},
-        event = 'VeryLazy',
+        ft = { 'c', 'bash', 'python', 'rust', 'markdown', 'lua', 'nix', 'yaml', 'vimdoc' },
+        -- event = 'VeryLazy',
         build = ':TSUpdate',
         dependencies = {
             -- Automatically add 'end' in languages like lua
@@ -164,6 +302,8 @@ return {
             })
         end,
     },
+
+    -- Toggle, join, and split line semanticly
     {
         'Wansmer/treesj',
         keys = { '<space>m', '<space>j', '<space>s' },
@@ -198,13 +338,17 @@ return {
                     if layout[1] == "leaf" and
                         vim.api.nvim_buf_get_option(vim.api.nvim_win_get_buf(layout[2]), "filetype") == "NvimTree" and
                         layout[3] == nil
-                   then
+                    then
                         vim.cmd("confirm quit")
                     end
                 end
             })
         end,
-        cmd = { 'NvimTreeToggle', 'NvimTreeFindFile' }
+        cmd = { 'NvimTreeToggle', 'NvimTreeFindFile' },
+        keys = {
+            { '<Leader>n', '<CMD>NvimTreeToggle<CR>',   "File explorer" },
+            { '<Leader>v', '<CMD>NvimTreeFindFile<CR>', "Current file in file explorer" },
+        }
     },
 
     -- Visualize undo history
@@ -218,7 +362,7 @@ return {
     { 'vim-scripts/a.vim',              cmd = 'A' },
 
     -- Remove extraneous whitespace when edit mode is exited
-    { 'thirtythreeforty/lessspace.vim', event = "InsertEnter" },
+    { 'thirtythreeforty/lessspace.vim', event = "InsertLeavePre" },
 
     -- Sandwich text between things
     {
@@ -230,10 +374,12 @@ return {
         },
     },
 
-    -- Tpope's plugins, because he requires a special place :)
-    'tpope/vim-repeat', --Enable repeating supported plugin maps with .
+    --[[ Tpope's plugins, because he requires a special place :) ]]
+    -- Enable repeating supported plugin maps with .
+    {'tpope/vim-repeat'},
+
+    --Unix commands from Vim
     {
-        --Unix commands from Vim
         'tpope/vim-eunuch',
         cmd = {
             "Remove",
@@ -255,9 +401,10 @@ return {
             "Wall",
         },
     },
+
     -- TODO: Check what's my current state with sessions
-    -- It appears I don't need that since Startify does the same
-    --'tpope/obsession', --Vim session management
+    --{'tpope/obsession'}, --Vim session management
+
     {
         'numToStr/Comment.nvim', -- Commenting powers, includes blocks and not only lines
         event = 'VeryLazy',
@@ -272,7 +419,7 @@ return {
 
     -- The ultimate cheat sheet
     -- NOTE: Re-consider given current AI integrations
-    { 'dbeniamine/cheat.sh-vim',                        lazy = true },
+    { 'dbeniamine/cheat.sh-vim',  lazy = true },
 
     -- TODO: Read GNU Info from vim
     -- 'alx741/vinfo',
@@ -285,26 +432,6 @@ return {
         config = true, -- or `opts = {}`
         ft = 'markdown',
     },
-
-    -- Language specific plugins
-    { 'kovetskiy/sxhkd-vim',                            ft = 'sxhkd' },
-    { 'chrisbra/csv.vim',                               ft = 'csv' },
-    { 'vhdirk/vim-cmake',                               ft = 'cmake' },
-    { 'vim-pandoc/vim-pandoc',                          ft = 'markdown' }, -- Utilities, not syntax
-    { 'vim-pandoc/vim-pandoc-syntax',                   ft = 'markdown' },
-    { 'kergoth/vim-bitbake',                            ft = 'bitbake' },
-    { 'https://codeberg.org/Dokana/vim-systemd-syntax', branch = 'trunk',   ft = 'systemd' },
-    { 'cespare/vim-toml',                               ft = 'toml' },
-    { 'tmux-plugins/vim-tmux',                          ft = 'tmux' },
-    { 'mfukar/robotframework-vim',                      ft = 'robot' },
-    { 'coddingtonbear/confluencewiki.vim',              ft = 'confluencewiki' },
-    { 'aklt/plantuml-syntax',                           ft = 'plantuml' },
-    { 'scrooloose/vim-slumlord',                        ft = 'plantuml' }, -- Preview
-
-    -- When reading logfiles with Ansi Escape codes dumped in them,
-    -- conceal the escape code and show the text with the proper color
-    { 'powerman/vim-plugin-AnsiEsc',                    ft = 'log' },
-    { 'MTDL9/vim-log-highlighting',                     ft = 'log' },
 
     -- Utilities for builtin terminal
     {
@@ -367,9 +494,24 @@ return {
         'sainnhe/gruvbox-material',
         priority = 1000,
         config = function()
+            vim.g.gruvbox_material_background = 'hard'
+            vim.g.gruvbox_material_enable_italic = 1
+            vim.g.gruvbox_material_disable_italic_comment = 0
+            vim.g.gruvbox_material_enable_bold = 1
+            vim.g.gruvbox_material_ui_contrast = 'high'
         end,
     },
-   -- { "ellisonleao/gruvbox.nvim", priority = 1000 , config = true, opts = {}},
+
+    {
+        'rcarriga/nvim-notify',
+        event = 'VeryLazy',
+        config = function()
+            vim.opt.termguicolors = true
+            vim.notify = require("notify")
+        end
+    },
+
+    -- { "ellisonleao/gruvbox.nvim", priority = 1000 , config = true, opts = {}},
     { 'nvim-lualine/lualine.nvim' },
 
     -- Color colorcodes
@@ -392,5 +534,11 @@ return {
     },
 
     -- Highlight same words as under cursor
-    { 'RRethy/vim-illuminate',    event = 'VeryLazy' },
+    {
+        'RRethy/vim-illuminate',
+        event = 'VeryLazy',
+        -- config = function()
+        --     require('vim-illuminate').configure({})
+        -- end,
+    },
 }

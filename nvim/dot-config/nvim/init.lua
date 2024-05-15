@@ -77,7 +77,7 @@ vim.opt.sidescrolloff = 10
 --  Show matching brackets
 vim.opt.showmatch = true
 
---  persist the undo tree for each file
+--  Persist the undo tree for each file
 vim.opt.undofile = true
 
 --  Highlight edge column
@@ -96,7 +96,7 @@ vim.opt.shiftwidth = 4
 
 --  Vim folds
 vim.opt.foldmethod = 'marker'
-vim.opt.foldlevel = 1
+vim.opt.foldlevel = 0
 
 --  save the file when switch buffers, make it etc.
 vim.opt.autowriteall = true
@@ -110,6 +110,7 @@ vim.opt.wildignore = vim.opt.wildignore + '*.so,*.swp,*.zip,*.o,*.la'
 vim.opt.wildignorecase = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+-- Preview some commands (:g/:s/:v)
 vim.opt.inccommand = "split"
 
 --  Enable per project .vimrc
@@ -120,7 +121,7 @@ vim.opt.secure = true
 vim.g.do_filetype_lua = true
 -- A value of 0 for this variable disables filetype.vim.
 -- A value of 1 disables both filetype.vim and filetype.lua (which you probably don’t want).
-vim.g.did_load_filetypes = false
+-- vim.g.did_load_filetypes = false
 
 --  Integrate RipGrep
 if vim.fn.executable('rg') then
@@ -135,26 +136,13 @@ vim.opt.tags = './tags,**5/tags,tags;~'
 --            ^ sibling of open file
 -- }}}
 
-vim.cmd [[
-    augroup highlight_yank
-        autocmd!
-        autocmd TextYankPost * silent! lua vim.highlight.on_yank({timeout='1000'})
-    augroup END
-]]
-
-vim.cmd [[
-    augroup autoreconf
-        autocmd!
-        autocmd BufWritePost *sxhkdrc !pkill -USR1 -x sxhkd
-        autocmd BufWritePost *init.vim source ~/.config/nvim/init.vim
-        " autocmd BufWritePost *init.lua source <afile> -- Not required with Lazi.nvim
-        autocmd BufWritePost *bspwmrc !bspc wm -r
-        autocmd BufWritePost *picom.conf !pkill -x picom && picom -b
-        autocmd BufWritePost *mpd.conf !mpd --kill && mpd
-        autocmd BufWritePost *termite/config !killall -USR1 termite
-        autocmd BufWritePost *qtile/config.py !qtile-cmd -o cmd -f restart > /dev/null 2&>1
-    augroup END
-]]
+local highlight_yank = vim.api.nvim_create_augroup('highlight_yank', { clear = true })
+vim.api.nvim_create_autocmd('TextYankPost', {
+        group = highlight_yank,
+        pattern = "*",
+        callback = function() vim.highlight.on_yank({ timeout = '1000' }) end,
+    }
+)
 
 --  Vim's built in AutoComplete configuration {{{2
 --  Don't let autocomplete affect usual typing habits
@@ -167,145 +155,122 @@ vim.opt.completeopt = 'menuone,noinsert,noselect'
 --                     completion candidate. Usefull for the
 --                     extra about the completion candidate
 -- 2}}}
--- 1}}}
+-- 1}}} General Vim config
+
+-- Attempt for a minimal config, for faster short edits
+check_minimal = function(plugin)
+    local whitelist = {
+        "gruvbox-material",
+        "lualine.nvim",
+        "mapx.nvim",
+        "which-key.nvim"
+    }
+    if vim.g.minimal ~= nil then
+        print(plugin.name)
+        for _, plug in ipairs(whitelist) do
+            if plugin.name == plug then
+                return true
+            end
+        end
+        return false
+    end
+    return true
+end
 
 -- Bring up the plugins after NeoVim's general configuration was done
-require("lazy").setup("plugins")
+-- version: use latest stable verion, override with setting to false for a specific plugin
+-- cond: to load only specific plugins for a minimal config for faster startup
+require("lazy").setup("plugins", { defaults = { version = "*", cond = check_minimal } })
 
--- """""" Plugins Configuration """"""{{{1
-
--- Statusbar configuration
--- vim.cmd.colorscheme("gruvbox")
-vim.g.gruvbox_material_background = 'hard'
-vim.g.gruvbox_material_enable_italic = 1
-vim.g.gruvbox_material_disable_italic_comment = 1
-vim.g.gruvbox_material_enable_bold = 1
-vim.g.gruvbox_material_ui_contrast = 'high'
+-- Colors setups
 vim.cmd.colorscheme('gruvbox-material')
 require('lualine').setup {
     options = { theme = 'gruvbox-material' },
 }
 
-vim.filetype.add({
-    extension = {
-        bbappend = "bitbake",
-        bbclass = "bitbake",
-        bb = "bitbake",
-    }
-})
+-- """""" Key Mappings and custom commands """""" {{{1
 
---  Vim Rooter Config
-vim.g.rooter_manual_only = 1         --  Improves Vim startup time
-vim.cmd('autocmd BufEnter * Rooter') --  Still autochange the directory
-vim.g.rooter_silent_chdir = 1
-vim.g.rooter_change_directory_for_non_project_files = 'current'
-vim.g.rooter_resolve_links = 1
-vim.g.rooter_patterns = { 'compile_commands.json', '.git', 'Cargo.toml' }
+-- While initialiazing into the local m variable is not strictily required,
+-- as I can use the "global = true" argument, but it makes the config more explicit
+-- in terms of where the function came from, and removes lua-language-server errors
+local m = require('mapx').setup({ whichkey = true })
 
---  Ack config
-vim.g.ackprg = 'rg --vimgrep --smart-case'
-vim.g.ackhighlight = 1
---  Auto close the Quickfix list after pressing '<enter>' on a list item
-vim.g.ack_autoclose = 1
---  Any empty ack search will search for the word the cursor is on
-vim.g.ack_use_cword_for_empty_search = 1
---  Don't jump to first match
---[[ TODO: Need to move this to minimal config or to vimrc
-cnoreabbrev Ack Ack!
-command! -nargs=1 Nack Ack! "<args>" $NOTES/**
-command! -nargs=1 Note e $NOTES/Scratch/<args>.md
-command! Scratch exe "e $NOTES/Scratch/".strftime("%F-%H%M%S").".md"
-]]
-
---  FZF Config
--- let $FZF_DEFAULT_COMMAND = 'ag -g ""'
--- let $FZF_DEFAULT_COMMAND = 'fd --type file'
--- let $FZF_DEFAULT_COMMAND = 'rg --files -g ""'
-
---  Pandoc configuration
-vim.g['pandoc#command#custom_open'] = 'zathura'
-vim.g['pandoc#command#prefer_pdf'] = 1
-vim.g['pandoc#command#autoexec_command'] = "Pandoc! pdf"
-vim.g['pandoc#completion#bib#mode'] = 'citeproc'
-
---  PlantUML path
-vim.g.plantuml_executable_script = 'java -jar $NFS/plantuml.jar'
+-- Not required as mapx above does that, but leaving for reference
+-- require('which-key').setup({})
 
 -- For kernel development
-vim.api.nvim_create_user_command("Kernel", "source " .. vim.api.nvim_list_runtime_paths()[1] .. "/linux-kernel.vim", {})
+m.cmdbang("Kernel", function() vim.cmd.source(vim.api.nvim_list_runtime_paths()[1] .. "/linux-kernel.vim") end)
 
--- """""" Key Mappings """""" {{{1
-
-if not vim.g.mapx then
-    require('mapx').setup { global = true, whichkey = true }
-    -- When sourcing this file a second time, Neovim throws an error on the line above.
-    -- Seems like mapx tries to map again all of its commands and finds a conflict (with itself).
-    -- This is a workaround to run above line only once in a running Neovim instance.
-    vim.g.mapx = 1
+-- Vim's background transparency
+local transparency = function()
+    if not vim.g.transparency_on then
+        vim.cmd.highlight({ "normal", "guibg=none" })
+        vim.cmd.highlight({ "nontext", "guibg=none" })
+        vim.cmd.highlight({ "normal", "ctermbg=none" })
+        vim.cmd.highlight({ "nontext", "ctermbg=none" })
+        vim.g.transparency_on = true
+    else
+        -- normal         xxx ctermfg=223 ctermbg=234 guifg=#d4be98 guibg=#1d2021
+        -- nontext        xxx ctermfg=239 guifg=#504945
+        vim.cmd.highlight({ "normal", "guibg=#1d2021" })
+        vim.cmd.highlight({ "normal", "ctermbg=223" })
+        vim.cmd.highlight({ "nontext", "guibg=none" })
+        vim.cmd.highlight({ "nontext", "ctermbg=239" })
+        vim.g.transparency_on = false
+    end
 end
+m.cmdbang("Transparent", transparency)
 
-require('which-key').setup {}
-
-nnoremap('<Leader>n', '<CMD>NvimTreeToggle<CR>', "File explorer")
-nnoremap('<Leader>v', '<CMD>NvimTreeFindFile<CR>', "Current file in file explorer")
+-- Allow more shell-like editing in ':' mode
+m.cnoremap('<C-A>', '<Home>')
+-- Happens way too many times
+m.cmdbang('W', 'update')
+-- Search and replace word under cursor
+m.nnoremap('<leader>rr', ":%s/<c-r><c-w>//g<left><left>", "Search and replace")
+-- Show full path, not relative
+m.nnoremap('<c-g>', function() print(vim.fn.expand('%:p')) end, "Show current file's full path")
 
 --  Quickfix bindings
-nnoremap(']q', '<CMD>cnext<CR>')
-nnoremap(']Q', '<CMD>clast<CR>')
-nnoremap('[q', '<CMD>cprevious<CR>')
-nnoremap('[Q', '<CMD>cfirst<CR>')
-nnoremap('<Leader>q', '<CMD>ccl<CR>')
-
---  }}}
-
---  }}}
-
-nnoremap('<Leader>wn', ':Nack<space>')
-nnoremap('<Leader>ww', '<CMD>FZF $NOTES<CR>')
+m.nnoremap(']q', '<CMD>cnext<CR>', "Next quickfix entry")
+m.nnoremap(']Q', '<CMD>clast<CR>', "Last quickfix entry")
+m.nnoremap('[q', '<CMD>cprevious<CR>', "Previous quickfix entry")
+m.nnoremap('[Q', '<CMD>cfirst<CR>', "First quickfix entry")
+m.nnoremap('<Leader>q', '<CMD>cclose<CR>', "Close quickfix window")
+m.nnoremap('qq', '<CMD>copen<CR>', "Open quickfix window")
 
 --  Insert date/time
-inoremap('<leader>d', '<C-r>=strftime("%a %d.%m.%Y %H:%M")<CR>')
-inoremap('<leader>D', '<C-r>=strftime("%d.%m.%y")<CR>')
+m.inoremap('<leader>d', '<C-r>=strftime("%a %d.%m.%Y %H:%M")<CR>')
+m.inoremap('<leader>D', '<C-r>=strftime("%d.%m.%y")<CR>')
 
 --  Turn off search highlight
-nnoremap('<Leader>/', '<CMD>noh<CR>')
-
---  FZF bindings
-nnoremap('<Leader><CR>', '<CMD>Buffers<CR>')
-nnoremap('<Leader>f', '<CMD>Files<CR>')
-nnoremap('<Leader>t', '<CMD>FzfLua lsp_live_workspace_symbols<CR>', "Search symbols")
-nnoremap('<Leader>T', '<CMD>FzfLua lsp_document_symbols<CR>', "Search symbols in document")
-nnoremap('<Leader>M', '<CMD>FzfLua git_commits --no-merges<CR>', "Git commits")
-nnoremap('<Leader>m', '<CMD>FzfLua git_bcommits --no-merges<CR>', "Git buffer commits")
+m.nnoremap('<Leader>/', '<CMD>noh<CR>')
 
 --  Spellchecking Bindings
-inoremap('<m-f>', '<C-G>u<Esc>[s1z=`]a<C-G>u', "Fix spelling")
-nnoremap('<m-f>', '[s1z=<c-o>', "Fix spelling")
+m.inoremap('<m-f>', '<C-G>u<Esc>[s1z=`]a<C-G>u', "Fix spelling")
+m.nnoremap('<m-f>', '[s1z=<c-o>', "Fix spelling")
+m.nnoremap('<F3>', '<CMD>setlocal spell! spelllang=en<CR>', "Toggle spellcheck")
 
 --  Toggle whitespaces
-nnoremap('<F2>', '<CMD>set list! <CR>', "Toggle whitespaces")
---  Toggle spell checking
-nnoremap('<F3>', '<CMD>setlocal spell! spelllang=en<CR>')
+m.nnoremap('<F2>', '<CMD>set list! <CR>', "Toggle whitespaces")
 --  real make
-nnoremap('<silent> <F5>', '<CMD>make<CR><CR><CR>')
+m.nnoremap('<silent> <F5>', '<CMD>make<CR><CR><CR>', "Make")
 --  GNUism, for building recursively
-nnoremap('<silent> <s-F5>', '<CMD>make -w<CR><CR><CR>')
+m.nnoremap('<silent> <s-F5>', '<CMD>make -w<CR><CR><CR>', "GNU Make")
 --  Toggle the tags bar
-nnoremap('<F8>', '<CMD>Lspsaga outline<CR>')
+m.nnoremap('<F8>', '<CMD>Lspsaga outline<CR>', "Tagbar")
 
---  Ctags in previw/split window
-nnoremap('<C-w><C-]>', '<C-w>}')
-nnoremap('<C-w>}', '<C-w><C-]>')
-
--- --  Nuake Bindings
--- nnoremap('<Leader>`', '<CMD>Nuake<CR>')
--- inoremap('<Leader>`', '<C-\\><C-n>:Nuake<CR>')
--- tnoremap('<Leader>`', '<C-\\><C-n>:Nuake<CR>')
+--  Tags in previw/split window
+m.nnoremap('<C-w><C-]>', '<C-w>}', "Preview tag")
+m.nnoremap('<C-w>}', '<C-w><C-]>', "Open tag in split")
 
 --  Compile file (Markdown, LaTeX, etc)
 --  TODO: Auto-recognize build system
-nnoremap('<silent> <F6>', '<CMD>!compiler %<CR>')
+--  TODO: Move to file specific spec
+m.nnoremap('<silent> <F6>', '<CMD>!compiler %<CR>', "Compile file")
 
---inoremap('<silent><expr><tab>', 'pumvisible() ? "<c-n>" : "<tab>"')
---inoremap('<silent><expr><s-tab>', 'pumvisible() ? "<c-p>" : "<s-tab>"')
---  }}}
+if vim.g.minimal ~= nil then
+    m.inoremap('<silent><expr><tab>', 'pumvisible() ? "<c-n>" : "<tab>"')
+    m.inoremap('<silent><expr><s-tab>', 'pumvisible() ? "<c-p>" : "<s-tab>"')
+end
+
+--  }}} Key mappings

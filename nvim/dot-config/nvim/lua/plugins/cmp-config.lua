@@ -170,8 +170,8 @@ end
 return {
     'hrsh7th/nvim-cmp',
     branch = 'main',
-    -- load cmp on InsertEnter
-    event = "InsertEnter",
+    -- load cmp when starting editing, commands or search
+    event = {"InsertEnter", "CmdlineEnter"},
     dependencies = {
         { 'hrsh7th/cmp-nvim-lsp',              branch = 'main' },
         { 'hrsh7th/cmp-buffer',                branch = 'main' },

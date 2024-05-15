@@ -2,6 +2,13 @@
 --         Alpha Greeter         --
 -----------------------------------
 
+-- If we're opening a file, Alpha plugin is not loaded,
+-- meaning that its config function isn't called.
+-- So we need to separately map a key to invoke it
+if vim.fn.argc() > 0 then
+    vim.keymap.set('n', "<leader>s", "<CMD>Lazy load alpha-nvim <BAR> Alpha<CR>")
+end
+
 local alpha_config = function()
     local alpha = require('alpha')
     local startify = require('alpha.themes.startify')
@@ -77,8 +84,15 @@ local alpha_config = function()
 end
 
 return {
-    'goolord/alpha-nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    lazy = vim.argc == 0,
-    config = alpha_config
+    {
+        'goolord/alpha-nvim',
+        dependencies = {
+            'nvim-tree/nvim-web-devicons',
+        },
+        -- If we're opening a file, dashboard is not required, so lazy load it
+        -- We have a mapping at the top to load it on demand.
+        -- otherwise, we want to open the dashboard, so load it immediately.
+        lazy = vim.fn.argc() > 0,
+        config = alpha_config
+    },
 }
