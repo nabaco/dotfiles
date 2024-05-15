@@ -23,12 +23,45 @@ local alpha_config = function()
 
     startify.section.header.opts.position = "center"
 
+    local max_width = 55
+    local fortune_text = require('alpha.fortune')()
+    local boxed_fortune = { "╭" .. string.rep("─", max_width) .. "╮" }
+    for i, line in ipairs(fortune_text) do
+        local l = {}
+        if line == " " and i == 1 then
+        elseif line == " " then
+            l = { "│" .. string.rep(" ", max_width) .. "│" }
+        elseif #line < max_width then
+            l = { "│" .. line .. string.rep(" ", max_width - #line) .. "│" }
+        else
+            l = { "│" .. line .. " │" }
+        end
+        boxed_fortune = vim.list_extend(boxed_fortune, l)
+    end
+    boxed_fortune = vim.list_extend(boxed_fortune, { "╰" .. string.rep("─", max_width) .. "╯" })
+
     local fortune = {
         type = "text",
-        val = require('alpha.fortune')(),
+        val = boxed_fortune,
         opts = {
             position = "center",
             hl = "Title",
+            align = "center"
+        }
+    }
+
+    -- Days without accidents (changing my neovim config)
+    local get_dwa = function()
+        local time = require('configpulse').get_time()
+        return string.format("%d days, %d hours, and %d minutes without modifying configuration.",
+            time.days, time.hours, time.minutes)
+    end
+    local dwa = {
+        type = "text",
+        val = get_dwa,
+        opts = {
+            position = "center",
+            hl = "Directory",
             align = "center"
         }
     }
@@ -55,6 +88,7 @@ local alpha_config = function()
         { type = "padding", val = 1 },
         startify.section.header,
         fortune,
+        dwa,
         { type = "padding", val = 2 },
         startify.section.top_buttons,
         startify.section.mru_cwd,
@@ -88,6 +122,7 @@ return {
         'goolord/alpha-nvim',
         dependencies = {
             'nvim-tree/nvim-web-devicons',
+            'mrquantumcodes/configpulse',
         },
         -- If we're opening a file, dashboard is not required, so lazy load it
         -- We have a mapping at the top to load it on demand.
