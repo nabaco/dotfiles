@@ -42,11 +42,11 @@ function task_indicator {
     unset tomorrow
     unset inbox
     unset next
-    overdue=`todoist list --filter 'overdue' | wc --lines 2> /dev/null`
-    today=`todoist list --filter 'today & ! overdue' | wc --lines 2> /dev/null`
-    tomorrow=`todoist list --filter 'tomorrow' | wc --lines 2> /dev/null`
-    inbox=`todoist list --filter '#inbox' | wc --lines 2> /dev/null`
-    next=`todoist list --filter '@next' | wc --lines 2> /dev/null`
+    overdue=$(todoist list --filter 'overdue' | wc --lines 2> /dev/null)
+    today=$(todoist list --filter 'today & ! overdue' | wc --lines 2> /dev/null)
+    tomorrow=$(todoist list --filter 'tomorrow' | wc --lines 2> /dev/null)
+    inbox=$(todoist list --filter '#inbox' | wc --lines 2> /dev/null)
+    next=$(todoist list --filter '@next' | wc --lines 2> /dev/null)
     # if [ "$overdue" -gt "0" ]; then
         ti+="${red@P}O:$overdue${reset@P} "
     # fi
@@ -62,13 +62,13 @@ function task_indicator {
     # if [ "$inbox" -gt "0" ]; then
         ti+="${blue@P}I:$inbox${reset@P}]"
     # fi
-    echo $ti|tr -s " " "|"
+    echo "$ti"|tr -s " " "|"
 }
 
 function ns {
-    namespace=`ip netns id`
+    namespace=$(ip netns id)
     ns=${namespace:-"\u@\h"}
-    echo ${ns@P}
+    echo "${ns@P}"
 }
 
 # -- Improved X11 forwarding through GNU Screen (or tmux).
@@ -76,10 +76,11 @@ function ns {
 # If we are, update the value of DISPLAY to be that in the cache.
 update-x11-forwarding ()
 {
-    if [ -z "$STY" -a -z "$TMUX" ]; then
-        echo $DISPLAY > ~/.display.txt
+    if [ -z "$STY" ] && [ -z "$TMUX" ]; then
+        echo "$DISPLAY" > ~/.display.txt
     else
-        export DISPLAY=`cat ~/.display.txt`
+        DISPLAY=$(cat ~/.display.txt)
+        export DISPLAY
     fi
 }
 
@@ -243,7 +244,8 @@ fi
 #}}}
 
 tere() {
-    local result=$(command tere "$@")
-    [ -n "$result" ] && cd -- "$result"
+    local result
+    result=$(command tere "$@")
+    [ -n "$result" ] && cd "$result" || exit
 }
 

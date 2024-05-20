@@ -1,9 +1,10 @@
 -----------------------------------
 --   Language Server Protocol    --
 -----------------------------------
+local lsp_filetypes = { "python", "robot", "bash", "sh", "rust", "c", "cpp", "lua" }
 
 -- Function to concentrate all mappings
-local mappings_setup = function(client, bufnr)
+local function mappings_setup(client, bufnr)
     local m = require("mapx")
     local opts = { silent = true, buffer = bufnr }
     m.nname("<leader>l", "LSP")
@@ -30,13 +31,17 @@ local mappings_setup = function(client, bufnr)
     m.nnoremap("<leader>la", "<cmd>Lspsaga code_action<CR>", opts, "Code action")
     m.vnoremap("<leader>la", "<cmd>Lspsaga range_code_action<CR>", opts, "Code action")
 
-    -- local caps = client.server_capabilities
     -- Set some keybinds conditional on server capabilities
-    -- if caps.document_formatting then
-    m.nnoremap("<leader>lf", function() vim.lsp.buf.format() end, opts, "Format")
-    -- elseif caps.document_range_formatting then
-    vim.api.nvim_buf_set_option(bufnr, "formatexpr", "v:lua.vim.lsp.formatexpr(#{timeout_ms:250})")
-    -- end
+    if client.supports_method('textDocument/formatting') then
+        m.nnoremap("<leader>lf", function() vim.lsp.buf.format() end, opts, "Format")
+    end
+    if client.supports_method('textDocument/rangeFormatting') then
+        vim.api.nvim_set_option_value(
+            "formatexpr",
+            "v:lua.vim.lsp.formatexpr(#{timeout_ms:250})",
+            {buf=bufnr}
+        )
+    end
 
     m.nname("<leader>w", "LSP Workspace")
     m.nnoremap("<leader>wa", function()
@@ -57,18 +62,17 @@ local mappings_setup = function(client, bufnr)
     m.cmdbang("LspDiag", function() vim.diagnostic.setqflist() end, { nargs = 0 })
 
     -- LSP UI imporvements
-    require("lspsaga").init_lsp_saga()
+    require("lspsaga").setup({})
 end -- mappings_setup
 
 -- Callback to be passed to NeoVim
 -- Will be called once an LSP client attaches to a buffer
-local on_attach = function(client, bufnr)
+local function on_attach(client, bufnr)
     mappings_setup(client, bufnr)
-    local caps = client.server_capabilities
     -- Set autocommands conditional on server_capabilities
     -- Will highlight symbol's usage if I hover on it enough time
     -- Not really required given the illuminate plugin
-    if caps.document_highlight then
+    if client.supports_method('textDocument/documentHighlight') then
         vim.api.nvim_set_hl(0, "LspReferenceRead", { link = "Search" })
         vim.api.nvim_set_hl(0, "LspReferenceText", { link = "Search" })
         vim.api.nvim_set_hl(0, "LspReferenceWrite", { link = "Search" })
@@ -82,86 +86,83 @@ local on_attach = function(client, bufnr)
 end -- on_attach
 
 -- Setup the different LSP servers
-local servers_setup = function()
+local function servers_setup()
     local lspconfig = require("lspconfig")
     -- Use a loop to conveniently both setup defined servers
     -- and map buffer local keybindings when the language server attaches
-    -- Those are only generic servers that don't require extra configuration
-    -- TODO: Add a method to have all servers here and store settings separately
-    local servers = { "jedi_language_server", "robotframework_ls", "bashls" }
-    local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
-
-    for _, lsp in ipairs(servers) do
-        lspconfig[lsp].setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-        })
-    end
-
-    lspconfig.rust_analyzer.setup({
-        on_attach = on_attach,
-        capabilities = capabilities,
-        settings = {
-            ["rust-analyzer"] = {
-                checkOnSave = {
-                    command = "clippy",
+    local servers = {
+        jedi_language_server = {},
+        robotframework_ls = {},
+        bashls = {},
+        rust_analyzer = {
+            settings = {
+                ["rust-analyzer"] = {
+                    checkOnSave = {
+                        command = "clippy",
+                    },
                 },
             },
         },
-    })
-
-    lspconfig.clangd.setup({
-        cmd = {
-            "clangd",
-            "--background-index",
-            "--limit-results=0",
-            "-j=" .. io.popen("nproc"):read(),
-            "--enable-config",
-            "--clang-tidy",
-            "--header-insertion=iwyu",
+        clangd = {
+            cmd = {
+                "clangd",
+                "--background-index",
+                "--limit-results=0",
+                "-j=" .. io.popen("nproc"):read(),
+                "--enable-config",
+                "--clang-tidy",
+                "--header-insertion=iwyu",
+            },
+            root_dir = function(fname)
+                return lspconfig.util.root_pattern("compile_commands.json")(fname)
+                    or lspconfig.util.root_pattern("compile_flags.txt", ".clangd", ".git")(fname)
+            end,
         },
-        on_attach = on_attach,
-        capabilities = capabilities,
-        root_dir = function(fname)
-            return lspconfig.util.root_pattern("compile_commands.json")(fname)
-                or lspconfig.util.root_pattern("compile_flags.txt", ".clangd", ".git")(fname)
-        end,
-    })
+        lua_ls = {}
+    }
+
+    local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
+
+    for lsp, opts in pairs(servers) do
+        opts['on_attach'] = on_attach
+        opts['capabilities'] = capabilities
+        if lsp == "lua_ls" then
+            require('neodev').setup({
+                -- library = { plugins = { "nvim-dap-ui" }, types = true },
+            })
+        end
+        lspconfig[lsp].setup(opts)
+    end
 end -- servers_setup
 
 -- configuration function passed to LSP on_attach
-local lsp_config = function()
+local function lsp_config()
     servers_setup()
-    vim.cmd.LspStart()
+    for _, ft in ipairs(lsp_filetypes) do
+        if vim.api.nvim_get_option_value("ft",{buf=0}) == ft then
+            vim.cmd.LspStart()
+        end
+    end
 end -- lsp_config
+
+-- A handy command, for when shortcuts don't work
+-- I need it for now as lua-language-server is misbhaving with my Lua configs
+vim.cmd.command("Format", "lua vim.lsp.buf.format()")
 
 return {
     -- LSP configuration for Lua development in Neovim
     {
         "folke/neodev.nvim",
-        ft = "lua",
-        opts = {
-            -- library = { plugins = { "nvim-dap-ui" }, types = true },
-        },
-        config = function()
-            require("neodev").setup({})
-            require("lspconfig").lua_ls.setup({
-                settings = {
-                    Lua = {
-                        completion = {
-                            callSnippet = "Replace",
-                        },
-                    },
-                },
-            })
-        end,
+        version = false,
+        -- It'll be loaded upon being 'required'
+        lazy = true,
     },
 
     -- LSP stock defaults
     {
         "neovim/nvim-lspconfig",
-        -- event = 'VeryLazy',
-        ft = { "python", "robot", "bash", "sh", "rust", "c", "cpp" },
+        event = 'VeryLazy',
+        -- ft = lsp_filetypes,
         config = lsp_config,
         dependencies = {
 
@@ -170,15 +171,15 @@ return {
                 "nvimdev/lspsaga.nvim",
                 config = true,
                 dependencies = {
-                    "nvim-treesitter/nvim-treesitter", -- optional
-                    "nvim-tree/nvim-web-devicons",     -- optional
+                    -- "nvim-treesitter/nvim-treesitter", -- optional
+                    -- "nvim-tree/nvim-web-devicons",     -- optional
                 },
             },
 
             -- Better integration with nvim's tags tools
             {
                 "weilbith/nvim-lsp-smag",
-                config = function()
+                init = function()
                     -- In case no tags are available from the LSP Server,
                     -- or I turned off the LSP client, use regular tags (e.g. ctags)
                     vim.g.lsp_smag_fallback_tags = 1

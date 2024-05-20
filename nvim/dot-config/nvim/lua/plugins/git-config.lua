@@ -2,11 +2,10 @@
 --       Git VCS Utilities       --
 -----------------------------------
 
-local m = require('mapx')
-m.nname("<leader>g", "Git")
-
-local gitsigns_config = function(bufnr)
+local function gitsigns_config(bufnr)
     local gitsigns = require('gitsigns')
+    local m = require('mapx')
+    m.nname("<leader>g", "Git")
 
     m.group({ buffer = bufnr }, function()
         -- Navigation
@@ -104,7 +103,7 @@ return {
         },
         config = true,
         keys = {
-            { '<leader>gv', function() require('neogit').open() end, "Neogit" }
+            { '<leader>gv', function() require('neogit').open() end, desc = "Neogit" }
         }
     },
     {

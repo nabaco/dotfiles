@@ -180,7 +180,31 @@ end
 -- Bring up the plugins after NeoVim's general configuration was done
 -- version: use latest stable verion, override with setting to false for a specific plugin
 -- cond: to load only specific plugins for a minimal config for faster startup
-require("lazy").setup("plugins", { defaults = { version = "*", cond = check_minimal } })
+require("lazy").setup(
+    "plugins",
+    {
+        defaults = {
+            version = "*",
+            cond = check_minimal,
+        },
+        performance = {
+            rtp = {
+                disabled_plugins = {
+                    "editorconfig",
+                    "gzip",
+                    -- "matchit",
+                    -- "matchparen",
+                    "netrwPlugin",
+                    "spellfile",
+                    "tarPlugin",
+                    "tohtml",
+                    "tutor",
+                    "zipPlugin",
+                },
+            }
+        }
+    }
+)
 
 -- Colors setups
 vim.cmd.colorscheme('gruvbox-material')

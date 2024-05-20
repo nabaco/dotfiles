@@ -170,6 +170,7 @@ end
 return {
     'hrsh7th/nvim-cmp',
     branch = 'main',
+    version = false,
     -- load cmp when starting editing, commands or search
     event = {"InsertEnter", "CmdlineEnter"},
     dependencies = {
@@ -185,8 +186,10 @@ return {
             branch = 'main',
             dependencies = {
                 'SirVer/ultisnips',
+                version = false,
                 dependencies = {
                     'honza/vim-snippets',
+                    version = false,
                 }
             },
         },

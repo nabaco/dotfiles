@@ -16,33 +16,19 @@ return {
     -- Add some additional text objects and attack them
     { 'wellle/targets.vim', event = 'VeryLazy' },
 
-    -- Incerement numbers intelligently
-    {
-        'monaqa/dial.nvim',
-        version = false,
-        dependencies = {
-            "nvim-treesitter/nvim-treesitter",
-            "b0o/mapx.nvim"
-        },
-        keys = { '<c-a>', '<c-x>' },
-        config = function()
-            require('dial-config')
-        end
-    },
-
     -- Reposition cursor in the last position upon file reopening
-    {'farmergreg/vim-lastplace'},
+    { 'farmergreg/vim-lastplace' },
 
     -- Run scripts async from neovim - I'm not sure whether it is really needed
     -- given neovim's built in job support
-    { 'skywind3000/asyncrun.vim',       cmd = 'AsyncRun' },
+    { 'skywind3000/asyncrun.vim', cmd = 'AsyncRun' },
 
     -- Vim Rooter - needed for all the git plugins to work correctly,
     -- in a multi-repo environment
     {
         'airblade/vim-rooter',
         cmd = 'Rooter',
-        config = function()
+        init = function()
             --  Vim Rooter Config
             vim.g.rooter_manual_only = 1         --  Improves Vim startup time
             vim.cmd('autocmd BufEnter * Rooter') --  Still autochange the directory
@@ -171,17 +157,8 @@ return {
                         vim.fn["fzf#install"]()
                     end
                 end,
-                config = function()
-                    local m = require('mapx')
-                    --  FZF bindings
-                    m.nnoremap('<Leader><CR>', '<CMD>Buffers<CR>')
-                    m.nnoremap('<Leader>f', '<CMD>Files<CR>')
-                    m.nnoremap('<Leader>t', '<CMD>FzfLua lsp_live_workspace_symbols<CR>', "Search symbols")
-                    m.nnoremap('<Leader>T', '<CMD>FzfLua lsp_document_symbols<CR>', "Search symbols in document")
-                    m.nnoremap('<Leader>M', '<CMD>FzfLua git_commits --no-merges<CR>', "Git commits")
-                    m.nnoremap('<Leader>m', '<CMD>FzfLua git_bcommits --no-merges<CR>', "Git buffer commits")
-                end
             },
+            { "nvim-tree/nvim-web-devicons" },
         },
         config = function()
             require('fzf-lua').setup()
@@ -216,8 +193,14 @@ return {
             "Filetypes",
         },
         keys = {
-            { '<leader>rg', function() vim.cmd.FzfLua("grep_cword") end },
-            { '<leader>RG', function() vim.cmd.FzfLua("grep_cWORD") end },
+            { '<leader>rg',   function() vim.cmd.FzfLua("grep_cword") end,                  "RipGrep current word" },
+            { '<leader>RG',   function() vim.cmd.FzfLua("grep_cWORD") end,                  "RipGrep current WORD" },
+            { '<Leader><CR>', function() vim.cmd.FzfLua("buffers") end,                     "Search open buffers" },
+            { '<Leader>f',    function() vim.cmd.FzfLua("files") end,                       "Search files" },
+            { '<Leader>t',    function() vim.cmd.FzfLua("lsp_live_workspace_symbols") end,  "Search symbols" },
+            { '<Leader>T',    function() vim.cmd.FzfLua("lsp_document_symbols") end,        "Search symbols in document" },
+            { '<Leader>M',    function() vim.cmd.FzfLua("git_commits", "--no-merges") end,  "Git commits" },
+            { '<Leader>m',    function() vim.cmd.FzfLua("git_bcommits", "--no-merges") end, "Git buffer commits" },
         }
     },
 
@@ -278,8 +261,8 @@ return {
     -- TreeSitter
     {
         'nvim-treesitter/nvim-treesitter',
-        ft = { 'c', 'bash', 'python', 'rust', 'markdown', 'lua', 'nix', 'yaml', 'vimdoc' },
-        -- event = 'VeryLazy',
+        -- ft = { 'c', 'bash', 'python', 'rust', 'markdown', 'lua', 'nix', 'yaml', 'vimdoc' },
+        event = 'VeryLazy',
         build = ':TSUpdate',
         dependencies = {
             -- Automatically add 'end' in languages like lua
@@ -311,46 +294,6 @@ return {
         config = true,
     },
 
-    -- File browsing
-    {
-        'kyazdani42/nvim-tree.lua',
-        dependencies = {
-            'nvim-tree/nvim-web-devicons', -- optional, for file icon
-        },
-        config = function()
-            require('nvim-tree').setup {
-                actions = {
-                    open_file = {
-                        quit_on_open = true,
-                    },
-                },
-            }
-            vim.g.nvim_tree_quit_on_open = 1
-            vim.g.nvim_tree_disable_window_picker = 1
-            vim.g.nvim_tree_respect_buf_cwd = 1
-            --  Close nvim/tab if NvimTree is the last one open
-            vim.o.confirm = true
-            vim.api.nvim_create_autocmd("BufEnter", {
-                group = vim.api.nvim_create_augroup("NvimTreeClose", { clear = true }),
-                pattern = "NvimTree_*",
-                callback = function()
-                    local layout = vim.api.nvim_call_function("winlayout", {})
-                    if layout[1] == "leaf" and
-                        vim.api.nvim_buf_get_option(vim.api.nvim_win_get_buf(layout[2]), "filetype") == "NvimTree" and
-                        layout[3] == nil
-                    then
-                        vim.cmd("confirm quit")
-                    end
-                end
-            })
-        end,
-        cmd = { 'NvimTreeToggle', 'NvimTreeFindFile' },
-        keys = {
-            { '<Leader>n', '<CMD>NvimTreeToggle<CR>',   "File explorer" },
-            { '<Leader>v', '<CMD>NvimTreeFindFile<CR>', "Current file in file explorer" },
-        }
-    },
-
     -- Visualize undo history
     {
         'mbbill/undotree',
@@ -376,7 +319,7 @@ return {
 
     --[[ Tpope's plugins, because he requires a special place :) ]]
     -- Enable repeating supported plugin maps with .
-    {'tpope/vim-repeat'},
+    { 'tpope/vim-repeat' },
 
     --Unix commands from Vim
     {
@@ -419,7 +362,7 @@ return {
 
     -- The ultimate cheat sheet
     -- NOTE: Re-consider given current AI integrations
-    { 'dbeniamine/cheat.sh-vim',  lazy = true },
+    { 'dbeniamine/cheat.sh-vim', lazy = true },
 
     -- TODO: Read GNU Info from vim
     -- 'alx741/vinfo',
@@ -502,6 +445,12 @@ return {
         end,
     },
 
+    -- Icons in different plugins
+    {
+        'nvim-tree/nvim-web-devicons',
+        lazy = true, -- loads as a requirement of other plugins
+    },
+
     {
         'rcarriga/nvim-notify',
         event = 'VeryLazy',
@@ -519,7 +468,7 @@ return {
         'norcalli/nvim-colorizer.lua',
         event = 'VeryLazy',
         config = true,
-        ft = { 'lua', 'markdown', 'html', 'php', 'python', 'vim', 'css', 'javascript' },
+        -- ft = { 'lua', 'markdown', 'html', 'php', 'python', 'vim', 'css', 'javascript' },
     },
 
     -- Color brackets
