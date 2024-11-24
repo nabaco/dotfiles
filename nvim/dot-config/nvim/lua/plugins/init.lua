@@ -5,16 +5,14 @@
 -- Plugins declaration.
 return {
     -- Lazy can manage itself
-    { 'folke/lazy.nvim',    cmd = 'LazySync' },
+    { 'folke/lazy.nvim',          cmd = 'LazySync' },
 
-    -- Some help with the key mappings
-    -- supplies proper lua commands similar to vim's commands for mapping
     -- Which Key (similar to Emacs' plugin) supplies help pop-ups to remind of key bindings
     -- NOTE: I'm placing it on top, as to be able to use it in configuration scripts of other plugins
-    { 'b0o/mapx.nvim',      dependencies = 'folke/which-key.nvim', version = false },
+    { 'folke/which-key.nvim' },
 
     -- Add some additional text objects and attack them
-    { 'wellle/targets.vim', event = 'VeryLazy' },
+    { 'wellle/targets.vim',       event = 'VeryLazy' },
 
     -- Reposition cursor in the last position upon file reopening
     { 'farmergreg/vim-lastplace' },
@@ -396,6 +394,7 @@ return {
                         "--wintype=float",
                         "--name=lazygit",
                         "--autoclose=2",
+
                         "lazygit",
                     })
                 end,

@@ -33,7 +33,7 @@ return {
             "nvim-neotest/nvim-nio",
         },
         keys = {
-            {"<leader>dd", start_dap_ui, desc="DAP UI"}
+            { "<leader>dd", start_dap_ui, desc = "DAP UI" }
         }
     },
 }

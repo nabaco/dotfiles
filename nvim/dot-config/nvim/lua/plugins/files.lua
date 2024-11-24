@@ -169,7 +169,7 @@ local autoreconf = augroup('autoreconf', { clear = true })
 -- Not required with Lazy.nvim
 -- autocmd('BufWritePost', {group=autoreconf, pattern='*init.lua', command=function(args) vim.cmd.source(args.file) end})
 -- autocmd('BufWritePost', { group = autoreconf, pattern = '*bspwmrc', command = '!bspc wm -r' })
-autocmd('BufWritePost', { group = autoreconf, pattern = '*picom.conf', command = '!pkill -x picom && picom -b' })
+autocmd('BufWritePost', { group = autoreconf, pattern = '*picom.conf', command = '!pkill -USR1 picom ' })
 -- autocmd('BufWritePost', { group = autoreconf, pattern = '*mpd.conf', command = '!mpd' }) --kill && mpd
 -- autocmd('BufWritePost', { group = autoreconf, pattern = '*termite/config', command = '!killall -USR1 termite' })
 -- autocmd('BufWritePost',

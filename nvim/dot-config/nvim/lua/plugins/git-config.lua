@@ -4,53 +4,70 @@
 
 local function gitsigns_config(bufnr)
     local gitsigns = require('gitsigns')
-    local m = require('mapx')
-    m.nname("<leader>g", "Git")
+    local wk = require('which-key')
 
-    m.group({ buffer = bufnr }, function()
-        -- Navigation
-        m.nnoremap(']c', function()
-                if vim.wo.diff then
-                    vim.cmd.normal({ ']c', bang = true })
-                else
-                    gitsigns.nav_hunk('next')
-                end
-            end,
-            "Next hunk")
+    local function noremap(mode, lhs, rhs, opts)
+        local o = opts or {}
+        o.buffer = bufnr
+        if type(lhs) == "table" then
+            for _, v in ipairs(lhs) do
+                vim.keymap.set(mode, v, rhs, o)
+            end
+        else
+            vim.keymap.set(mode, lhs, rhs, o)
+        end
+    end
+    local function nnoremap(...)  noremap("n", ...) end
+    local function xnoremap(...)  noremap("x", ...) end
+    local function onoremap(...)  noremap("o", ...) end
 
-        m.nnoremap('[c', function()
-                if vim.wo.diff then
-                    vim.cmd.normal({ '[c', bang = true })
-                else
-                    gitsigns.nav_hunk('prev')
-                end
-            end,
-            "Previous hunk")
+    wk.add({ "<leader>g", group = "Git", mode = "n" })
 
-        -- Actions
-        m.nname('<leader>h', 'GitSigns')
-        m.xname('<leader>h', 'GitSigns')
-        m.nnoremap('<leader>hs', function() gitsigns.stage_hunk() end, "Stage hunk")
-        m.nnoremap('<leader>hr', function() gitsigns.reset_hunk() end, "Reset hunk")
-        m.xnoremap('<leader>hs', function() gitsigns.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end,
-            "Stage selected hunk")
-        m.xnoremap('<leader>hr', function() gitsigns.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end,
-            "Reset selected hunk")
-        m.nnoremap('<leader>hS', function() gitsigns.stage_buffer() end, "Stage buffer")
-        m.nnoremap('<leader>hu', function() gitsigns.undo_stage_hunk() end, "Unstage hunk")
-        m.nnoremap('<leader>hR', function() gitsigns.reset_buffer() end, "Reset buffer")
-        m.nnoremap('<leader>hp', function() gitsigns.preview_hunk() end, "Preview hunk")
-        -- "gm" mapping for compatability with GitMessenger - don't break muscle memory
-        m.nnoremap({ '<leader>hb', '<leader>gm' }, function() gitsigns.blame_line { full = true } end, "Blame line")
-        m.nnoremap('<leader>htb', function() gitsigns.toggle_current_line_blame() end, "Toggle inline blame")
-        m.nnoremap('<leader>hd', function() gitsigns.diffthis() end, "Diff buffer")
-        m.nnoremap('<leader>hD', function() gitsigns.diffthis('~') end, "Diff buffer HEAD")
-        m.nnoremap('<leader>htd', function() gitsigns.toggle_deleted() end, "Toggle delted inline")
+    -- Navigation
+    nnoremap(']c', function()
+            if vim.wo.diff then
+                vim.cmd.normal({ ']c', bang = true })
+            else
+                gitsigns.nav_hunk('next')
+            end
+        end,
+        { desc = "Next hunk" })
 
-        -- Text object
-        m.onoremap('ih', function() gitsigns.select_hunk() end)
-        m.xnoremap('ih', function() gitsigns.select_hunk() end)
-    end)
+    nnoremap('[c', function()
+            if vim.wo.diff then
+                vim.cmd.normal({ '[c', bang = true })
+            else
+                gitsigns.nav_hunk('prev')
+            end
+        end,
+        { desc = "Previous hunk" })
+
+    -- Actions
+    wk.add({
+        { '<leader>h', group = 'GitSigns', mode = 'n' },
+        { '<leader>h', group = 'GitSigns', mode = 'x' },
+    })
+    nnoremap('<leader>hs', function() gitsigns.stage_hunk() end, { desc = "Stage hunk" })
+    nnoremap('<leader>hr', function() gitsigns.reset_hunk() end, { desc = "Reset hunk" })
+    xnoremap('<leader>hs', function() gitsigns.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end,
+        { desc = "Stage selected hunk" })
+    xnoremap('<leader>hr', function() gitsigns.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end,
+        { desc = "Reset selected hunk" })
+    nnoremap('<leader>hS', function() gitsigns.stage_buffer() end, { desc = "Stage buffer" })
+    nnoremap('<leader>hu', function() gitsigns.undo_stage_hunk() end, { desc = "Unstage hunk" })
+    nnoremap('<leader>hR', function() gitsigns.reset_buffer() end, { desc = "Reset buffer" })
+    nnoremap('<leader>hp', function() gitsigns.preview_hunk() end, { desc = "Preview hunk" })
+    -- "gm" mapping for compatability with GitMessenger - don't break muscle memory
+    nnoremap({ '<leader>hb', '<leader>gm' }, function() gitsigns.blame_line { full = true } end,
+        { desc = "Blame line" })
+    nnoremap('<leader>htb', function() gitsigns.toggle_current_line_blame() end, { desc = "Toggle inline blame" })
+    nnoremap('<leader>hd', function() gitsigns.diffthis() end, { desc = "Diff buffer" })
+    nnoremap('<leader>hD', function() gitsigns.diffthis('~') end, { desc = "Diff buffer HEAD" })
+    nnoremap('<leader>htd', function() gitsigns.toggle_deleted() end, { desc = "Toggle delted inline" })
+
+    -- Text object
+    onoremap('ih', function() gitsigns.select_hunk() end)
+    xnoremap('ih', function() gitsigns.select_hunk() end)
 end
 
 return {
@@ -81,6 +98,7 @@ return {
     },
     {
         "NeogitOrg/neogit",
+        version = false,
         dependencies = {
             "nvim-lua/plenary.nvim", -- required
             {

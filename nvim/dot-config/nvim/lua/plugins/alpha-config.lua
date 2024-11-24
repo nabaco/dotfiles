@@ -113,8 +113,7 @@ local alpha_config = function()
 
     alpha.setup(startify.config)
 
-    local mapx = require('mapx')
-    mapx.nnoremap("<leader>s", "<CMD>Alpha<CR>")
+    vim.keymap.set("n", "<leader>s", "<CMD>Alpha<CR>")
 end
 
 return {

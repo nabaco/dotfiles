@@ -1,65 +1,69 @@
 -----------------------------------
 --   Language Server Protocol    --
 -----------------------------------
-local lsp_filetypes = { "python", "robot", "bash", "sh", "rust", "c", "cpp", "lua" }
+local lsp_filetypes = { "python", "robot", "bash", "sh", "rust", "c", "cpp", "lua", "go", "zig" }
 
 -- Function to concentrate all mappings
 local function mappings_setup(client, bufnr)
-    local m = require("mapx")
+    local wk = require("which-key")
     local opts = { silent = true, buffer = bufnr }
-    m.nname("<leader>l", "LSP")
-    m.nnoremap("<leader>lD", function()
+
+    local function nnoremap(...) vim.keymap.set('n', ...) end
+    local function vnoremap(...) vim.keymap.set('v', ...) end
+
+    wk.add({"<leader>l", group="LSP"})
+    nnoremap("<leader>lD", function()
         vim.lsp.buf.declaration()
-    end, opts, "Declaration")
-    m.nnoremap("<c-[>", "<cmd>Lspsaga peek_definition<CR>", opts, "Peek definition")
-    m.nnoremap("<leader>ld", function()
+    end, opts, { desc = "Declaration" })
+    nnoremap("<c-[>", "<cmd>Lspsaga peek_definition<CR>", opts, { desc = "Peek definition" })
+    nnoremap("<leader>ld", function()
         vim.lsp.buf.definition()
-    end, opts, "Definition")
-    m.nnoremap("<leader>li", function()
+    end, opts, { desc = "Definition" })
+    nnoremap("<leader>li", function()
         vim.lsp.buf.implementation()
-    end, opts, "Implementation")
-    m.nnoremap("<leader>lt", function()
+    end, opts, { desc = "Implementation" })
+    nnoremap("<leader>lt", function()
         vim.lsp.buf.type_definition()
-    end, opts, "Type definition")
-    m.nnoremap("<leader>ls", function()
+    end, opts, { desc = "Type definition" })
+    nnoremap("<leader>ls", function()
         vim.lsp.buf.workspace_symbol()
-    end, opts, "Symbol search")
-    m.nnoremap("<leader>lR", "<cmd>Lspsaga rename<CR>", opts)
-    m.nnoremap("<leader>lr", function()
+    end, opts, { desc = "Symbol search" })
+    nnoremap("<leader>lR", "<cmd>Lspsaga rename<CR>", opts, { desc = "Rename" })
+    nnoremap("<leader>lr", function()
         vim.lsp.buf.references()
-    end, opts, "References")
-    m.nnoremap("<leader>la", "<cmd>Lspsaga code_action<CR>", opts, "Code action")
-    m.vnoremap("<leader>la", "<cmd>Lspsaga range_code_action<CR>", opts, "Code action")
+    end, opts, { desc = "References" })
+    nnoremap("<leader>la", "<cmd>Lspsaga code_action<CR>", opts, { desc = "Code action" })
+    vnoremap("<leader>la", "<cmd>Lspsaga range_code_action<CR>", opts, { desc = "Code action" })
 
     -- Set some keybinds conditional on server capabilities
     if client.supports_method('textDocument/formatting') then
-        m.nnoremap("<leader>lf", function() vim.lsp.buf.format() end, opts, "Format")
+        nnoremap("<leader>lf", function() vim.lsp.buf.format() end, opts, { desc = "Format" })
     end
     if client.supports_method('textDocument/rangeFormatting') then
         vim.api.nvim_set_option_value(
             "formatexpr",
             "v:lua.vim.lsp.formatexpr(#{timeout_ms:250})",
-            {buf=bufnr}
+            { buf = bufnr }
         )
     end
 
-    m.nname("<leader>w", "LSP Workspace")
-    m.nnoremap("<leader>wa", function()
+    wk.add({"<leader>w", group="LSP Workspace"})
+    nnoremap("<leader>wa", function()
         vim.lsp.buf.add_workspace_folder()
-    end, opts, "Add workspace folder")
-    m.nnoremap("<leader>wr", function()
+    end, opts, { desc = "Add workspace folder" })
+    nnoremap("<leader>wr", function()
         vim.lsp.buf.remove_workspace_folder()
-    end, opts, "Remove workspace folder")
-    m.nnoremap("<leader>wl", function()
+    end, opts, { desc = "Remove workspace folder" })
+    nnoremap("<leader>wl", function()
         print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, opts, "List workspace folders")
+    end, opts, { desc = "List workspace folders" })
 
-    m.nname("<leader>d", "LSP Diagnostics")
-    m.nnoremap("<leader>ds", "<cmd>Lspsaga show_line_diagnostics<CR>", opts, "Show line diagnostics")
-    m.nnoremap("[d", "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts, "Previous diagnostic")
-    m.nnoremap("]d", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts, "Next diagnostic")
-    m.nnoremap("<leader>dq", function() vim.diagnostic.setqflist() end, opts, "Set diagnostics in Quickfix")
-    m.cmdbang("LspDiag", function() vim.diagnostic.setqflist() end, { nargs = 0 })
+    wk.add({"<leader>d", group="LSP Diagnostics"})
+    nnoremap("<leader>ds", "<cmd>Lspsaga show_line_diagnostics<CR>", opts, { desc = "Show line diagnostics" })
+    nnoremap("[d", "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts, { desc = "Previous diagnostic" })
+    nnoremap("]d", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts, { desc = "Next diagnostic" })
+    nnoremap("<leader>dq", function() vim.diagnostic.setqflist() end, opts, { desc = "Set diagnostics in Quickfix" })
+    vim.api.nvim_buf_create_user_command(bufnr, "LspDiag", function() vim.diagnostic.setqflist() end, { nargs = 0 })
 
     -- LSP UI imporvements
     require("lspsaga").setup({})
@@ -94,6 +98,8 @@ local function servers_setup()
         jedi_language_server = {},
         robotframework_ls = {},
         bashls = {},
+        gopls = {},
+        zls = {},
         rust_analyzer = {
             settings = {
                 ["rust-analyzer"] = {
@@ -127,8 +133,11 @@ local function servers_setup()
         opts['on_attach'] = on_attach
         opts['capabilities'] = capabilities
         if lsp == "lua_ls" then
-            require('neodev').setup({
-                -- library = { plugins = { "nvim-dap-ui" }, types = true },
+            require('lazydev').setup({
+                library = {
+                    -- plugins = { "nvim-dap-ui" }, types = true,
+                    { path = "luvit-meta/library", words = { "vim%.uv" } },
+                },
             })
         end
         lspconfig[lsp].setup(opts)
@@ -139,7 +148,7 @@ end -- servers_setup
 local function lsp_config()
     servers_setup()
     for _, ft in ipairs(lsp_filetypes) do
-        if vim.api.nvim_get_option_value("ft",{buf=0}) == ft then
+        if vim.api.nvim_get_option_value("ft", { buf = 0 }) == ft then
             vim.cmd.LspStart()
         end
     end
@@ -147,15 +156,17 @@ end -- lsp_config
 
 -- A handy command, for when shortcuts don't work
 -- I need it for now as lua-language-server is misbhaving with my Lua configs
-vim.cmd.command("Format", "lua vim.lsp.buf.format()")
+vim.api.nvim_create_user_command("Format", vim.lsp.buf.format, {})
 
 return {
     -- LSP configuration for Lua development in Neovim
     {
-        "folke/neodev.nvim",
-        version = false,
+        "folke/lazydev.nvim",
         -- It'll be loaded upon being 'required'
         lazy = true,
+        dependencies = {
+            { "Bilal2453/luvit-meta", lazy = true }, -- optional `vim.uv` typings
+        }
     },
 
     -- LSP stock defaults

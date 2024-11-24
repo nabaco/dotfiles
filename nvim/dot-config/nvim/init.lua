@@ -138,10 +138,10 @@ vim.opt.tags = './tags,**5/tags,tags;~'
 
 local highlight_yank = vim.api.nvim_create_augroup('highlight_yank', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
-        group = highlight_yank,
-        pattern = "*",
-        callback = function() vim.highlight.on_yank({ timeout = '1000' }) end,
-    }
+    group = highlight_yank,
+    pattern = "*",
+    callback = function() vim.highlight.on_yank({ timeout = '1000' }) end,
+}
 )
 
 --  Vim's built in AutoComplete configuration {{{2
@@ -162,7 +162,6 @@ check_minimal = function(plugin)
     local whitelist = {
         "gruvbox-material",
         "lualine.nvim",
-        "mapx.nvim",
         "which-key.nvim"
     }
     if vim.g.minimal ~= nil then
@@ -214,16 +213,11 @@ require('lualine').setup {
 
 -- """""" Key Mappings and custom commands """""" {{{1
 
--- While initialiazing into the local m variable is not strictily required,
--- as I can use the "global = true" argument, but it makes the config more explicit
--- in terms of where the function came from, and removes lua-language-server errors
-local m = require('mapx').setup({ whichkey = true })
-
--- Not required as mapx above does that, but leaving for reference
--- require('which-key').setup({})
-
 -- For kernel development
-m.cmdbang("Kernel", function() vim.cmd.source(vim.api.nvim_list_runtime_paths()[1] .. "/linux-kernel.vim") end)
+vim.api.nvim_create_user_command("Kernel",
+    function() vim.cmd.source(
+        vim.api.nvim_list_runtime_paths()[1] .. "/linux-kernel.vim"
+    ) end, {})
 
 -- Vim's background transparency
 local transparency = function()
@@ -243,58 +237,65 @@ local transparency = function()
         vim.g.transparency_on = false
     end
 end
-m.cmdbang("Transparent", transparency)
+vim.api.nvim_create_user_command("Transparent", transparency, {})
+
+local function nnoremap(...) vim.keymap.set('n', ...) end
+local function inoremap(...) vim.keymap.set('i', ...) end
+local function vnoremap(...) vim.keymap.set('v', ...) end
+local function xnoremap(...) vim.keymap.set('x', ...) end
+local function cnoremap(...) vim.keymap.set('c', ...) end
+local function onoremap(...) vim.keymap.set('o', ...) end
 
 -- Allow more shell-like editing in ':' mode
-m.cnoremap('<C-A>', '<Home>')
+cnoremap('<C-A>', '<Home>')
 -- Happens way too many times
-m.cmdbang('W', 'update')
+vim.api.nvim_create_user_command('W', 'update', {})
 -- Search and replace word under cursor
-m.nnoremap('<leader>rr', ":%s/<c-r><c-w>//g<left><left>", "Search and replace")
+nnoremap('<leader>rr', ":%s/<c-r><c-w>//g<left><left>", { desc = "Search and replace" })
 -- Show full path, not relative
-m.nnoremap('<c-g>', function() print(vim.fn.expand('%:p')) end, "Show current file's full path")
+nnoremap('<c-g>', function() print(vim.fn.expand('%:p')) end, { desc = "Show current file's full path" })
 
 --  Quickfix bindings
-m.nnoremap(']q', '<CMD>cnext<CR>', "Next quickfix entry")
-m.nnoremap(']Q', '<CMD>clast<CR>', "Last quickfix entry")
-m.nnoremap('[q', '<CMD>cprevious<CR>', "Previous quickfix entry")
-m.nnoremap('[Q', '<CMD>cfirst<CR>', "First quickfix entry")
-m.nnoremap('<Leader>q', '<CMD>cclose<CR>', "Close quickfix window")
-m.nnoremap('qq', '<CMD>copen<CR>', "Open quickfix window")
+nnoremap(']q', '<CMD>cnext<CR>', { desc = "Next quickfix entry" })
+nnoremap(']Q', '<CMD>clast<CR>', { desc = "Last quickfix entry" })
+nnoremap('[q', '<CMD>cprevious<CR>', { desc = "Previous quickfix entry" })
+nnoremap('[Q', '<CMD>cfirst<CR>', { desc = "First quickfix entry" })
+nnoremap('<Leader>q', '<CMD>cclose<CR>', { desc = "Close quickfix window" })
+nnoremap('qq', '<CMD>copen<CR>', { desc = "Open quickfix window" })
 
 --  Insert date/time
-m.inoremap('<leader>d', '<C-r>=strftime("%a %d.%m.%Y %H:%M")<CR>')
-m.inoremap('<leader>D', '<C-r>=strftime("%d.%m.%y")<CR>')
+inoremap('<leader>d', '<C-r>=strftime("%a %d.%m.%Y %H:%M")<CR>')
+inoremap('<leader>D', '<C-r>=strftime("%d.%m.%y")<CR>')
 
 --  Turn off search highlight
-m.nnoremap('<Leader>/', '<CMD>noh<CR>')
+nnoremap('<Leader>/', '<CMD>noh<CR>')
 
 --  Spellchecking Bindings
-m.inoremap('<m-f>', '<C-G>u<Esc>[s1z=`]a<C-G>u', "Fix spelling")
-m.nnoremap('<m-f>', '[s1z=<c-o>', "Fix spelling")
-m.nnoremap('<F3>', '<CMD>setlocal spell! spelllang=en<CR>', "Toggle spellcheck")
+inoremap('<m-f>', '<C-G>u<Esc>[s1z=`]a<C-G>u', { desc = "Fix spelling" })
+nnoremap('<m-f>', '[s1z=<c-o>', { desc = "Fix spelling" })
+nnoremap('<F3>', '<CMD>setlocal spell! spelllang=en<CR>', { desc = "Toggle spellcheck" })
 
 --  Toggle whitespaces
-m.nnoremap('<F2>', '<CMD>set list! <CR>', "Toggle whitespaces")
+nnoremap('<F2>', '<CMD>set list! <CR>', { desc = "Toggle whitespaces" })
 --  real make
-m.nnoremap('<silent> <F5>', '<CMD>make<CR><CR><CR>', "Make")
+nnoremap('<silent> <F5>', '<CMD>make<CR><CR><CR>', { desc = "Make" })
 --  GNUism, for building recursively
-m.nnoremap('<silent> <s-F5>', '<CMD>make -w<CR><CR><CR>', "GNU Make")
+nnoremap('<silent> <s-F5>', '<CMD>make -w<CR><CR><CR>', { desc = "GNU Make" })
 --  Toggle the tags bar
-m.nnoremap('<F8>', '<CMD>Lspsaga outline<CR>', "Tagbar")
+nnoremap('<F8>', '<CMD>Lspsaga outline<CR>', { desc = "Tagbar" })
 
 --  Tags in previw/split window
-m.nnoremap('<C-w><C-]>', '<C-w>}', "Preview tag")
-m.nnoremap('<C-w>}', '<C-w><C-]>', "Open tag in split")
+nnoremap('<C-w><C-]>', '<C-w>}', { desc = "Preview tag" })
+nnoremap('<C-w>}', '<C-w><C-]>', { desc = "Open tag in split" })
 
 --  Compile file (Markdown, LaTeX, etc)
 --  TODO: Auto-recognize build system
 --  TODO: Move to file specific spec
-m.nnoremap('<silent> <F6>', '<CMD>!compiler %<CR>', "Compile file")
+nnoremap('<silent> <F6>', '<CMD>!compiler %<CR>', { desc = "Compile file" })
 
 if vim.g.minimal ~= nil then
-    m.inoremap('<silent><expr><tab>', 'pumvisible() ? "<c-n>" : "<tab>"')
-    m.inoremap('<silent><expr><s-tab>', 'pumvisible() ? "<c-p>" : "<s-tab>"')
+    inoremap('<silent><expr><tab>', 'pumvisible() ? "<c-n>" : "<tab>"')
+    inoremap('<silent><expr><s-tab>', 'pumvisible() ? "<c-p>" : "<s-tab>"')
 end
 
 --  }}} Key mappings
