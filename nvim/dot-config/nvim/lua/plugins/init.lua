@@ -62,7 +62,12 @@ return {
             },
             modes = {
                 char = {
-                    jump_labels = true
+                    -- hide after jump when not using jump labels
+                    autohide = true,
+                    jump_labels = true,
+                    -- When using jump labels, don't use these keys
+                    -- This allows using those keys directly after the motion
+                    label = { exclude = "hjkliardcsx" },
                 },
                 search = {
                     enabled = true
@@ -86,7 +91,7 @@ return {
         'smoka7/hop.nvim',
         enabled = false,
         opts = {
-            keys = 'etovxqpdygfblzhckisuran'
+            keys = 'etovqpdygfblzhckiuran'
         },
         config = true,
         keys = {

@@ -100,6 +100,7 @@ local function servers_setup()
         bashls = {},
         gopls = {},
         zls = {},
+        bitbake_language_server = {},
         rust_analyzer = {
             settings = {
                 ["rust-analyzer"] = {
@@ -180,7 +181,21 @@ return {
             -- prettier tools for LSP commands
             {
                 "nvimdev/lspsaga.nvim",
+                -- enabled = false,
                 config = true,
+                opts = {
+                    outline = {
+                        close_after_jump = true,
+                        keys = {
+                            toggle_or_jump = '<CR>',
+                        }
+                    },
+                    rename = {
+                        keys = {
+                            quit = '<ESC>',
+                        }
+                    }
+                },
                 dependencies = {
                     -- "nvim-treesitter/nvim-treesitter", -- optional
                     -- "nvim-tree/nvim-web-devicons",     -- optional
@@ -214,6 +229,7 @@ return {
                 "folke/trouble.nvim",
                 config = true,
                 cmd = "Trouble",
+                -- branch = "dev"
             },
         },
     },

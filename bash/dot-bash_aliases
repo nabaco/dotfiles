@@ -72,7 +72,13 @@ then
     alias bat="batcat"
 fi
 
-if (which exa &> /dev/null);
+if (which eza &> /dev/null);
+then
+    alias ls="eza --icons=automatic"
+    alias ll="eza --long --icons --git"
+    alias la="eza --all --icons"
+    alias tree="eza --tree --long --icons --git"
+elif (which exa &> /dev/null);
 then
     alias ls="exa"
     alias ll="exa -l"
@@ -119,7 +125,3 @@ alias next='todoist list --filter "@next" --priority'
 alias next-work='todoist list --filter "@next & ##work" --priority'
 alias next-personal='todoist list --filter "##personal & ((today | overdue) | @next)" --priority'
 alias q='todoist quick'
-
-alias nn=new-note
-alias nm=new-meeting
-alias np=new-post
